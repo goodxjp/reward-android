@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="jp.kyuuki.reward.android" > <!-- GCM requires Android SDK version 2.2 (API level 8) or above. -->
+    package="com.reward.omotesando" >
+    <!-- GCM requires Android SDK version 2.2 (API level 8) or above. -->
     <!--
      The targetSdkVersion is optional, but it's always a good practice
          to target higher versions.
@@ -23,10 +24,10 @@
            where PACKAGE is the application's package name.
     -->
     <permission
-        android:name="jp.kyuuki.reward.android.permission.C2D_MESSAGE"
+        android:name="com.reward.omotesando.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="jp.kyuuki.reward.android.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.reward.omotesando.permission.C2D_MESSAGE" />
 
     <!-- This app has permission to register and receive data message. -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
@@ -48,7 +49,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".activities.MainActivity"
+            android:name="com.reward.omotesando.activities.MainActivity"
             android:label="@string/app_name_drawer" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -65,7 +66,7 @@
           so only GCM services can send data messages for the app.
         -->
         <receiver
-            android:name=".receivers.GcmBroadcastReceiver"
+            android:name="com.reward.omotesando.receivers.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
 
@@ -76,12 +77,8 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".services.GcmIntentService" />
+        <service android:name="com.reward.omotesando.services.GcmIntentService" />
 
-        <activity
-            android:name=".activities.BaseActivity"
-            android:label="@string/title_activity_base" >
-        </activity>
     </application>
 
 </manifest>

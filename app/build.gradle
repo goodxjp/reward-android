@@ -4,22 +4,29 @@ android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
 
+    // commons-codec:commons-codec:1.10 組み込みでエラー。
+    // http://stackoverflow.com/questions/26352958/duplicate-files-when-adding-compiling-with-gradle-in-android-studio
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+
     defaultConfig {
-        applicationId "jp.kyuuki.reward.android"
+        applicationId 'com.reward.omotesando'
         minSdkVersion 9
         targetSdkVersion 21
         versionCode 1
-        versionName "0.0.2"
+        versionName "0.0.3"
         manifestPlaceholders = [activityLabel: "defaultName"]
     }
     productFlavors {
         development {
-            applicationId "jp.kyuuki.reward.android.development"
+            applicationId 'com.reward.omotesando.development'
             manifestPlaceholders = [activityLabel: "defaultName"]
             buildConfigField "String", "BASE_URL", "\"http://kyuuki.jp:3000/api/v1\""
         }
         production {
-            buildConfigField "String", "BASE_URL", "\"http://admin.dolly-reward.com/api/v1\""
+            buildConfigField "String", "BASE_URL", "\"https://reward-staging.herokuapp.com/api/v1\""
         }
     }
     buildTypes {
@@ -40,4 +47,5 @@ dependencies {
     compile 'com.mcxiaoke.volley:library:1.0.+'
     compile 'com.android.support:support-v4:21.0.3'
     compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'commons-codec:commons-codec:1.10'
 }

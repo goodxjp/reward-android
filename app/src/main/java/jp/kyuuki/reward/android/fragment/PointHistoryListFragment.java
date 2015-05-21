@@ -323,7 +323,7 @@ public class PointHistoryListFragment extends BaseFragment {
             return;
         }
 
-        mAdapter = new PointHistoryArrayAdapter(getActivity(), R.layout.row_point_history, mPointHistories);
+        mAdapter = new PointHistoryArrayAdapter(getActivity(), R.layout.list_item_point_history, mPointHistories);
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
     }
 }

@@ -31,12 +31,12 @@ public class OfferArrayAdapter extends ArrayAdapter<Offer> {
         View view = convertView;
         ViewHolder holder;
         if (view == null) {
-            view = mInflater.inflate(R.layout.row_offer, null);
+            view = mInflater.inflate(R.layout.list_item_offer, null);
 
             holder = new ViewHolder();
-            holder.iconImage = (ImageView) view.findViewById(R.id.iconImage);
-            holder.rensouText = (TextView) view.findViewById(R.id.nameText);
-            holder.pointText = (TextView) view.findViewById(R.id.pointText);
+            holder.iconImage = (ImageView) view.findViewById(R.id.icon_image);
+            holder.rensouText = (TextView) view.findViewById(R.id.name_text);
+            holder.pointText = (TextView) view.findViewById(R.id.point_text);
 
             view.setTag(holder);
         } else {

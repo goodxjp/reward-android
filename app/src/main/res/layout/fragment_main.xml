@@ -14,8 +14,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="手動購入した Amazon ギフト券と交換？"
-        android:id="@+id/textView"
+        android:text="Under Constraction..."
+        android:id="@+id/main_text"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"/>
 

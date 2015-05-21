@@ -1,8 +1,6 @@
 package jp.kyuuki.reward.android.fragment;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -412,7 +410,7 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
             return;
         }
 
-        mAdapter = new OfferArrayAdapter(getActivity(), R.layout.row_offer, offers);
+        mAdapter = new OfferArrayAdapter(getActivity(), R.layout.list_item_offer, offers);
         // http://skyarts.com/blog/jp/skyarts/?p=3964
 //        // API 9 で動かすための苦肉の策。
 //        if (mListView instanceof ListView) {

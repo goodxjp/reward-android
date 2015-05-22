@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="api_scheme">https</string>
+    <string name="api_encoded_authority">reward-staging.herokuapp.com</string>
+    <string name="api_path_base">/api/v1</string>
+
+    <string name="gcm_sender_id">857237989884</string>
+
+    <integer name="media_id">1</integer>
+    <string name="media_key">6Fk810vbM3</string>
+</resources>

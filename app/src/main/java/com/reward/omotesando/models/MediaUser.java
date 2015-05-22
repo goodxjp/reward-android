@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 /**
  * メディアユーザー。
  *
- * - TODO: 自分と一般的なメディアユーザーのモデルとをきちんとわけたほうがよさげ。
+ * - 自分のこと。
  */
 public class MediaUser {
     static MediaUser mediaUser;

@@ -198,9 +198,9 @@ public class MainActivity extends BaseActivity
         RequestQueue requestQueue = VolleyUtils.getRequestQueue(getApplicationContext());
 
         // ユーザー登録 API
-        final PostMediaUsers api = PostMediaUsers.create(Terminal.getAndroidId(this), new JSONObject(Terminal.getBuildInfo()), regId);
+        final PostMediaUsers api = new PostMediaUsers(this, Terminal.getAndroidId(this), new JSONObject(Terminal.getBuildInfo()), regId);
 
-        JsonObjectRequest request = new JsonObjectRequest(api.getUrl(), api.getJsonRequest(),
+        JsonObjectRequest request = new JsonObjectRequest(api.getUrl(this), api.getJsonRequest(),
 
             new Response.Listener<JSONObject>() {
                 @Override

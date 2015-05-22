@@ -1,5 +1,8 @@
 package com.reward.omotesando.components.api;
 
+import android.content.Context;
+import android.net.Uri;
+
 import org.apache.commons.codec.binary.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -8,14 +11,20 @@ import org.json.JSONObject;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.reward.omotesando.R;
 import com.reward.omotesando.commons.Logger;
+import com.reward.omotesando.models.Media;
+import com.reward.omotesando.models.MediaUser;
 import com.reward.omotesando.models.Offer;
 
 /**
@@ -26,50 +35,22 @@ public class GetOffers extends RewardApi<List<Offer>> {
     /*
      * HTTP リクエスト仕様
      */
-    public static GetOffers create(long mid, long uid) {
-        GetOffers api = new GetOffers();
-        Logger.e("---------------------", "test");
-        Logger.d("---------------------", "test");
+    public GetOffers(Context context) {
+        // メソッド
+        this.method = "GET";
 
-        // URL
-        api.url = BASE_URL + "/offers.json?mid=" + mid + "&uid=" + uid;
-        // Volley では GET のクエリー文字列は自前で作らないとダメらしい。
-        // TODO: 署名を付けるときに共通化
+        // パス
+        this.path = context.getString(R.string.api_path_base) + "/offers.json";
 
-        // 署名
-        String method = "GET";
-        String path = "/api/v1/offers.json";
-        String sortedQuery = "mid=1&uid=17";
-        String data = method + "\n" + path + "\n" + sortedQuery;
+        // クエリー文字
+        Media media = Media.getMedia(context);
+        MediaUser mediaUser = MediaUser.getMediaUser(context);
 
-        KeyGenerator kg = null;
+        this.queryPut("mid", String.valueOf(media.mediaId));
+        this.queryPut("uid", String.valueOf(mediaUser.mediaUserId));
 
-        try {
-            kg = KeyGenerator.getInstance("HmacSHA1");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        SecretKey sk = new SecretKeySpec("xxx&2273000afa576152".getBytes(), "HmacSHA1");
-
-        Mac mac = null;
-        try {
-            mac = Mac.getInstance("HmacSHA1");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        try {
-            mac.init(sk);
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        }
-        byte[] result = mac.doFinal(data.getBytes()); // "hoge"が認証メッセージ
-        Logger.e("---------------------", new String(Hex.encodeHex(result)));
-
-
-        // Body
-        api.jsonRequest = null;
-
-        return api;
+        // ボディ
+        this.jsonRequest = null;
     }
 
     /*

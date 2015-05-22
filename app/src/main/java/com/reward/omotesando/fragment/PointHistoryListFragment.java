@@ -249,9 +249,9 @@ public class PointHistoryListFragment extends BaseFragment {
             mediaUserId = mediaUser.mediaUserId;
         }
 
-        final GetMediaUsers api = GetMediaUsers.create(mediaUserId);
+        final GetMediaUsers api = new GetMediaUsers(getActivity());
 
-        JsonObjectRequest request = new JsonObjectRequest(api.getUrl(),
+        JsonObjectRequest request = new JsonObjectRequest(api.getUrl(getActivity()),
 
             new Response.Listener<JSONObject>() {
                 @Override
@@ -288,9 +288,9 @@ public class PointHistoryListFragment extends BaseFragment {
         }
 
         // TODO: メディア ID 取得
-        final GetPointHistories api = GetPointHistories.create(1, mediaUserId);
+        final GetPointHistories api = new GetPointHistories(getActivity());
 
-        JsonArrayRequest request = new JsonArrayRequest(api.getUrl(),
+        JsonArrayRequest request = new JsonArrayRequest(api.getUrl(getActivity()),
 
             new Response.Listener<JSONArray>() {
                 @Override

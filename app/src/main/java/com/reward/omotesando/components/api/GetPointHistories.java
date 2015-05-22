@@ -1,5 +1,7 @@
 package com.reward.omotesando.components.api;
 
+import android.content.Context;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -8,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.reward.omotesando.R;
+import com.reward.omotesando.models.Media;
+import com.reward.omotesando.models.MediaUser;
 import com.reward.omotesando.models.PointHistory;
 
 /**
@@ -18,20 +23,23 @@ public class GetPointHistories extends RewardApi<List<PointHistory>> {
     /*
      * HTTP リクエスト仕様
      */
-    public static GetPointHistories create(long mid, long uid) {
-        GetPointHistories api = new GetPointHistories();
+    public GetPointHistories(Context context) {
+        // メソッド
+        this.method = "GET";
 
+        // パス
         // TODO: mid, uid を全部クエリー文字列に付けるか URL に含めて REST っぽくするか悩み中。
+        Media media = Media.getMedia(context);
+        MediaUser mediaUser = MediaUser.getMediaUser(context);
 
-        // URL
-        api.url = BASE_URL + "/media_users/"+ uid + "/point_histories.json?mid=" + mid + "&uid=" + uid;
-        // Volley では GET のクエリー文字列は自前で作らないとダメらしい。
-        // TODO: 署名を付けるときに共通化
+        this.path = context.getString(R.string.api_path_base) + "/media_users/"+ String.valueOf(mediaUser.mediaUserId) + "/point_histories.json";
 
-        // Body
-        api.jsonRequest = null;
+        // クエリー文字
+        this.queryPut("mid", String.valueOf(media.mediaId));
+        this.queryPut("uid", String.valueOf(mediaUser.mediaUserId));
 
-        return api;
+        // ボディ
+        this.jsonRequest = null;
     }
 
     /*

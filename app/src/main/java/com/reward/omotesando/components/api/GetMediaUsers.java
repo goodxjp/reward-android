@@ -1,9 +1,13 @@
 package com.reward.omotesando.components.api;
 
+import android.content.Context;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.reward.omotesando.R;
+import com.reward.omotesando.models.Media;
 import com.reward.omotesando.models.MediaUser;
 
 /**
@@ -14,16 +18,22 @@ public class GetMediaUsers extends RewardApi<MediaUser> {
     /*
      * HTTP リクエスト仕様
      */
-    public static GetMediaUsers create(long uid) {
-        GetMediaUsers api = new GetMediaUsers();
+    public GetMediaUsers(Context context) {
+        // メソッド
+        this.method = "GET";
 
-        // URL
-        api.url = BASE_URL + "/media_users/" + uid + ".json";
+        // パス
+        Media media = Media.getMedia(context);
+        MediaUser mediaUser = MediaUser.getMediaUser(context);
 
-        // Body
-        api.jsonRequest = null;
+        this.path = context.getString(R.string.api_path_base) + "/media_users/"+ String.valueOf(mediaUser.mediaUserId) + ".json";
 
-        return api;
+        // クエリー文字
+        this.queryPut("mid", String.valueOf(media.mediaId));
+        this.queryPut("uid", String.valueOf(mediaUser.mediaUserId));
+
+        // ボディ
+        this.jsonRequest = null;
     }
 
     /*

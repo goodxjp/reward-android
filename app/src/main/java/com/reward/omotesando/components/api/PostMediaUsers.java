@@ -1,9 +1,13 @@
 package com.reward.omotesando.components.api;
 
+import android.content.Context;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.reward.omotesando.R;
+import com.reward.omotesando.models.Media;
 import com.reward.omotesando.models.MediaUser;
 
 /**
@@ -14,14 +18,19 @@ public class PostMediaUsers extends RewardApi<MediaUser> {
     /*
      * HTTP リクエスト仕様
      */
-    public static PostMediaUsers create(String terminalId, JSONObject terminalInfo, String androidRegistrationId) {
-        PostMediaUsers api = new PostMediaUsers();
+    public PostMediaUsers(Context context, String terminalId, JSONObject terminalInfo, String androidRegistrationId) {
+        // メソッド
+        this.method = "POST";
 
-        // URL
-        api.url = BASE_URL + "/media_users.json";
+        // パス
+        this.path = context.getString(R.string.api_path_base) + "/media_users.json";
 
-        // Body
-        JSONObject jsonRequest = new JSONObject();
+        // クエリー文字
+        Media media = Media.getMedia(context);
+        this.queryPut("mid", String.valueOf(media.mediaId));
+
+        // ボディ
+        this.jsonRequest = new JSONObject();
 
         try {
             jsonRequest.put("terminal_id", terminalId);
@@ -33,10 +42,6 @@ public class PostMediaUsers extends RewardApi<MediaUser> {
             e.printStackTrace();
             throw new IllegalStateException();
         }
-
-        api.jsonRequest = jsonRequest;
-
-        return api;
     }
 
     /*

@@ -28,12 +28,6 @@
     <string name="query_mail_subject">Inquiry</string>
     <string name="query_mail_text"></string>
 
-    <string name="gcm_sender_id">857237989884</string>
-    <string name="api_base_url">http://admin.dolly-reward.com</string>
-    <string name="title_activity_base">BaseActivity</string>
-
-    <string name="hello_world">Hello world!</string>
-
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

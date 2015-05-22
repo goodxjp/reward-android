@@ -1,16 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+    }
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
-
     // commons-codec:commons-codec:1.10 組み込みでエラー。
     // http://stackoverflow.com/questions/26352958/duplicate-files-when-adding-compiling-with-gradle-in-android-studio
     packagingOptions {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
     }
-
     defaultConfig {
         applicationId 'com.reward.omotesando'
         minSdkVersion 9

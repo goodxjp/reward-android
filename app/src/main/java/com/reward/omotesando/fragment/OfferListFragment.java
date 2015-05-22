@@ -337,9 +337,9 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
             mediaUserId = mediaUser.mediaUserId;
         }
 
-        final GetMediaUsers api = GetMediaUsers.create(mediaUserId);
+        final GetMediaUsers api = new GetMediaUsers(getActivity());
 
-        JsonObjectRequest request = new JsonObjectRequest(api.getUrl(),
+        JsonObjectRequest request = new JsonObjectRequest(api.getUrl(getActivity()),
 
             new Response.Listener<JSONObject>() {
                 @Override
@@ -375,10 +375,9 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
             mediaUserId = mediaUser.mediaUserId;
         }
 
-        // TODO: メディア ID 取得
-        final GetOffers api = GetOffers.create(1, mediaUserId);
+        final GetOffers api = new GetOffers(getActivity());
 
-        JsonArrayRequest request = new JsonArrayRequest(api.getUrl(),
+        JsonArrayRequest request = new JsonArrayRequest(api.getUrl(getActivity()),
 
             new Response.Listener<JSONArray>() {
                 @Override

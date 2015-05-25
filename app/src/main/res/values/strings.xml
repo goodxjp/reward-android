@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Reward App</string>
     <string name="app_name_drawer">Reward</string>
+    <string name="app_name_drawer_tab">RewardTab</string>
 
     <string name="title_section1">List</string>
     <string name="title_section2">Help</string>
@@ -30,4 +31,7 @@
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_tabbed">TabbedActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 </resources>

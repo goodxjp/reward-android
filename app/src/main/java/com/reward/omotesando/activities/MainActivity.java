@@ -109,9 +109,10 @@ public class MainActivity extends BaseActivity
         switch (navigationMenu) {
             case OFFER_LIST:
                 // オファー一覧は作り直さない
-                if (fragment instanceof OfferListFragment) {
-                    return;
-                }
+                // TODO: ここの挙動要検討
+//                if (fragment instanceof OfferListFragment) {
+//                    return;
+//                }
                 fragment = OfferListFragment.newInstance();
                 break;
             case POINT_EXCHANGE:
@@ -119,9 +120,10 @@ public class MainActivity extends BaseActivity
                 break;
             case POINT_HISTORY:
                 // ポイント履歴一覧は作り直さない
-                if (fragment instanceof PointHistoryListFragment) {
-                    return;
-                }
+                // TODO: ここの挙動要検討
+//                if (fragment instanceof PointHistoryListFragment) {
+//                    return;
+//                }
                 fragment = PointHistoryListFragment.newInstance();
                 break;
             case HELP:

@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">リワードアプリ（仮）</string>
     <string name="app_name_drawer">リワード（仮）</string>
-
+    <string name="app_name_drawer_tab">リワードタブ</string>
 
     <string name="title_section1">案件リスト</string>
     <string name="title_section2">ヘルプ</string>

@@ -49,13 +49,19 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name="com.reward.omotesando.activities.MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name_drawer" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <!-- 仮にタブ切り替えバージョンも作って見た -->
+        <activity
+            android:name=".activities.TabbedActivity"
+            android:label="@string/app_name_drawer_tab" >
         </activity>
 
         <!--
@@ -66,7 +72,7 @@
           so only GCM services can send data messages for the app.
         -->
         <receiver
-            android:name="com.reward.omotesando.receivers.GcmBroadcastReceiver"
+            android:name=".receivers.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
 
@@ -77,8 +83,7 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="com.reward.omotesando.services.GcmIntentService" />
-
+        <service android:name=".services.GcmIntentService" />
     </application>
 
 </manifest>

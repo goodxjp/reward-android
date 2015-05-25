@@ -24,7 +24,7 @@ import java.util.List;
 
 import com.reward.omotesando.R;
 
-import com.reward.omotesando.activities.MainActivity;
+import com.reward.omotesando.activities.ShowableProgressDialog;
 import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.commons.VolleyUtils;
 import com.reward.omotesando.components.api.GetMediaUsers;
@@ -246,10 +246,15 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
                 // TODO: 端末の通信状態を確認
                 // TODO: サーバーの状態を確認
                 // TODO: エラーダイアログを表示
-                MainActivity activity = (MainActivity) fragment.getActivity();
+                ShowableProgressDialog activity = (ShowableProgressDialog) fragment.getActivity();
                 if (activity != null) {
                     activity.dismissProgressDialog();
-                    Toast.makeText(activity, activity.getString(R.string.error_communication), Toast.LENGTH_LONG).show();
+                }
+
+                // TODO: 名前考える
+                Activity activity2 = fragment.getActivity();
+                if (activity2 != null) {
+                    Toast.makeText(activity2, activity2.getString(R.string.error_communication), Toast.LENGTH_LONG).show();
                 }
 
                 fragment.transit(ERROR);
@@ -262,8 +267,7 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
             public void successGetCampaginData(OfferListFragment fragment, List<Offer> offers) {
                 fragment.showCampaignData();
 
-                // TODO: MainActivity 依存を解消する。
-                MainActivity activity = (MainActivity) fragment.getActivity();
+                ShowableProgressDialog activity = (ShowableProgressDialog) fragment.getActivity();
                 if (activity != null) {
                     activity.dismissProgressDialog();
                 }
@@ -276,10 +280,15 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
                 // TODO: 端末の通信状態を確認
                 // TODO: サーバーの状態を確認
                 // TODO: エラーダイアログを表示
-                MainActivity activity = (MainActivity) fragment.getActivity();
+                ShowableProgressDialog activity = (ShowableProgressDialog) fragment.getActivity();
                 if (activity != null) {
                     activity.dismissProgressDialog();
-                    Toast.makeText(activity, activity.getString(R.string.error_communication), Toast.LENGTH_LONG).show();
+                }
+
+                // TODO: 名前考える
+                Activity activity2 = fragment.getActivity();
+                if (activity2 != null) {
+                    Toast.makeText(activity2, activity2.getString(R.string.error_communication), Toast.LENGTH_LONG).show();
                 }
 
                 fragment.transit(ERROR);
@@ -361,7 +370,7 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
             }
         );
 
-        ((MainActivity) getActivity()).showProgressDialog(null, getString(R.string.dialog_message_communicating));
+        ((ShowableProgressDialog) getActivity()).showProgressDialog(null, getString(R.string.dialog_message_communicating));
         mRequestQueue.add(request);
     }
 

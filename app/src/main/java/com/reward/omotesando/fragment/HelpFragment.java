@@ -70,7 +70,7 @@ public class HelpFragment extends BaseFragment {
             }
         });
         // TODO: ヘルプページ作成
-        mWebView.loadUrl("https://sp.hashibi6.jp/security/");
+        mWebView.loadUrl("http://dolly-reward.com/");
 
         return v;
     }

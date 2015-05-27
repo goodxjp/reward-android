@@ -35,7 +35,9 @@ public class PostMediaUsers extends RewardApi<MediaUser> {
         try {
             jsonRequest.put("terminal_id", terminalId);
             jsonRequest.put("terminal_info", terminalInfo);
-            jsonRequest.put("android_registration_id", androidRegistrationId);
+            if (androidRegistrationId != null) {
+                jsonRequest.put("android_registration_id", androidRegistrationId);
+            }
         } catch (JSONException e) {
             // 値が数値の時にしか発生しない、致命的なエラーなので、落としてしまってよい。
             // TODO: 致命的なバグに気付くしくみ、共通ライブラリ化

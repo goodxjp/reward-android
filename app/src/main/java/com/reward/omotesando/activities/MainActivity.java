@@ -26,6 +26,7 @@ import com.reward.omotesando.components.GcmManager;
 import com.reward.omotesando.components.api.PostMediaUsers;
 import com.reward.omotesando.components.Terminal;
 import com.reward.omotesando.fragment.AboutFragment;
+import com.reward.omotesando.fragment.DebugFragment;
 import com.reward.omotesando.fragment.HelpFragment;
 import com.reward.omotesando.fragment.NavigationDrawerFragment;
 import com.reward.omotesando.R;
@@ -36,6 +37,12 @@ import com.reward.omotesando.models.MediaUser;
 import com.reward.omotesando.models.NavigationMenu;
 import com.reward.omotesando.models.Offer;
 
+/**
+ * メインアクティビティ
+ *
+ * - 初期処理
+ * - メニューによるフラグメント切り替えの管理
+ */
 public class MainActivity extends BaseActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks,
                    GcmManager.GcmManagerCallbacks,
@@ -55,32 +62,24 @@ public class MainActivity extends BaseActivity
      */
     private CharSequence mTitle;
 
+
+    /*
+     * ライフサイクル
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         //mTitle = getTitle();
         mTitle = getString(R.string.app_name);
-        // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        initNavigationDrawer();
 
         // TODO: 回転とかで毎回通信が走るのをまじめに対処。
 
-        // TODO: GDM 状態遷移
-        // TODO: 初期化処理中は通信中的な表示にする
-        GcmManager gcmManager = GcmManager.getInstance(getApplicationContext(), this);
-        gcmManager.tryToRegister(this);
-
-        MediaUser mediaUser;
-        if ((mediaUser = MediaUser.getMediaUser(this)) != null) {
-            Logger.i("MediaUser", "mediaUserId = " + mediaUser.mediaUserId);
-            Logger.i("MediaUser", "terminalId = " + mediaUser.terminalId);
-        }
+        state.start(this);
     }
 
     @Override
@@ -89,13 +88,17 @@ public class MainActivity extends BaseActivity
 
         // 公式ドキュメントによると onResume() でもチェックするのがお作法らしい。
         // http://developer.android.com/google/gcm/client.html#sample-play
-        GcmManager gcmManager = GcmManager.getInstance(getApplicationContext(), this);
+        GcmManager gcmManager = GcmManager.getInstance(getApplicationContext());
         gcmManager.checkPlayServices(this);
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         Logger.v(TAG, "[" + this.hashCode() + "] onNavigationDrawerItemSelected() position = " + position);
+
+        if (state != State.READY) {
+            return;
+        }
 
         // update the main content by replacing fragments
         Fragment fragment;
@@ -132,6 +135,9 @@ public class MainActivity extends BaseActivity
             case ABOUT:
                 fragment = AboutFragment.newInstance();
                 break;
+            case DEBUG:
+                fragment = DebugFragment.newInstance();
+                break;
             default:
                 throw new IllegalStateException();
         }
@@ -166,6 +172,8 @@ public class MainActivity extends BaseActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (true) return false;
+
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
@@ -194,11 +202,117 @@ public class MainActivity extends BaseActivity
         return super.onOptionsItemSelected(item);
     }
 
-    // GcmManager.GcmManagerCallbacks コールバック
-    @Override
-    public void onRegistered(String regId) {
-        RequestQueue requestQueue = VolleyUtils.getRequestQueue(getApplicationContext());
+    /*
+     * 状態管理
+     */
 
+    private State state = State.INITIAL;
+
+    enum State {
+        // 初期状態
+        INITIAL {
+            @Override
+            public void start(MainActivity activity) {
+
+                GcmManager gcmManager = GcmManager.getInstance(activity.getApplicationContext());
+                if (gcmManager.tryToRegister(activity, activity)) {
+                    //activity.showProgressDialog(null, activity.getString(R.string.dialog_message_initializing));
+                    activity.transit(GCM_REGISTERING);
+                } else if (activity.tryToRegisterUser(null)) {
+                    //activity.showProgressDialog(null, activity.getString(R.string.dialog_message_initializing));
+                    activity.transit(USER_REGISTERING);
+                } else {
+                    activity.transit(READY);
+                    activity.onNavigationDrawerItemSelected(0);  // TODO: もっとうまいやり方がないか？
+
+                    // TODO: activity.showProgressDialog() の直後に呼ぶと落ちるのはなぜか要調査;
+
+                    //activity.dismissProgressDialog();
+                }
+            }
+        },
+
+        // GCM 登録中
+        GCM_REGISTERING {
+            @Override
+            public void gcmRegisterd(MainActivity activity, String regId) {
+                if (activity.tryToRegisterUser(null)) {
+                    activity.transit(USER_REGISTERING);
+                } else {
+                    activity.transit(READY);
+                    activity.onNavigationDrawerItemSelected(0);  // TODO: もっとうまいやり方がないか？
+                    //activity.dismissProgressDialog();
+                }
+            }
+        },
+
+        // ユーザー登録中
+        USER_REGISTERING {
+            @Override
+            public void successUserRegister(MainActivity activity, MediaUser mediaUser) {
+                // 登録に成功したら保存
+                MediaUser.storeMediaUserId(activity, mediaUser.mediaUserId, mediaUser.terminalId);
+
+                activity.transit(READY);
+                activity.onNavigationDrawerItemSelected(0);  // TODO: もっとうまいやり方がないか？
+                //activity.dismissProgressDialog();
+            }
+
+            @Override
+            public void failureUserRegister(MainActivity activity) {
+                // TODO: ユーザー登録に失敗したときのエラー処理
+                activity.transit(READY);
+                activity.onNavigationDrawerItemSelected(0);  // TODO: もっとうまいやり方がないか？
+                //activity.dismissProgressDialog();
+            }
+        },
+
+        // 操作可能状態
+        READY;
+
+        /*
+         * イベント
+         */
+        // 初期処理開始
+        public void start(MainActivity activity) {
+            throw new IllegalStateException();
+        }
+
+        // GCM 登録完了
+        public void gcmRegisterd(MainActivity activity, String regId) {
+            throw new IllegalStateException();
+        }
+
+        // ユーザー登録成功
+        public void successUserRegister(MainActivity activity, MediaUser mediaUser) {
+            throw new IllegalStateException();
+        }
+
+        // ユーザー登録失敗
+        public void failureUserRegister(MainActivity activity) {
+            throw new IllegalStateException();
+        }
+    }
+
+    // 状態遷移 (enum State 内でのみ使用すること、なら中に入れちゃえばいいんじゃね？)
+    private void transit(State nextState) {
+        Logger.d(TAG, "STATE: " + state + " -> " + nextState);
+        state = nextState;
+    }
+
+    // ユーザー登録してみる
+    private boolean tryToRegisterUser(String regId) {
+        if  (MediaUser.getMediaUser(getApplicationContext()) != null) {
+            // 登録済みなら送らない？でいいかなぁ。毎回送る？
+            return false;
+        }
+
+        registerUser(regId);
+        return true;
+    }
+
+    // ユーザー登録
+    private void registerUser(String regId) {
         // ユーザー登録 API
         final PostMediaUsers api = new PostMediaUsers(this, Terminal.getAndroidId(this), new JSONObject(Terminal.getBuildInfo()), regId);
 
@@ -207,24 +321,46 @@ public class MainActivity extends BaseActivity
             new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    Logger.e("HTTP", "body is " + response.toString());
+                    Logger.e(TAG, "HTTP: body is " + response.toString());
                     MediaUser mediaUser = api.parseJsonResponse(response);
 
-                    // 登録に成功したら保存
-                    MediaUser.storeMediaUserId(MainActivity.this, mediaUser.mediaUserId, mediaUser.terminalId);
+                    state.successUserRegister(MainActivity.this, mediaUser);
                 }
             },
 
             new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Logger.e("HTTP", "error = " + error.getMessage());
-                    // TODO
+                    Logger.e(TAG, "HTTP: error = " + error.getMessage());
+
+                    state.failureUserRegister(MainActivity.this);
                 }
             });
 
+        RequestQueue requestQueue = VolleyUtils.getRequestQueue(getApplicationContext());
         requestQueue.add(request);
     }
+
+    private void initNavigationDrawer() {
+        mNavigationDrawerFragment = (NavigationDrawerFragment)
+                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        // Set up the drawer.
+        mNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                (DrawerLayout) findViewById(R.id.drawer_layout));
+    }
+
+
+    /*
+     * GcmManager.GcmManagerCallbacks
+     */
+    @Override
+    public void onRegistered(String regId) {
+        Logger.v(getLogTag(), "[" + this.hashCode() + "] onRegistered");
+
+        state.gcmRegisterd(this, regId);
+    }
+
 
     /*
      * OfferListFragment.OnFragmentInteractionListener
@@ -279,5 +415,4 @@ public class MainActivity extends BaseActivity
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }
-
 }

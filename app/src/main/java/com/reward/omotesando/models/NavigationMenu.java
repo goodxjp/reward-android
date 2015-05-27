@@ -20,6 +20,9 @@ public enum NavigationMenu {
     ),
     ABOUT(
             R.string.menu_about
+    ),
+    DEBUG(
+            R.string.menu_debug
     );
 
     public int resource;

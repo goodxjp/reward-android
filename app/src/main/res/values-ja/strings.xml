@@ -13,6 +13,7 @@
     <string name="menu_point_history">ポイント履歴</string>
     <string name="menu_help">ヘルプ</string>
     <string name="menu_about">アプリ情報</string>
+    <string name="menu_debug">開発用</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -23,6 +24,7 @@
     <string name="point_unit">ポイント</string>
     <string name="query">お問い合わせ</string>
 
+    <string name="dialog_message_initializing">初期化中...</string>
     <string name="dialog_message_communicating">通信中...</string>
 
     <string name="error_communication">通信エラー</string>

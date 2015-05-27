@@ -41,22 +41,19 @@ public class GcmManager {
      */
     static final String TAG = GcmManager.class.getName();
 
-    static GcmManager gcmManager;
+    private static GcmManager gcmManager;
 
     private Context mApplicationContext;
     private GoogleCloudMessaging mGcm;
 
-    private GcmManagerCallbacks mCallbacks;
-
-    private GcmManager(Context applicationContext, GcmManagerCallbacks callbacks) {
+    private GcmManager(Context applicationContext) {
         mApplicationContext = applicationContext;
         mGcm = GoogleCloudMessaging.getInstance(applicationContext);
-        mCallbacks = callbacks;
     }
 
-    public static synchronized GcmManager getInstance(Context applicationContext, GcmManagerCallbacks callbacks) {
+    public static synchronized GcmManager getInstance(Context applicationContext) {
         if (gcmManager == null) {
-            gcmManager = new GcmManager(applicationContext, callbacks);
+            gcmManager = new GcmManager(applicationContext);
         }
 
         return gcmManager;
@@ -64,25 +61,24 @@ public class GcmManager {
 
     // とりあえず、登録されているかどうかにかかわらず、登録しようとしてみる。
     // TODO: 不整合が起きたときに強制的に registration ID を取得するしくみを追加。
-    public void tryToRegister(Activity activity) {
+    public boolean tryToRegister(Activity activity, GcmManagerCallbacks callbacks) {
         // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
-        if (checkPlayServices(activity)) {
-            String regId = getRegistrationId(mApplicationContext);
-            regId = ""; // TODO
-
-            if (regId.isEmpty()) {
-                // GCM 未登録
-                registerInBackground();
-            } else if  (MediaUser.getMediaUser(mApplicationContext) == null) {
-                // 仮にユーザー登録に失敗している場合もここからやり直す
-                // TODO: ちゃんと状態遷移を考える
-                // TODO: GcmManager から MediaUser 依存のコード排除する
-                registerInBackground();
-            }
-        } else {
+        if (checkPlayServices(activity) == false) {
             Logger.d(TAG, "gcm = " + mGcm);  // Google 開発者サービスをインストールしていなくても gcm インスタンスはできるようだ。
             Logger.i(TAG, "No valid Google Play Services APK found.");
+            return false;
         }
+
+        String regId = getRegistrationId(mApplicationContext);
+        //regId = ""; // TODO: 強制的に送信
+
+        if (regId.isEmpty()) {
+            // GCM 未登録
+            registerInBackground(callbacks);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -160,7 +156,7 @@ public class GcmManager {
      * Stores the registration ID and the app versionCode in the application's
      * shared preferences.
      */
-    private void registerInBackground() {
+    private void registerInBackground(final GcmManagerCallbacks callbacks) {
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
@@ -173,6 +169,7 @@ public class GcmManager {
                     String senderId = mApplicationContext.getString(R.string.gcm_sender_id);
                     Logger.d(TAG, "sender ID = " + senderId);
                     regId = mGcm.register(senderId);
+                    // ↑のメソッド完了が遅い場合あり。
                     Logger.d(TAG, "Device registered, registration ID=" + regId);
 
                     // You should send the registration ID to your server over HTTP, so it
@@ -204,8 +201,8 @@ public class GcmManager {
             protected void onPostExecute(String regid) {
                 Logger.d(TAG, "onPostExecute regid = " + regid);
 
-                if (mCallbacks != null) {
-                    mCallbacks.onRegistered(regid);
+                if (callbacks != null) {
+                    callbacks.onRegistered(regid);
                 }
             }
         }.execute(null, null, null);

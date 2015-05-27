@@ -285,7 +285,7 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
                     activity.dismissProgressDialog();
                 }
 
-                // TODO: 名前考える
+                // TODO: 名前真面目に考える
                 Activity activity2 = fragment.getActivity();
                 if (activity2 != null) {
                     Toast.makeText(activity2, activity2.getString(R.string.error_communication), Toast.LENGTH_LONG).show();

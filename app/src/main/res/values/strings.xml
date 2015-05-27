@@ -12,6 +12,7 @@
     <string name="menu_point_history">History</string>
     <string name="menu_help">Help</string>
     <string name="menu_about">About</string>
+    <string name="menu_debug">Debug</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -22,6 +23,7 @@
     <string name="point_unit">point</string>
     <string name="query">Query</string>
 
+    <string name="dialog_message_initializing">Initializing...</string>
     <string name="dialog_message_communicating">Communicating...</string>
 
     <string name="error_communication">Communication error</string>

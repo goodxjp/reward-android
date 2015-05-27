@@ -59,7 +59,12 @@ abstract public class RewardApi<T> {
         }
 
         // 署名作成
-        String signature = makeSignature(media.mediaKey, mediaUser.terminalId, method, path, query);
+        String signature;
+        if (mediaUser == null) {
+            signature = makeSignature(media.mediaKey, null, method, path, query);
+        } else {
+            signature = makeSignature(media.mediaKey, mediaUser.terminalId, method, path, query);
+        }
         builder.appendQueryParameter("sig", signature);
 
         return builder.toString();

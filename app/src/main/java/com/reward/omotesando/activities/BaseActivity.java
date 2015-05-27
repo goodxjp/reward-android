@@ -29,6 +29,18 @@ public abstract class BaseActivity extends ActionBarActivity implements Showable
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        Logger.v(getLogTag(), "[" + this.hashCode() + "] onPause()");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Logger.v(getLogTag(), "[" + this.hashCode() + "] onDestroy()");
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.menu_base, menu);

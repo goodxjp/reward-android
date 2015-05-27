@@ -3,12 +3,16 @@ package com.reward.omotesando.models;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.reward.omotesando.commons.Logger;
+
 /**
  * メディアユーザー。
  *
  * - 自分のこと。
  */
 public class MediaUser {
+    private static String TAG = MediaUser.class.getName();
+
     static MediaUser mediaUser;
 
     public static final String PROPERTY_MEDIA_USER_ID = "media_user_id";
@@ -42,6 +46,12 @@ public class MediaUser {
         String terminalId = prefs.getString(PROPERTY_TERMINAL_ID, null);
         // TODO: データ不整合の場合 (片方のみおかしい場合) どうするか？
         if (mediaUserId < 0 || terminalId == null) {
+            Logger.e(TAG, "mediaUserId = " + mediaUserId);
+            Logger.e(TAG, "terminalId = " + terminalId);
+
+            // 変な文字列をサーバーに送って掲出する？
+            //return new MediaUser(99999999, "InvalidTerminalId", 0);
+            // 開発時は落とした方がわかりやすい。
             return null;
         }
 
@@ -56,6 +66,15 @@ public class MediaUser {
         editor.putLong(PROPERTY_MEDIA_USER_ID, userId);
         editor.putString(PROPERTY_TERMINAL_ID, terminalId);
         editor.commit();
+
+    }
+
+    public static void clearMediaUser(Context context) {
+        final SharedPreferences prefs = getMediaUserPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear();
+        editor.commit();
+
     }
 
     private static SharedPreferences getMediaUserPreferences(Context context) {

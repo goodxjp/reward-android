@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.reward.omotesando.R;
+import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.models.Media;
 import com.reward.omotesando.models.MediaUser;
 

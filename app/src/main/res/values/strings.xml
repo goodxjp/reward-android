@@ -21,17 +21,20 @@
 
     <string name="action_settings">Settings</string>
     <string name="point_unit">point</string>
+    <string name="exchange">Exchange</string>
     <string name="query">Query</string>
 
     <string name="dialog_message_initializing">Initializing...</string>
     <string name="dialog_message_communicating">Communicating...</string>
 
-    <string name="error_communication">Communication error</string>
-
     <string name="query_mail_subject">Inquiry</string>
     <string name="query_mail_text"></string>
 
-<!-- TODO: Remove or change this placeholder text -->
+    <string name="error_communication">Communication error</string>
+
+    <string name="message_critical_server_error">Server error</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_tabbed">TabbedActivity</string>
 

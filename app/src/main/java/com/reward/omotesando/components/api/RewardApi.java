@@ -30,7 +30,7 @@ import javax.crypto.spec.SecretKeySpec;
  * リワードシステム API。
  *
  * - API 仕様にかかわる部分をここに集約。
- * - 通信ライブラリには依存したくない。
+ * - できれば、通信ライブラリに依存したくない。
  */
 abstract public class RewardApi<T> {
     private static final String TAG = RewardApi.class.getName();
@@ -39,11 +39,12 @@ abstract public class RewardApi<T> {
 
     // API の向き先は configs.xml に記述してある。
 
-    protected String method;
+    public String method;
     protected String path;
     protected TreeMap<String, String> query = null;  // ソート順が重要なので TreeMap 限定
     protected JSONObject jsonRequest;
 
+    // 署名付きの URL を取得する
     public String getUrl(Context context) {
         // 継承先と処理ダブってるけど、クエリー文字に mid, uid つけるために Media, MediaUser 取ってくるのと、
         // 署名のために Media, MediaUser 取ってくるのとでは意味が違うので、しょうがないかなぁ。
@@ -113,11 +114,11 @@ abstract public class RewardApi<T> {
         } else {
             key = mediaKey + "&" + terminalId;
         }
-        Logger.e(TAG, key);
+        Logger.v(TAG, key);
 
         // データ
-        String data = method + "\n" + path + "\n" + sortedQuery;
-        Logger.e(TAG, data);
+        String data = method.toUpperCase() + "\n" + path + "\n" + sortedQuery;
+        Logger.v(TAG, data);
 
         // 署名作成
         SecretKey sk = new SecretKeySpec(key.getBytes(), "HmacSHA1");
@@ -126,21 +127,21 @@ abstract public class RewardApi<T> {
         try {
             mac = Mac.getInstance("HmacSHA1");
         } catch (NoSuchAlgorithmException e) {
-            // TODO: 致命的エラーをすばやく検知する
-            e.printStackTrace();
-            return "NoSuchAlgorithmException";  // 変な署名をサーバーに送って、サーバーに検知させよう。
+            Logger.e(TAG, e.getMessage());
+            // TODO: 致命的エラー通知
+            return "NoSuchAlgorithmException";  // 変な署名をサーバーに送って、サーバーに検知させる。
         }
         try {
             mac.init(sk);
         } catch (InvalidKeyException e) {
-            // TODO: 致命的エラーをすばやく検知する
-            e.printStackTrace();
-            return "InvalidKeyException";  // 変な署名をサーバーに送って、サーバーに検知させよう。
+            Logger.e(TAG, e.getMessage());
+            // TODO: 致命的エラー通知
+            return "InvalidKeyException";  // 変な署名をサーバーに送って、サーバーに検知させる。
         }
 
         byte[] result = mac.doFinal(data.getBytes());
         String resultString = new String(Hex.encodeHex(result));
-        Logger.e(TAG, resultString);
+        Logger.v(TAG, resultString);
 
         return resultString;
     }

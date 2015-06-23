@@ -7,10 +7,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.reward.omotesando.R;
-import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.commons.VolleyUtils;
 import com.reward.omotesando.components.api.GetItems;
-import com.reward.omotesando.components.api.GetPointHistories;
 import com.reward.omotesando.models.Item;
 
 import org.json.JSONArray;

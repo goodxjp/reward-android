@@ -12,20 +12,22 @@ import com.reward.omotesando.models.Media;
 import com.reward.omotesando.models.User;
 
 /**
- * ユーザー取得 API
+ * ユーザー登録 API
  */
-public class GetMediaUsers extends RewardApi<User> {
-    private static final String TAG = GetMediaUsers.class.getName();
+public class PostUser extends RewardApi<User> {
+    private static final String TAG = PostUser.class.getName();
+
+    String terminalId;
 
     /*
      * HTTP リクエスト仕様
      */
-    public GetMediaUsers(Context context) {
+    public PostUser(Context context, String terminalId, JSONObject terminalInfo, String androidRegistrationId) {
         this.media = Media.getMedia(context);
-        this.user = User.getUser(context);
+        this.user = null;
 
         // メソッド
-        this.method = "GET";
+        this.method = "POST";
 
         // パス
         this.path = context.getString(R.string.api_path_base) + "/user.json";
@@ -34,7 +36,26 @@ public class GetMediaUsers extends RewardApi<User> {
         setQueryMediaAndUser();
 
         // ボディ
-        this.jsonRequest = null;
+        this.jsonRequest = new JSONObject();
+
+        try {
+            JSONObject o = new JSONObject();
+            o.put("terminal_id", terminalId);
+            o.put("terminal_info", terminalInfo);
+            if (androidRegistrationId != null) {
+                o.put("android_registration_id", androidRegistrationId);
+            }
+
+            this.jsonRequest.put("user", o);
+        } catch (JSONException e) {
+            // 値が数値の時にしか発生しない、致命的なエラーなので、落としてしまってよい。
+            // TODO: 致命的なバグに気付くしくみ、共通ライブラリ化
+            e.printStackTrace();
+            throw new IllegalStateException();
+        }
+
+        // レスポンスでも使用するので、端末 ID を保持。
+        this.terminalId = terminalId;
     }
 
     /*
@@ -56,7 +77,7 @@ public class GetMediaUsers extends RewardApi<User> {
             return null;
         }
 
-        return new User(userId, userKey, null, point);  // TODO: やっぱり、端末 ID がモデルに入ってるのは微妙。
+        return new User(userId, userKey, this.terminalId, point);
     }
 
     @Override

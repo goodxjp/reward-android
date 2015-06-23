@@ -6,15 +6,13 @@ import com.reward.omotesando.R;
 import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.models.Item;
 import com.reward.omotesando.models.Media;
-import com.reward.omotesando.models.MediaUser;
-import com.reward.omotesando.models.PointHistory;
+import com.reward.omotesando.models.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,6 +25,9 @@ public class GetItems extends RewardApi<List<Item>> {
      * HTTP リクエスト仕様
      */
     public GetItems(Context context) {
+        this.media = Media.getMedia(context);
+        this.user = User.getUser(context);
+
         // メソッド
         this.method = "GET";
 
@@ -34,10 +35,7 @@ public class GetItems extends RewardApi<List<Item>> {
         this.path = context.getString(R.string.api_path_base) + "/items.json";
 
         // クエリー文字
-        Media media = Media.getMedia(context);
-        MediaUser mediaUser = MediaUser.getMediaUser(context);
-        this.queryPut("mid", String.valueOf(media.mediaId));
-        this.queryPut("uid", String.valueOf(mediaUser.mediaUserId));
+        setQueryMediaAndUser();
 
         // ボディ
         this.jsonRequest = null;

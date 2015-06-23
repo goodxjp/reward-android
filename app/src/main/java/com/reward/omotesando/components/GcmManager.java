@@ -15,7 +15,6 @@ import java.io.IOException;
 
 import com.reward.omotesando.R;
 import com.reward.omotesando.commons.Logger;
-import com.reward.omotesando.models.MediaUser;
 
 /**
  * GCM マネージャー。

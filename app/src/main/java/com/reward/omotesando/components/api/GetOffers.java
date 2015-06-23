@@ -1,31 +1,18 @@
 package com.reward.omotesando.components.api;
 
 import android.content.Context;
-import android.net.Uri;
 
-import org.apache.commons.codec.binary.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.crypto.KeyGenerator;
-import javax.crypto.Mac;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 import com.reward.omotesando.R;
-import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.models.Media;
-import com.reward.omotesando.models.MediaUser;
 import com.reward.omotesando.models.Offer;
+import com.reward.omotesando.models.User;
 
 /**
  * 案件情報取得 API
@@ -36,6 +23,9 @@ public class GetOffers extends RewardApi<List<Offer>> {
      * HTTP リクエスト仕様
      */
     public GetOffers(Context context) {
+        this.media = Media.getMedia(context);
+        this.user = User.getUser(context);
+
         // メソッド
         this.method = "GET";
 
@@ -43,11 +33,7 @@ public class GetOffers extends RewardApi<List<Offer>> {
         this.path = context.getString(R.string.api_path_base) + "/offers.json";
 
         // クエリー文字
-        Media media = Media.getMedia(context);
-        MediaUser mediaUser = MediaUser.getMediaUser(context);
-
-        this.queryPut("mid", String.valueOf(media.mediaId));
-        this.queryPut("uid", String.valueOf(mediaUser.mediaUserId));
+        setQueryMediaAndUser();
 
         // ボディ
         this.jsonRequest = null;

@@ -5,8 +5,8 @@ import android.content.Context;
 import com.reward.omotesando.R;
 import com.reward.omotesando.models.Item;
 import com.reward.omotesando.models.Media;
-import com.reward.omotesando.models.MediaUser;
 import com.reward.omotesando.models.PointHistory;
+import com.reward.omotesando.models.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * ポイント履歴取得 API
+ * 購入 API
  */
 public class PostPurchases extends RewardApi<Void> {
 
@@ -25,18 +25,17 @@ public class PostPurchases extends RewardApi<Void> {
      * HTTP リクエスト仕様
      */
     public PostPurchases(Context context, Item item) {
+        this.media = Media.getMedia(context);
+        this.user = User.getUser(context);
+
         // メソッド
         this.method = "POST";
 
         // パス
-        Media media = Media.getMedia(context);
-        MediaUser mediaUser = MediaUser.getMediaUser(context);
-
         this.path = context.getString(R.string.api_path_base) + "/purchases.json";
 
         // クエリー文字
-        this.queryPut("mid", String.valueOf(media.mediaId));
-        this.queryPut("uid", String.valueOf(mediaUser.mediaUserId));
+        setQueryMediaAndUser();
 
         // ボディ
         this.jsonRequest = new JSONObject();

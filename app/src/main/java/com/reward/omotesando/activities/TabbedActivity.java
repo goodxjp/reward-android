@@ -1,8 +1,5 @@
 package com.reward.omotesando.activities;
 
-import java.util.Locale;
-
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,13 +7,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -27,7 +17,8 @@ import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.commons.VolleyUtils;
 import com.reward.omotesando.components.GcmManager;
 import com.reward.omotesando.components.Terminal;
-import com.reward.omotesando.components.api.PostMediaUsers;
+import com.reward.omotesando.components.VolleyApi;
+import com.reward.omotesando.components.api.PostUser;
 import com.reward.omotesando.fragment.AboutFragment;
 import com.reward.omotesando.fragment.DebugFragment;
 import com.reward.omotesando.fragment.HelpFragment;
@@ -36,9 +27,9 @@ import com.reward.omotesando.fragment.OfferDetailFragment;
 import com.reward.omotesando.fragment.OfferFragment;
 import com.reward.omotesando.fragment.OfferListFragment;
 import com.reward.omotesando.fragment.PointHistoryListFragment;
-import com.reward.omotesando.models.MediaUser;
 import com.reward.omotesando.models.NavigationMenu;
 import com.reward.omotesando.models.Offer;
+import com.reward.omotesando.models.User;
 
 import org.json.JSONObject;
 
@@ -46,6 +37,10 @@ public class TabbedActivity extends BaseActivity
         implements ActionBar.TabListener,
                    GcmManager.GcmManagerCallbacks,
                    OfferListFragment.OnFragmentInteractionListener {
+
+    protected String TAG = TabbedActivity.class.getName();
+    @Override
+    protected String getLogTag() { return TAG; }
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -204,7 +199,7 @@ public class TabbedActivity extends BaseActivity
         GCM_REGISTERING {
             @Override
             public void gcmRegisterd(TabbedActivity activity, String regId) {
-                if (activity.tryToRegisterUser(null)) {
+                if (activity.tryToRegisterUser(regId)) {
                     activity.transit(USER_REGISTERING);
                 } else {
                     activity.transit(READY);
@@ -217,9 +212,9 @@ public class TabbedActivity extends BaseActivity
         // ユーザー登録中
         USER_REGISTERING {
             @Override
-            public void successUserRegister(TabbedActivity activity, MediaUser mediaUser) {
+            public void successUserRegister(TabbedActivity activity, User user) {
                 // 登録に成功したら保存
-                MediaUser.storeMediaUserId(activity, mediaUser.mediaUserId, mediaUser.terminalId);
+                User.storeUser(activity, user);
 
                 activity.transit(READY);
                 activity.readyGo();
@@ -229,8 +224,8 @@ public class TabbedActivity extends BaseActivity
             @Override
             public void failureUserRegister(TabbedActivity activity) {
                 // TODO: ユーザー登録に失敗したときのエラー処理
-                activity.transit(READY);
-                activity.readyGo();
+                //activity.transit(READY);
+                //activity.readyGo();
                 //activity.dismissProgressDialog();
             }
         },
@@ -252,7 +247,7 @@ public class TabbedActivity extends BaseActivity
         }
 
         // ユーザー登録成功
-        public void successUserRegister(TabbedActivity activity, MediaUser mediaUser) {
+        public void successUserRegister(TabbedActivity activity, User user) {
             throw new IllegalStateException();
         }
 
@@ -270,8 +265,9 @@ public class TabbedActivity extends BaseActivity
 
     // ユーザー登録してみる
     private boolean tryToRegisterUser(String regId) {
-        if  (MediaUser.getMediaUser(getApplicationContext()) != null) {
-            // 登録済みなら送らない？でいいかなぁ。毎回送る？
+        if  (User.getUser(getApplicationContext()) != null) {
+            // 登録済みなら、できるだけユーザー登録は送らないようにしたい。
+            // 同一端末かどうかのチェックは完全にできないため。
             return false;
         }
 
@@ -282,24 +278,25 @@ public class TabbedActivity extends BaseActivity
     // ユーザー登録
     private void registerUser(String regId) {
         // ユーザー登録 API
-        final PostMediaUsers api = new PostMediaUsers(this, Terminal.getAndroidId(this), new JSONObject(Terminal.getBuildInfo()), regId);
+        final PostUser api = new PostUser(this, Terminal.getAndroidId(this), new JSONObject(Terminal.getBuildInfo()), regId);
 
         JsonObjectRequest request = new JsonObjectRequest(api.getUrl(this), api.getJsonRequest(),
 
             new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    Logger.e(TAG, "HTTP: body is " + response.toString());
-                    MediaUser mediaUser = api.parseJsonResponse(response);
+                    VolleyApi.Log(TAG, api, response);
 
-                    state.successUserRegister(TabbedActivity.this, mediaUser);
+                    User user = api.parseJsonResponse(response);
+
+                    state.successUserRegister(TabbedActivity.this, user);
                 }
             },
 
             new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Logger.e(TAG, "HTTP: error = " + error.getMessage());
+                    VolleyApi.Log(TAG, api, error);
 
                     state.failureUserRegister(TabbedActivity.this);
                 }

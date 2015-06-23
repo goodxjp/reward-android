@@ -12,8 +12,8 @@ import java.util.List;
 
 import com.reward.omotesando.R;
 import com.reward.omotesando.models.Media;
-import com.reward.omotesando.models.MediaUser;
 import com.reward.omotesando.models.PointHistory;
+import com.reward.omotesando.models.User;
 
 /**
  * ポイント履歴取得 API
@@ -24,19 +24,18 @@ public class GetPointHistories extends RewardApi<List<PointHistory>> {
      * HTTP リクエスト仕様
      */
     public GetPointHistories(Context context) {
+        this.media = Media.getMedia(context);
+        this.user = User.getUser(context);
+
         // メソッド
         this.method = "GET";
 
         // パス
-        // TODO: mid, uid を全部クエリー文字列に付けるか URL に含めて REST っぽくするか悩み中。
-        Media media = Media.getMedia(context);
-        MediaUser mediaUser = MediaUser.getMediaUser(context);
-
-        this.path = context.getString(R.string.api_path_base) + "/media_users/"+ String.valueOf(mediaUser.mediaUserId) + "/point_histories.json";
+        // TODO: URL 変更
+        this.path = context.getString(R.string.api_path_base) + "/media_users/"+ String.valueOf(this.user.userId) + "/point_histories.json";
 
         // クエリー文字
-        this.queryPut("mid", String.valueOf(media.mediaId));
-        this.queryPut("uid", String.valueOf(mediaUser.mediaUserId));
+        setQueryMediaAndUser();
 
         // ボディ
         this.jsonRequest = null;

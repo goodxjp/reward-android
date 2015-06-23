@@ -86,16 +86,16 @@ public class DebugFragment extends BaseFragment {
 
             switch (position) {
                 case 0:
-                    fragment = new DebugMainFragment();
+                    fragment = DebugMainFragment.newInstance();
                     break;
                 case 1:
-                    fragment = new DebugLogFragment();
+                    fragment = DebugLogFragment.newInstance();
                     break;
                 case 2:
-                    fragment = new HelpFragment();
+                    fragment = HelpFragment.newInstance();
                     break;
                 default:
-                    fragment = new DebugMainFragment();
+                    fragment = DebugMainFragment.newInstance();
                     break;
             }
 

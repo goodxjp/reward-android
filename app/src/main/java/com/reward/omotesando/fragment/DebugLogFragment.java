@@ -16,7 +16,7 @@ public class DebugLogFragment extends Fragment {
     // View
     EditText mLogEditText;
 
-    public static DebugLogFragment newInstance(String param1, String param2) {
+    public static DebugLogFragment newInstance() {
         DebugLogFragment fragment = new DebugLogFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);

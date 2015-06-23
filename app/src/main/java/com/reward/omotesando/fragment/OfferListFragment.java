@@ -29,8 +29,8 @@ import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.commons.VolleyUtils;
 import com.reward.omotesando.components.api.GetMediaUsers;
 import com.reward.omotesando.components.api.GetOffers;
-import com.reward.omotesando.models.MediaUser;
 import com.reward.omotesando.models.Offer;
+import com.reward.omotesando.models.User;
 
 /**
  * オファー一覧フラグメント。
@@ -232,9 +232,9 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
         // ユーザー情報取得中
         GETTING_USER {
             @Override
-            public void successGetMediaUser(OfferListFragment fragment, MediaUser mediaUser) {
+            public void successGetMediaUser(OfferListFragment fragment, User user) {
                 // ポイント表示を更新
-                fragment.mPoint = mediaUser.point;
+                fragment.mPoint = user.point;
                 fragment.mCurrentPointText.setText(String.valueOf(fragment.mPoint));
                 fragment.getCampaignData();
 
@@ -310,7 +310,7 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
         }
 
         // ユーザー情報取得成功
-        public void successGetMediaUser(OfferListFragment fragment, MediaUser mediaUser) {
+        public void successGetMediaUser(OfferListFragment fragment, User user) {
             throw new IllegalStateException();
         }
 
@@ -338,14 +338,6 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
 
     // ユーザー情報取得
     private void getMediaUser() {
-        MediaUser mediaUser = MediaUser.getMediaUser(getActivity());
-
-        // TODO: 状態遷移でユーザー登録が確実にすんでいるようにする。
-        long mediaUserId = -1;
-        if (mediaUser != null) {
-            mediaUserId = mediaUser.mediaUserId;
-        }
-
         final GetMediaUsers api = new GetMediaUsers(getActivity());
 
         JsonObjectRequest request = new JsonObjectRequest(api.getUrl(getActivity()),
@@ -355,8 +347,8 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
                 public void onResponse(JSONObject response) {
                     Logger.i(TAG, "HTTP: body is " + response.toString());
 
-                    MediaUser mediaUser = api.parseJsonResponse(response);
-                    state.successGetMediaUser(OfferListFragment.this, mediaUser);
+                    User user = api.parseJsonResponse(response);
+                    state.successGetMediaUser(OfferListFragment.this, user);
                 }
             },
 
@@ -376,14 +368,6 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
 
     // キャンペーン情報 (案件情報) 取得
     private void getCampaignData() {
-        MediaUser mediaUser = MediaUser.getMediaUser(getActivity());
-
-        // TODO: 状態遷移でユーザー登録が確実にすんでいるようにする。
-        long mediaUserId = -1;
-        if (mediaUser != null) {
-            mediaUserId = mediaUser.mediaUserId;
-        }
-
         final GetOffers api = new GetOffers(getActivity());
 
         JsonArrayRequest request = new JsonArrayRequest(api.getUrl(getActivity()),

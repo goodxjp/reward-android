@@ -28,8 +28,8 @@ import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.commons.VolleyUtils;
 import com.reward.omotesando.components.api.GetMediaUsers;
 import com.reward.omotesando.components.api.GetPointHistories;
-import com.reward.omotesando.models.MediaUser;
 import com.reward.omotesando.models.PointHistory;
+import com.reward.omotesando.models.User;
 
 /**
  * ポイント履歴一覧フラグメント。
@@ -155,9 +155,9 @@ public class PointHistoryListFragment extends BaseFragment {
         // ユーザー情報取得中
         GETTING_USER {
             @Override
-            public void successGetMediaUser(PointHistoryListFragment fragment, MediaUser mediaUser) {
+            public void successGetMediaUser(PointHistoryListFragment fragment, User user) {
                 // ポイント表示を更新
-                fragment.mPoint = mediaUser.point;
+                fragment.mPoint = user.point;
                 fragment.mCurrentPointText.setText(String.valueOf(fragment.mPoint));
                 fragment.getPointHistories();
 
@@ -213,7 +213,7 @@ public class PointHistoryListFragment extends BaseFragment {
         }
 
         // ユーザー情報取得成功
-        public void successGetMediaUser(PointHistoryListFragment fragment, MediaUser mediaUser) {
+        public void successGetMediaUser(PointHistoryListFragment fragment, User user) {
             throw new IllegalStateException();
         }
 
@@ -241,14 +241,6 @@ public class PointHistoryListFragment extends BaseFragment {
 
     // ユーザー情報取得
     private void getMediaUser() {
-        MediaUser mediaUser = MediaUser.getMediaUser(getActivity());
-
-        // TODO: 状態遷移でユーザー登録が確実にすんでいるようにする。
-        long mediaUserId = -1;
-        if (mediaUser != null) {
-            mediaUserId = mediaUser.mediaUserId;
-        }
-
         final GetMediaUsers api = new GetMediaUsers(getActivity());
 
         JsonObjectRequest request = new JsonObjectRequest(api.getUrl(getActivity()),
@@ -258,8 +250,8 @@ public class PointHistoryListFragment extends BaseFragment {
                 public void onResponse(JSONObject response) {
                     Logger.i(TAG, "HTTP: body is " + response.toString());
 
-                    MediaUser mediaUser = api.parseJsonResponse(response);
-                    state.successGetMediaUser(PointHistoryListFragment.this, mediaUser);
+                    User user = api.parseJsonResponse(response);
+                    state.successGetMediaUser(PointHistoryListFragment.this, user);
                 }
             },
 
@@ -279,14 +271,6 @@ public class PointHistoryListFragment extends BaseFragment {
 
     // キャンペーン情報 (案件情報) 取得
     private void getPointHistories() {
-        MediaUser mediaUser = MediaUser.getMediaUser(getActivity());
-
-        // TODO: 状態遷移でユーザー登録が確実にすんでいるようにする。
-        long mediaUserId = -1;
-        if (mediaUser != null) {
-            mediaUserId = mediaUser.mediaUserId;
-        }
-
         // TODO: メディア ID 取得
         final GetPointHistories api = new GetPointHistories(getActivity());
 

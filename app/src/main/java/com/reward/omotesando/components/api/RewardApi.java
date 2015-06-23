@@ -16,11 +16,10 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.reward.omotesando.BuildConfig;
 import com.reward.omotesando.R;
 import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.models.Media;
-import com.reward.omotesando.models.MediaUser;
+import com.reward.omotesando.models.User;
 
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
@@ -44,13 +43,12 @@ abstract public class RewardApi<T> {
     protected TreeMap<String, String> query = null;  // ソート順が重要なので TreeMap 限定
     protected JSONObject jsonRequest;
 
+    // クエリー文字と署名に効いてくる。
+    Media media;  // null でなければ mid を送る
+    User user;    // null でなければ uid を送る
+
     // 署名付きの URL を取得する
     public String getUrl(Context context) {
-        // 継承先と処理ダブってるけど、クエリー文字に mid, uid つけるために Media, MediaUser 取ってくるのと、
-        // 署名のために Media, MediaUser 取ってくるのとでは意味が違うので、しょうがないかなぁ。
-        Media media = Media.getMedia(context);
-        MediaUser mediaUser = MediaUser.getMediaUser(context);
-
         Uri.Builder builder = new Uri.Builder();
         builder.scheme(context.getString(R.string.api_scheme));
         builder.encodedAuthority(context.getString(R.string.api_encoded_authority));
@@ -61,10 +59,10 @@ abstract public class RewardApi<T> {
 
         // 署名作成
         String signature;
-        if (mediaUser == null) {
+        if (this.user == null) {
             signature = makeSignature(media.mediaKey, null, method, path, query);
         } else {
-            signature = makeSignature(media.mediaKey, mediaUser.terminalId, method, path, query);
+            signature = makeSignature(media.mediaKey, user.userKey, method, path, query);
         }
         builder.appendQueryParameter("sig", signature);
 
@@ -75,7 +73,7 @@ abstract public class RewardApi<T> {
         return jsonRequest;
     };
 
-    public String queryPut(String key, String value) {
+    protected String queryPut(String key, String value) {
         if (query == null) {
             query = new TreeMap<>();
         }
@@ -83,13 +81,23 @@ abstract public class RewardApi<T> {
         return query.put(key, value);
     };
 
+    // メディアとユーザーをクエリー文字列に設定
+    protected void setQueryMediaAndUser() {
+        if (this.media != null) {
+            this.queryPut("mid", String.valueOf(this.media.mediaId));
+        }
+        if (this.user != null) {
+            this.queryPut("uid", String.valueOf(this.user.userId));
+        }
+    }
+
     abstract public T parseJsonResponse(JSONObject jsonResponse);
     abstract public T parseJsonResponse(JSONArray jsonResponse);
 
     /*
      * 署名作成
      */
-    private static String makeSignature(String mediaKey, String terminalId, String method, String path, TreeMap<String, String> query) {
+    private static String makeSignature(String mediaKey, String userKey, String method, String path, TreeMap<String, String> query) {
         // ソート済みクエリー文字列
         StringBuffer sortedQuery = null;
         for (String key : query.keySet()) {
@@ -108,11 +116,11 @@ abstract public class RewardApi<T> {
 
         // キー
         String key;
-        if (terminalId == null) {
-            // 端末 ID が決定していない場合は "<メディアキー>&" がキーとなる。
+        if (userKey == null) {
+            // ユーザーキーが決定していない場合は "<メディアキー>&" がキーとなる。
             key = mediaKey + "&";
         } else {
-            key = mediaKey + "&" + terminalId;
+            key = mediaKey + "&" + userKey;
         }
         Logger.v(TAG, key);
 

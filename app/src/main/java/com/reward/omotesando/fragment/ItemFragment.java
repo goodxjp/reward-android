@@ -25,7 +25,6 @@ import com.reward.omotesando.commons.VolleyUtils;
 import com.reward.omotesando.components.*;
 import com.reward.omotesando.components.api.PostPurchases;
 import com.reward.omotesando.models.Item;
-import com.reward.omotesando.models.MediaUser;
 
 import org.json.JSONObject;
 

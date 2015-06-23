@@ -4,8 +4,6 @@
              android:layout_height="match_parent"
              tools:context="com.reward.omotesando.fragment.DebugMainFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -31,6 +29,26 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:id="@+id/media_user_id_text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="5dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="UserKey" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/user_key_text" />
         </LinearLayout>
 
         <LinearLayout

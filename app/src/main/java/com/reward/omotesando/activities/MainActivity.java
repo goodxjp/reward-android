@@ -23,7 +23,7 @@ import org.json.JSONObject;
 import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.commons.VolleyUtils;
 import com.reward.omotesando.components.GcmManager;
-import com.reward.omotesando.components.api.PostMediaUsers;
+import com.reward.omotesando.components.api.PostUser;
 import com.reward.omotesando.components.Terminal;
 import com.reward.omotesando.fragment.AboutFragment;
 import com.reward.omotesando.fragment.DebugFragment;
@@ -33,9 +33,9 @@ import com.reward.omotesando.R;
 import com.reward.omotesando.fragment.OfferDetailFragment;
 import com.reward.omotesando.fragment.OfferListFragment;
 import com.reward.omotesando.fragment.PointHistoryListFragment;
-import com.reward.omotesando.models.MediaUser;
 import com.reward.omotesando.models.NavigationMenu;
 import com.reward.omotesando.models.Offer;
+import com.reward.omotesando.models.User;
 
 /**
  * メインアクティビティ
@@ -249,9 +249,9 @@ public class MainActivity extends BaseActivity
         // ユーザー登録中
         USER_REGISTERING {
             @Override
-            public void successUserRegister(MainActivity activity, MediaUser mediaUser) {
+            public void successUserRegister(MainActivity activity, User user) {
                 // 登録に成功したら保存
-                MediaUser.storeMediaUserId(activity, mediaUser.mediaUserId, mediaUser.terminalId);
+                //MediaUser.storeMediaUserId(activity, mediaUser.mediaUserId, mediaUser.terminalId);
 
                 activity.transit(READY);
                 activity.onNavigationDrawerItemSelected(0);  // TODO: もっとうまいやり方がないか？
@@ -284,7 +284,7 @@ public class MainActivity extends BaseActivity
         }
 
         // ユーザー登録成功
-        public void successUserRegister(MainActivity activity, MediaUser mediaUser) {
+        public void successUserRegister(MainActivity activity, User user) {
             throw new IllegalStateException();
         }
 
@@ -302,7 +302,7 @@ public class MainActivity extends BaseActivity
 
     // ユーザー登録してみる
     private boolean tryToRegisterUser(String regId) {
-        if  (MediaUser.getMediaUser(getApplicationContext()) != null) {
+        if  (User.getUser(getApplicationContext()) != null) {
             // 登録済みなら送らない？でいいかなぁ。毎回送る？
             return false;
         }
@@ -314,7 +314,7 @@ public class MainActivity extends BaseActivity
     // ユーザー登録
     private void registerUser(String regId) {
         // ユーザー登録 API
-        final PostMediaUsers api = new PostMediaUsers(this, Terminal.getAndroidId(this), new JSONObject(Terminal.getBuildInfo()), regId);
+        final PostUser api = new PostUser(this, Terminal.getAndroidId(this), new JSONObject(Terminal.getBuildInfo()), regId);
 
         JsonObjectRequest request = new JsonObjectRequest(api.getUrl(this), api.getJsonRequest(),
 
@@ -322,9 +322,9 @@ public class MainActivity extends BaseActivity
                 @Override
                 public void onResponse(JSONObject response) {
                     Logger.e(TAG, "HTTP: body is " + response.toString());
-                    MediaUser mediaUser = api.parseJsonResponse(response);
+                    //MediaUser mediaUser = api.parseJsonResponse(response);
 
-                    state.successUserRegister(MainActivity.this, mediaUser);
+                    //state.successUserRegister(MainActivity.this, mediaUser);
                 }
             },
 

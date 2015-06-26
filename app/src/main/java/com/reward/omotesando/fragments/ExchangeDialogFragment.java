@@ -1,4 +1,4 @@
-package com.reward.omotesando.fragment;
+package com.reward.omotesando.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,15 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.reward.omotesando.commons.VolleyUtils;
-import com.reward.omotesando.components.api.PostPurchases;
 import com.reward.omotesando.models.Item;
-
-import org.json.JSONObject;
 
 /**
  * ポイント交換確認ダイアログ。

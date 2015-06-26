@@ -32,7 +32,7 @@ import javax.crypto.spec.SecretKeySpec;
  * - できれば、通信ライブラリに依存したくない。
  */
 abstract public class RewardApi<T> {
-    private static final String TAG = RewardApi.class.getName();
+    protected static final String TAG = RewardApi.class.getName();
 
     // TODO: まだ、どういう形式で共通化するかブレブレ。
 

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.reward.omotesando.R;
+import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.models.Media;
 import com.reward.omotesando.models.Offer;
 import com.reward.omotesando.models.User;
@@ -30,6 +31,9 @@ public class GetOffers extends RewardApi<List<Offer>> {
         this.method = "GET";
 
         // パス
+        if (context == null) {
+            Logger.e(TAG, "context is null.");
+        }
         this.path = context.getString(R.string.api_path_base) + "/offers.json";
 
         // クエリー文字

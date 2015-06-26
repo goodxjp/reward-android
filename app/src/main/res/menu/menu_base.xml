@@ -2,8 +2,29 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.reward.omotesando.activities.BaseActivity">
+    <item android:id="@+id/action_point_exchange"
+          android:title="@string/menu_point_exchange"
+          android:orderInCategory="100"
+          app:showAsAction="ifRoom|withText"/>
+    <item android:id="@+id/action_point_history"
+          android:title="@string/menu_point_history"
+          android:orderInCategory="100"
+          app:showAsAction="never"/>
+    <item android:id="@+id/action_help"
+          android:title="@string/menu_help"
+          android:orderInCategory="100"
+          app:showAsAction="never"/>
+    <item android:id="@+id/action_about"
+          android:title="@string/menu_about"
+          android:orderInCategory="100"
+          app:showAsAction="never"/>
     <item android:id="@+id/action_settings"
           android:title="@string/action_settings"
+          android:orderInCategory="100"
+          app:showAsAction="never"/>
+
+    <item android:id="@+id/action_debug"
+          android:title="@string/menu_debug"
           android:orderInCategory="100"
           app:showAsAction="never"/>
 </menu>

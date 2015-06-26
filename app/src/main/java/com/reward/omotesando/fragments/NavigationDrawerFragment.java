@@ -1,4 +1,4 @@
-package com.reward.omotesando.fragment;
+package com.reward.omotesando.fragments;
 
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;

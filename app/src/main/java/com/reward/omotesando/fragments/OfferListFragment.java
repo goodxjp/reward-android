@@ -1,4 +1,4 @@
-package com.reward.omotesando.fragment;
+package com.reward.omotesando.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -70,7 +71,8 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
     private ListAdapter mAdapter;
 
     // 通信
-    public RequestQueue mRequestQueue;
+    private RequestQueue mRequestQueue;
+    private Request mRequest;
 
     /*
      * 初期処理
@@ -121,6 +123,7 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
 
         // バックスタックから戻ったときに状態は遷移したままで onCreateView のみが呼ばれる。
         if (state == State.INITIAL) {
+            Logger.e(TAG, "Activity = " + getActivity());
             state.start(this);
         }
 
@@ -156,6 +159,10 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
     @Override
     public void onDetach() {
         super.onDetach();
+        state.detach(this);
+        if (mRequest != null) {
+            mRequest.cancel();
+        }
         mListener = null;
     }
 
@@ -233,6 +240,8 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
         GETTING_USER {
             @Override
             public void successGetMediaUser(OfferListFragment fragment, User user) {
+                fragment.mRequest = null;
+
                 // ポイント表示を更新
                 fragment.mPoint = user.point;
                 fragment.mCurrentPointText.setText(String.valueOf(fragment.mPoint));
@@ -243,6 +252,8 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
 
             @Override
             public void failureGetMediaUser(OfferListFragment fragment) {
+                fragment.mRequest = null;
+
                 // TODO: 端末の通信状態を確認
                 // TODO: サーバーの状態を確認
                 // TODO: エラーダイアログを表示
@@ -265,6 +276,8 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
         GETTING_OFFERS {
             @Override
             public void successGetCampaginData(OfferListFragment fragment, List<Offer> offers) {
+                fragment.mRequest = null;
+
                 fragment.showCampaignData();
 
                 ShowableProgressDialog activity = (ShowableProgressDialog) fragment.getActivity();
@@ -277,6 +290,8 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
 
             @Override
             public void failureGetCampaginData(OfferListFragment fragment) {
+                fragment.mRequest = null;
+
                 // TODO: 端末の通信状態を確認
                 // TODO: サーバーの状態を確認
                 // TODO: エラーダイアログを表示
@@ -328,6 +343,11 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
         public void failureGetCampaginData(OfferListFragment fragment) {
             throw new IllegalStateException();
         }
+
+        // 終了
+        public void detach(OfferListFragment fragment) {
+            fragment.transit(ERROR);
+        }
     }
 
     // 状態遷移 (enum State 内でのみ使用すること)
@@ -338,6 +358,12 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
 
     // ユーザー情報取得
     private void getMediaUser() {
+        // 途中で Detach された場合
+        if (getActivity() == null) {
+            return;
+        }
+
+        Logger.e(TAG, "getMediaUser Activity = " + getActivity());
         final GetMediaUsers api = new GetMediaUsers(getActivity());
 
         JsonObjectRequest request = new JsonObjectRequest(api.getUrl(getActivity()),
@@ -363,12 +389,21 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
         );
 
         ((ShowableProgressDialog) getActivity()).showProgressDialog(null, getString(R.string.dialog_message_communicating));
+
         mRequestQueue.add(request);
+        mRequest = request;
     }
 
     // キャンペーン情報 (案件情報) 取得
     private void getCampaignData() {
-        final GetOffers api = new GetOffers(getActivity());
+        // 途中で Detach された場合
+        if (getActivity() == null) {
+            return;
+        }
+
+        Logger.e(TAG, "getCampaignData Activity = " + getActivity());
+        //final GetOffers api = new GetOffers(getActivity());  // こっちだと null で落ちる？
+        final GetOffers api = new GetOffers(getActivity().getApplicationContext());
 
         JsonArrayRequest request = new JsonArrayRequest(api.getUrl(getActivity()),
 
@@ -393,6 +428,7 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
         );
 
         mRequestQueue.add(request);
+        mRequest = request;
     }
 
     private void showCampaignData() {

@@ -1,5 +1,6 @@
 package com.reward.omotesando.activities;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -7,7 +8,7 @@ import android.view.MenuItem;
 
 import com.reward.omotesando.R;
 import com.reward.omotesando.commons.Logger;
-import com.reward.omotesando.fragment.ProgressDialogFragment;
+import com.reward.omotesando.fragments.ProgressDialogFragment;
 
 public abstract class BaseActivity extends ActionBarActivity implements ShowableProgressDialog {
 
@@ -40,28 +41,51 @@ public abstract class BaseActivity extends ActionBarActivity implements Showable
         Logger.v(getLogTag(), "[" + this.hashCode() + "] onDestroy()");
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        //getMenuInflater().inflate(R.menu.menu_base, menu);
-//        //return true;
-//        return false;
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_base, menu);
+        return true;
+    }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        Intent intent;
+        switch (id) {
+            case R.id.action_point_exchange:
+                intent = new Intent(this, PointExchangeActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.action_point_history:
+                intent = new Intent(this, PointHistoryActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.action_help:
+                intent = new Intent(this, HelpActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.action_about:
+                intent = new Intent(this, AboutActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.action_debug:
+                intent = new Intent(this, DebugActivity.class);
+                startActivity(intent);
+                return true;
+        }
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     /*
      * ShowableProgressDialog
@@ -72,14 +96,16 @@ public abstract class BaseActivity extends ActionBarActivity implements Showable
     @Override
     public void showProgressDialog(String title, String message) {
         Logger.v(TAG, "showProgressDialog()");
-        progressDialog = ProgressDialogFragment.newInstance(title, message);
-        progressDialog.show(getSupportFragmentManager(), "progress");
+        // TODO: 画面構成が固まるまでは、通信中ダイアログは外す
+        //progressDialog = ProgressDialogFragment.newInstance(title, message);
+        //progressDialog.show(getSupportFragmentManager(), "progress");
     }
 
     @Override
     public void dismissProgressDialog() {
         Logger.v(TAG, "dismissProgressDialog()");
-        progressDialog.getDialog().dismiss();
+        // TODO: 画面構成が固まるまでは、通信中ダイアログは外す
+        //progressDialog.getDialog().dismiss();
         // http://furudate.hatenablog.com/entry/2014/01/09/162421
         // progressDialog.dismiss() がなぜダメか、仕組みがよくわかっていない。
     }

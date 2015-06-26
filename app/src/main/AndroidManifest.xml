@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.reward.omotesando" >
-    <!-- GCM requires Android SDK version 2.2 (API level 8) or above. -->
+    package="com.reward.omotesando" > <!-- GCM requires Android SDK version 2.2 (API level 8) or above. -->
     <!--
      The targetSdkVersion is optional, but it's always a good practice
          to target higher versions.
@@ -61,8 +60,44 @@
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <!-- ポイント交換 -->
+        <activity
+            android:name=".activities.PointExchangeActivity"
+            android:label="@string/menu_point_exchange"
+            android:parentActivityName=".activities.TabbedActivity">
+        </activity>
+
+        <!-- ポイント履歴 -->
+        <activity
+            android:name=".activities.PointHistoryActivity"
+            android:label="@string/menu_point_history"
+            android:parentActivityName=".activities.TabbedActivity">
+        </activity>
+
+        <!-- ヘルプ -->
+        <activity
+            android:name=".activities.HelpActivity"
+            android:label="@string/menu_help"
+            android:parentActivityName=".activities.TabbedActivity">
+        </activity>
+
+        <!-- アプリ情報 -->
+        <activity
+            android:name=".activities.AboutActivity"
+            android:label="@string/menu_about"
+            android:parentActivityName=".activities.TabbedActivity">
+        </activity>
+
+        <!-- デバッグ用 -->
+        <activity
+            android:name=".activities.DebugActivity"
+            android:label="@string/menu_debug"
+            android:parentActivityName=".activities.TabbedActivity">
         </activity>
 
         <!--
@@ -85,6 +120,7 @@
         </receiver>
 
         <service android:name=".services.GcmIntentService" />
+
     </application>
 
 </manifest>

@@ -1,62 +1,50 @@
-package com.reward.omotesando.fragment;
+package com.reward.omotesando.fragments;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.zip.ZipFile;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.reward.omotesando.R;
-import com.reward.omotesando.commons.Logger;
-import com.reward.omotesando.commons.Utils;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link AboutFragment.OnFragmentInteractionListener} interface
+ * {@link HelpFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link AboutFragment#newInstance} factory method to
+ * Use the {@link HelpFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AboutFragment extends BaseFragment {
+public class HelpFragment extends BaseFragment {
 
-    private static final String TAG = AboutFragment.class.getName();
+    private static final String TAG = HelpFragment.class.getName();
     @Override
     protected String getLogTag() { return TAG; }
 
     private OnFragmentInteractionListener mListener;
 
-    // View
-    private TextView mVersionText;
-    private TextView mBuildInfoText;
-    private Button mQueryButton;
+    private WebView mWebView;
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment AboutFragment.
+     * @return A new instance of fragment HelpFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static AboutFragment newInstance() {
-        AboutFragment fragment = new AboutFragment();
+    public static HelpFragment newInstance() {
+        HelpFragment fragment = new HelpFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
 
-    public AboutFragment() {
+    public HelpFragment() {
         // Required empty public constructor
     }
 
@@ -70,28 +58,19 @@ public class AboutFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);  // TODO: もうちょっと良い共通化ないか？
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_about, container, false);
+        View v = inflater.inflate(R.layout.fragment_help, container, false);
 
-        mVersionText = (TextView) v.findViewById(R.id.version_text);
-        mVersionText.setText("Ver. " + Utils.getVersionName(this.getActivity().getApplicationContext()));
-
-        mBuildInfoText = (TextView) v.findViewById(R.id.build_info_text);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
-        mBuildInfoText.setText(sdf.format(getUpdateTime()));
-
-        mQueryButton = (Button) v.findViewById(R.id.query_button);
-        mQueryButton.setOnClickListener(new View.OnClickListener() {
+        mWebView = (WebView) v.findViewById(R.id.web_view);
+        mWebView.setWebViewClient(new WebViewClient(){
             @Override
-            public void onClick(View v) {
-                Uri uri = Uri.parse ("mailto:kyuuki.japan@gmail.com");
-                Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
-                intent.putExtra(Intent.EXTRA_SUBJECT, getActivity().getString(R.string.query_mail_subject));
-                intent.putExtra(Intent.EXTRA_TEXT, getActivity().getString(R.string.query_mail_text));
-                getActivity().startActivity(intent);
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                // 別ブラウザで開かせない。
+                return false;
             }
         });
+        // TODO: ヘルプページ作成
+        mWebView.loadUrl("http://dolly-reward.com/");
 
         return v;
     }
@@ -136,20 +115,4 @@ public class AboutFragment extends BaseFragment {
         public void onFragmentInteraction(Uri uri);
     }
 
-    // http://ingaouhou.com/archives/3786
-    public Date getUpdateTime() {
-
-        File f = new File(getActivity().getApplicationInfo().sourceDir);
-        try {
-            ZipFile z = new ZipFile(f);
-            long time = z.getEntry("META-INF/MANIFEST.MF").getTime();
-            Date date = new Date(time);
-            z.close();
-            return date;
-        } catch (IOException e) {
-            Logger.e(TAG, e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
 }

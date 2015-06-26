@@ -9,11 +9,17 @@
     <string name="title_section3">このアプリについて</string>
 
     <string name="menu_offer_list">お仕事一覧</string>
-    <string name="menu_point_exchange">ポイント交換</string>
+    <string name="menu_point_exchange">交換</string>
     <string name="menu_point_history">ポイント履歴</string>
     <string name="menu_help">ヘルプ</string>
     <string name="menu_about">アプリ情報</string>
     <string name="menu_debug">開発用</string>
+
+    <!-- 案件一覧のタブ名 -->
+    <string name="tab_app_dl">アプリ DL</string>
+    <string name="tab_movie">動画</string>
+    <string name="tab_fb">FB いいね</string>
+
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

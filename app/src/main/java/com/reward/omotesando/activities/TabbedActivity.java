@@ -19,16 +19,15 @@ import com.reward.omotesando.components.GcmManager;
 import com.reward.omotesando.components.Terminal;
 import com.reward.omotesando.components.VolleyApi;
 import com.reward.omotesando.components.api.PostUser;
-import com.reward.omotesando.fragment.AboutFragment;
-import com.reward.omotesando.fragment.DebugFragment;
-import com.reward.omotesando.fragment.HelpFragment;
-import com.reward.omotesando.fragment.ItemFragment;
-import com.reward.omotesando.fragment.OfferDetailFragment;
-import com.reward.omotesando.fragment.OfferFragment;
-import com.reward.omotesando.fragment.OfferListFragment;
-import com.reward.omotesando.fragment.PointHistoryListFragment;
+import com.reward.omotesando.fragments.AboutFragment;
+import com.reward.omotesando.fragments.HelpFragment;
+import com.reward.omotesando.fragments.OfferDetailFragment;
+import com.reward.omotesando.fragments.OfferFragment;
+import com.reward.omotesando.fragments.OfferListFragment;
+import com.reward.omotesando.fragments.PointHistoryListFragment;
 import com.reward.omotesando.models.NavigationMenu;
 import com.reward.omotesando.models.Offer;
+import com.reward.omotesando.models.OfferListTab;
 import com.reward.omotesando.models.User;
 
 import org.json.JSONObject;
@@ -66,9 +65,9 @@ public class TabbedActivity extends BaseActivity
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        actionBar.setTitle(R.string.app_name);
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setTitle("");
+        //actionBar.setDisplayShowTitleEnabled(false);
+        //actionBar.setDisplayShowHomeEnabled(false);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -309,6 +308,9 @@ public class TabbedActivity extends BaseActivity
     // 準備完了後の初期処理
     private void readyGo() {
         mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        User user = User.getUser(this);
+        getSupportActionBar().setTitle("現在のポイント" + " " + String.valueOf(user.point) + " pt");
     }
 
 
@@ -326,26 +328,21 @@ public class TabbedActivity extends BaseActivity
         public Fragment getItem(int position) {
             Fragment fragment;
 
-            NavigationMenu[] values = NavigationMenu.values();
-            NavigationMenu navigationMenu = values[position];
-            switch (navigationMenu) {
-                case OFFER_LIST:
+            OfferListTab[] values = OfferListTab.values();
+            OfferListTab tab = values[position];
+            switch (tab) {
+                case APP_DL:
                     fragment = OfferFragment.newInstance();
                     break;
-                case POINT_EXCHANGE:
-                    fragment = ItemFragment.newInstance();
-                    break;
-                case POINT_HISTORY:
-                    fragment = PointHistoryListFragment.newInstance();
-                    break;
-                case HELP:
-                    fragment = HelpFragment.newInstance();
-                    break;
-                case ABOUT:
+                case MOVIE:
+                    // 現状、OfferFragment を同一仮面に複数追加できない。
+                    //fragment = OfferFragment.newInstance();
                     fragment = AboutFragment.newInstance();
                     break;
-                case DEBUG:
-                    fragment = DebugFragment.newInstance();
+                case FB:
+                    // 現状、OfferFragment を同一仮面に複数追加できない。
+                    //fragment = OfferFragment.newInstance();
+                    fragment = AboutFragment.newInstance();
                     break;
                 default:
                     throw new IllegalStateException();
@@ -356,14 +353,14 @@ public class TabbedActivity extends BaseActivity
 
         @Override
         public int getCount() {
-            return NavigationMenu.values().length;
+            return OfferListTab.values().length;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             // ナビゲーションメニューの文字列を取得
-            String[] menuStrings = new String[NavigationMenu.values().length];
-            for (NavigationMenu menu: NavigationMenu.values()) {
+            String[] menuStrings = new String[OfferListTab.values().length];
+            for (OfferListTab menu: OfferListTab.values()) {
                 menuStrings[menu.ordinal()] = getString(menu.resource);
             }
 

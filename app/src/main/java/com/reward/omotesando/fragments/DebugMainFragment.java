@@ -1,4 +1,4 @@
-package com.reward.omotesando.fragment;
+package com.reward.omotesando.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;

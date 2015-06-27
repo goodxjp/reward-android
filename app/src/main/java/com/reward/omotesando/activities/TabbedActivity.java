@@ -1,5 +1,6 @@
 package com.reward.omotesando.activities;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -32,6 +33,9 @@ import com.reward.omotesando.models.User;
 
 import org.json.JSONObject;
 
+/**
+ * メイン (案件一覧表示) アクティビティ。
+ */
 public class TabbedActivity extends BaseActivity
         implements ActionBar.TabListener,
                    GcmManager.GcmManagerCallbacks,
@@ -155,13 +159,16 @@ public class TabbedActivity extends BaseActivity
      */
     @Override
     public void onFragmentInteraction(Offer offer) {
-        Fragment fragment = OfferDetailFragment.newInstance(offer);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .addToBackStack(null)
-                .commit();
+//        Fragment fragment = OfferDetailFragment.newInstance(offer);
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        fragmentManager.beginTransaction()
+//                .replace(R.id.container, fragment)
+//                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+//                .addToBackStack(null)
+//                .commit();
+        Intent intent = new Intent(this, OfferDetailActivity.class);
+        intent.putExtra("xxx", offer);
+        startActivity(intent);
     }
 
 
@@ -310,6 +317,7 @@ public class TabbedActivity extends BaseActivity
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         User user = User.getUser(this);
+        // TODO: 文字列リソース化
         getSupportActionBar().setTitle("現在のポイント" + " " + String.valueOf(user.point) + " pt");
     }
 
@@ -332,17 +340,15 @@ public class TabbedActivity extends BaseActivity
             OfferListTab tab = values[position];
             switch (tab) {
                 case APP_DL:
-                    fragment = OfferFragment.newInstance();
+                    // 現状、OfferFragment を同一仮面に複数追加できない。
+                    //fragment = OfferFragment.newInstance();
+                    fragment = OfferListFragment.newInstance();
                     break;
                 case MOVIE:
-                    // 現状、OfferFragment を同一仮面に複数追加できない。
-                    //fragment = OfferFragment.newInstance();
-                    fragment = AboutFragment.newInstance();
+                    fragment = OfferListFragment.newInstance();
                     break;
                 case FB:
-                    // 現状、OfferFragment を同一仮面に複数追加できない。
-                    //fragment = OfferFragment.newInstance();
-                    fragment = AboutFragment.newInstance();
+                    fragment = OfferListFragment.newInstance();
                     break;
                 default:
                     throw new IllegalStateException();

@@ -28,7 +28,7 @@ import com.reward.omotesando.R;
 import com.reward.omotesando.activities.ShowableProgressDialog;
 import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.commons.VolleyUtils;
-import com.reward.omotesando.components.api.GetMediaUsers;
+import com.reward.omotesando.components.api.GetUser;
 import com.reward.omotesando.components.api.GetOffers;
 import com.reward.omotesando.models.Offer;
 import com.reward.omotesando.models.User;
@@ -364,7 +364,7 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
         }
 
         Logger.e(TAG, "getMediaUser Activity = " + getActivity());
-        final GetMediaUsers api = new GetMediaUsers(getActivity());
+        final GetUser api = new GetUser(getActivity());
 
         JsonObjectRequest request = new JsonObjectRequest(api.getUrl(getActivity()),
 

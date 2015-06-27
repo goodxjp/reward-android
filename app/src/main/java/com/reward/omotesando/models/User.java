@@ -18,6 +18,7 @@ public class User {
     public static final String PROPERTY_USER_ID     = "user_id";
     public static final String PROPERTY_USER_KEY    = "user_key";
     public static final String PROPERTY_TERMINAL_ID = "terminal_id";
+    public static final String PROPERTY_POINT       = "point";
 
     public long userId;
     public String userKey;
@@ -42,11 +43,13 @@ public class User {
         long userId = prefs.getLong(PROPERTY_USER_ID, -1);
         String userKey = prefs.getString(PROPERTY_USER_KEY, null);
         String terminalId = prefs.getString(PROPERTY_TERMINAL_ID, null);
+        long point = prefs.getLong(PROPERTY_POINT, -1);
         // TODO: データ不整合の場合 (片方のみおかしい場合) どうするか？
-        if (userId < 0 || userKey == null || terminalId == null) {
+        if (userId < 0 || userKey == null || terminalId == null || point < 0) {
             Logger.e(TAG, "userId = " + userId);
             Logger.e(TAG, "userKey = " + userKey);
             Logger.e(TAG, "terminalId = " + terminalId);
+            Logger.e(TAG, "point = " + point);
 
             // 変な文字列をサーバーに送って掲出する？
             //return new MediaUser(99999999, "InvalidTerminalId", 0);
@@ -54,7 +57,7 @@ public class User {
             return null;
         }
 
-        user = new User(userId, userKey, terminalId, 0);  // TODO: ポイントも保持
+        user = new User(userId, userKey, terminalId, point);
 
         return user;
     }
@@ -65,6 +68,7 @@ public class User {
         editor.putLong(PROPERTY_USER_ID, user.userId);
         editor.putString(PROPERTY_USER_KEY, user.userKey);
         editor.putString(PROPERTY_TERMINAL_ID, user.terminalId);
+        editor.putLong(PROPERTY_POINT, user.point);
         editor.commit();
 
     }

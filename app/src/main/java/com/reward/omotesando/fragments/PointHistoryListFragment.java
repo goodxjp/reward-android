@@ -26,7 +26,7 @@ import com.reward.omotesando.R;
 import com.reward.omotesando.activities.ShowableProgressDialog;
 import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.commons.VolleyUtils;
-import com.reward.omotesando.components.api.GetMediaUsers;
+import com.reward.omotesando.components.api.GetUser;
 import com.reward.omotesando.components.api.GetPointHistories;
 import com.reward.omotesando.models.PointHistory;
 import com.reward.omotesando.models.User;
@@ -241,7 +241,7 @@ public class PointHistoryListFragment extends BaseFragment {
 
     // ユーザー情報取得
     private void getMediaUser() {
-        final GetMediaUsers api = new GetMediaUsers(getActivity());
+        final GetUser api = new GetUser(getActivity());
 
         JsonObjectRequest request = new JsonObjectRequest(api.getUrl(getActivity()),
 

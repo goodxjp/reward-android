@@ -65,6 +65,13 @@
             </intent-filter>
         </activity>
 
+        <!-- 案件詳細 -->
+        <activity
+            android:name=".activities.OfferDetailActivity"
+            android:label="@string/app_name_drawer"
+            android:parentActivityName=".activities.TabbedActivity">
+        </activity>
+
         <!-- ポイント交換 -->
         <activity
             android:name=".activities.PointExchangeActivity"

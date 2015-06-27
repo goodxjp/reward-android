@@ -48,9 +48,11 @@ public class DebugMainFragment extends Fragment {
         mInitializeButton = (Button) v.findViewById(R.id.initialize_button);
 
         User user = User.getUser(getActivity());
-        mMediaUserIdText.setText(String.valueOf(user.userId));
-        mUserKeyText.setText(user.userKey);
-        mTerminalIdText.setText(user.terminalId);
+        if (user != null) {
+            mMediaUserIdText.setText(String.valueOf(user.userId));
+            mUserKeyText.setText(user.userKey);
+            mTerminalIdText.setText(user.terminalId);
+        }
 
         mInitializeButton.setOnClickListener(new View.OnClickListener() {
             @Override

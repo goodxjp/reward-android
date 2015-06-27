@@ -14,13 +14,13 @@ import com.reward.omotesando.models.User;
 /**
  * ユーザー取得 API
  */
-public class GetMediaUsers extends RewardApi<User> {
-    private static final String TAG = GetMediaUsers.class.getName();
+public class GetUser extends RewardApi<User> {
+    private static final String TAG = GetUser.class.getName();
 
     /*
      * HTTP リクエスト仕様
      */
-    public GetMediaUsers(Context context) {
+    public GetUser(Context context) {
         this.media = Media.getMedia(context);
         this.user = User.getUser(context);
 

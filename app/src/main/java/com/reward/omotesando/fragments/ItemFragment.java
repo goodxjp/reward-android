@@ -26,8 +26,10 @@ import com.reward.omotesando.components.*;
 import com.reward.omotesando.components.api.PostPurchases;
 import com.reward.omotesando.models.Item;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -217,6 +219,7 @@ public class ItemFragment extends BaseFragment
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         VolleyApi.Log(TAG, api, error);
+                        VolleyApi.ApiError apiError = VolleyApi.parseVolleyError(error);
 
                         ShowableProgressDialog showableDialog = (ShowableProgressDialog) getActivity();
                         if (showableDialog != null) {
@@ -226,7 +229,8 @@ public class ItemFragment extends BaseFragment
                         Activity activity = getActivity();
 
                         // TODO: 通信エラー内容によって、処理を変える
-                        if (error.networkResponse == null) {
+                        if (apiError == null) {
+                        //if (error.networkResponse == null) {
                             // 通信状態が悪いか、サーバー停止
                             // サーバーの停止は他の監視方法によって検知するので、通信状態が悪い方のケアを行う。
                             Toast.makeText(activity, activity.getString(R.string.error_communication), Toast.LENGTH_LONG).show();
@@ -242,7 +246,7 @@ public class ItemFragment extends BaseFragment
                             // - アカウント停止
                             // - メンテナンス中
                             // - サーバーエラー (DB おかしいとか、予期せぬ例外発生)
-                            Toast.makeText(activity, activity.getString(R.string.message_critical_server_error), Toast.LENGTH_LONG).show();
+                            Toast.makeText(activity, apiError.message + "(" + apiError.code + ")", Toast.LENGTH_LONG).show();
                         }
                     }
                 });

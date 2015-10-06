@@ -6,6 +6,7 @@ import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.components.api.RewardApi;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -61,5 +62,45 @@ public class VolleyApi {
                 Logger.e(tag, "HTTP: [" + api.getClass().getSimpleName() + "] data = " + data);
             }
         }
+    }
+
+    // API のエラーコードとメッセージ
+    // TODO: Volley に依存しない部分は他の所に移動したい。
+    public static class ApiError {
+        public int code;
+        public String message;
+
+//        ApiError(int code, String message) {
+//            this.code = code;
+//            this.message = message;
+//        }
+    }
+
+    public static ApiError parseVolleyError(VolleyError error) {
+        if (error.networkResponse == null) {
+            return null;
+        }
+
+        if (error.networkResponse.data == null) {
+            return null;
+        }
+
+        ApiError apiError = new ApiError();
+        try {
+            String data = new String(error.networkResponse.data, "UTF-8");
+            JSONObject o = new JSONObject(data);
+            apiError.code = o.getInt("code");
+            apiError.message = o.getString("message");
+        } catch (UnsupportedEncodingException e) {
+            // TODO 致命的エラー検出
+            e.printStackTrace();
+            return null;
+        } catch (JSONException e) {
+            // TODO 致命的エラー検出
+            e.printStackTrace();
+            return null;
+        }
+
+        return apiError;
     }
 }

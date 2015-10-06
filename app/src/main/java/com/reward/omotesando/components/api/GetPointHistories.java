@@ -31,8 +31,7 @@ public class GetPointHistories extends RewardApi<List<PointHistory>> {
         this.method = "GET";
 
         // パス
-        // TODO: URL 変更
-        this.path = context.getString(R.string.api_path_base) + "/media_users/"+ String.valueOf(this.user.userId) + "/point_histories.json";
+        this.path = context.getString(R.string.api_path_base) + "/point_histories.json";
 
         // クエリー文字
         setQueryMediaAndUser();

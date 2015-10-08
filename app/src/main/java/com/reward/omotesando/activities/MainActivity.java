@@ -38,7 +38,7 @@ import com.reward.omotesando.models.Offer;
 import com.reward.omotesando.models.User;
 
 /**
- * メインアクティビティ
+ * メインアクティビティ (廃棄！！！)
  *
  * - 初期処理
  * - メニューによるフラグメント切り替えの管理

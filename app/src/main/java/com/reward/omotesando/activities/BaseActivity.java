@@ -45,6 +45,14 @@ public abstract class BaseActivity extends ActionBarActivity implements Showable
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_base, menu);
+        // TODO: 完成するまで非表示に
+        menu.findItem(R.id.action_help).setVisible(false);
+        menu.findItem(R.id.action_settings).setVisible(false);
+
+        // TODO: 開発版との切り替え判定はもうちょっと真面目に考える。
+        if (this.getString(R.string.api_scheme).equals("http") == false) {
+            menu.findItem(R.id.action_debug).setVisible(false);
+        }
         return true;
     }
 

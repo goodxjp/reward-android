@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -22,6 +23,9 @@ public class OfferDetailActivity extends BaseActivity {
 
         Intent intent = getIntent();
         mOffer = (Offer) intent.getSerializableExtra("xxx");
+
+        final ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(getString(R.string.title_offer_detail));
 
         Fragment fragment = OfferDetailFragment.newInstance(mOffer);
         FragmentManager fragmentManager = getSupportFragmentManager();

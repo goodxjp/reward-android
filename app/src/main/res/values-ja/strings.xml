@@ -4,10 +4,6 @@
     <string name="app_name_drawer">リワード（仮）</string>
     <string name="app_name_drawer_tab">リワードタブ</string>
 
-    <string name="title_section1">案件リスト</string>
-    <string name="title_section2">ヘルプ</string>
-    <string name="title_section3">このアプリについて</string>
-
     <string name="menu_offer_list">お仕事一覧</string>
     <string name="menu_point_exchange">交換</string>
     <string name="menu_point_history">ポイント履歴</string>
@@ -15,11 +11,12 @@
     <string name="menu_about">アプリ情報</string>
     <string name="menu_debug">開発用</string>
 
+    <string name="title_offer_detail">案件詳細</string>
+
     <!-- 案件一覧のタブ名 -->
-    <string name="tab_app_dl">アプリ DL</string>
+    <string name="tab_app_dl">オススメ！</string>
     <string name="tab_movie">動画</string>
     <string name="tab_fb">FB いいね</string>
-
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

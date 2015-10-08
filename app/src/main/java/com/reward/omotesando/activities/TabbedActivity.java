@@ -67,9 +67,11 @@ public class TabbedActivity extends BaseActivity
 
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        actionBar.setTitle("");
+        // アクションバーでタブ表示するのは廃止
+//        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        actionBar.setTitle(getString(R.string.app_name));
         //actionBar.setDisplayShowTitleEnabled(false);
         //actionBar.setDisplayShowHomeEnabled(false);
 
@@ -81,27 +83,29 @@ public class TabbedActivity extends BaseActivity
         mViewPager = (ViewPager) findViewById(R.id.pager);
         //mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        // アクションバーでタブ表示するのは廃止
         // When swiping between different sections, select the corresponding
         // tab. We can also use ActionBar.Tab#select() to do this if we have
         // a reference to the Tab.
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                actionBar.setSelectedNavigationItem(position);
-            }
-        });
+//        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+//            @Override
+//            public void onPageSelected(int position) {
+//                actionBar.setSelectedNavigationItem(position);
+//            }
+//        });
 
+        // アクションバーでタブ表示するのは廃止
         // For each of the sections in the app, add a tab to the action bar.
-        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-            // Create a tab with text corresponding to the page title defined by
-            // the adapter. Also specify this Activity object, which implements
-            // the TabListener interface, as the callback (listener) for when
-            // this tab is selected.
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(mSectionsPagerAdapter.getPageTitle(i))
-                            .setTabListener(this));
-        }
+//        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+//            // Create a tab with text corresponding to the page title defined by
+//            // the adapter. Also specify this Activity object, which implements
+//            // the TabListener interface, as the callback (listener) for when
+//            // this tab is selected.
+//            actionBar.addTab(
+//                    actionBar.newTab()
+//                            .setText(mSectionsPagerAdapter.getPageTitle(i))
+//                            .setTabListener(this));
+//        }
 
         state.start(this);
     }
@@ -318,7 +322,7 @@ public class TabbedActivity extends BaseActivity
 
         User user = User.getUser(this);
         // TODO: 文字列リソース化
-        getSupportActionBar().setTitle("現在のポイント" + " " + String.valueOf(user.point) + " pt");
+        //getSupportActionBar().setTitle("現在のポイント" + " " + String.valueOf(user.point) + " pt");
     }
 
 
@@ -340,16 +344,16 @@ public class TabbedActivity extends BaseActivity
             OfferListTab tab = values[position];
             switch (tab) {
                 case APP_DL:
-                    // 現状、OfferFragment を同一仮面に複数追加できない。
+                    // 現状、OfferFragment を同一画面に複数追加できない。
                     //fragment = OfferFragment.newInstance();
                     fragment = OfferListFragment.newInstance();
                     break;
-                case MOVIE:
-                    fragment = OfferListFragment.newInstance();
-                    break;
-                case FB:
-                    fragment = OfferListFragment.newInstance();
-                    break;
+//                case MOVIE:
+//                    fragment = OfferListFragment.newInstance();
+//                    break;
+//                case FB:
+//                    fragment = OfferListFragment.newInstance();
+//                    break;
                 default:
                     throw new IllegalStateException();
             }

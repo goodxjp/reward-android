@@ -53,11 +53,11 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
     private OnFragmentInteractionListener mListener;
 
     // Model
-    long mPoint;
+    //long mPoint;
     List<Offer> offers;
 
     // View
-    private TextView mCurrentPointText;
+    //private TextView mCurrentPointText;
 
     /**
      * The fragment's ListView/GridView.
@@ -129,7 +129,7 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
 
         View view = inflater.inflate(R.layout.fragment_offerlist, container, false);
 
-        mCurrentPointText = (TextView) view.findViewById(R.id.current_point_text);
+//        mCurrentPointText = (TextView) view.findViewById(R.id.current_point_text);
         mListView = (AbsListView) view.findViewById(android.R.id.list);
 
         // Set OnItemClickListener so we can be notified on item clicks
@@ -138,7 +138,7 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
         // View の再設定は毎回せなあかんものだろうか？
         if (state == State.READY) {
             // View に ID 付けておけば復旧してくれるもの？
-            mCurrentPointText.setText(String.valueOf(mPoint));
+//            mCurrentPointText.setText(String.valueOf(mPoint));
             ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
         }
 
@@ -243,8 +243,8 @@ public class OfferListFragment extends BaseFragment implements AbsListView.OnIte
                 fragment.mRequest = null;
 
                 // ポイント表示を更新
-                fragment.mPoint = user.point;
-                fragment.mCurrentPointText.setText(String.valueOf(fragment.mPoint));
+//                fragment.mPoint = user.point;
+//                fragment.mCurrentPointText.setText(String.valueOf(fragment.mPoint));
                 fragment.getCampaignData();
 
                 fragment.transit(GETTING_OFFERS);

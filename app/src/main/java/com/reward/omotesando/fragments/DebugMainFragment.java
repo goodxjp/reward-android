@@ -51,7 +51,7 @@ public class DebugMainFragment extends Fragment {
         if (user != null) {
             mMediaUserIdText.setText(String.valueOf(user.userId));
             mUserKeyText.setText(user.userKey);
-            mTerminalIdText.setText(user.terminalId);
+            mTerminalIdText.setText(null);
         }
 
         mInitializeButton.setOnClickListener(new View.OnClickListener() {

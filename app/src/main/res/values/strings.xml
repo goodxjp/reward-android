@@ -27,8 +27,12 @@
     <string name="exchange">Exchange</string>
     <string name="query">Query</string>
 
+    <!-- ダイアログメッセージ -->
     <string name="dialog_message_initializing">Initializing...</string>
     <string name="dialog_message_communicating">Communicating...</string>
+
+    <string name="dialog_title_error_init">Initializing Error</string>
+    <string name="dialog_message_error_init">Initializing error occurred. Please retry after checking network.</string>
 
     <string name="query_mail_subject">Inquiry</string>
     <string name="query_mail_text"></string>

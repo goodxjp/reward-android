@@ -215,7 +215,7 @@ public class MainActivity extends BaseActivity
             public void start(MainActivity activity) {
 
                 GcmManager gcmManager = GcmManager.getInstance(activity.getApplicationContext());
-                if (gcmManager.tryToRegister(activity, activity)) {
+                if (gcmManager.tryToRegister(activity, activity) == null) {
                     //activity.showProgressDialog(null, activity.getString(R.string.dialog_message_initializing));
                     activity.transit(GCM_REGISTERING);
                 } else if (activity.tryToRegisterUser(null)) {
@@ -314,7 +314,7 @@ public class MainActivity extends BaseActivity
     // ユーザー登録
     private void registerUser(String regId) {
         // ユーザー登録 API
-        final PostUser api = new PostUser(this, Terminal.getAndroidId(this), new JSONObject(Terminal.getBuildInfo()), regId);
+        final PostUser api = new PostUser(this, Terminal.getTerminalId(this), new JSONObject(Terminal.getBuildInfo()), regId);
 
         JsonObjectRequest request = new JsonObjectRequest(api.getUrl(this), api.getJsonRequest(),
 

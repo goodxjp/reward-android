@@ -28,9 +28,12 @@
     <string name="exchange">交換</string>
     <string name="query">お問い合わせ</string>
 
+    <!-- ダイアログメッセージ -->
     <string name="dialog_message_initializing">初期化中...</string>
     <string name="dialog_message_communicating">通信中...</string>
 
+    <string name="dialog_title_error_init">初期化エラー</string>
+    <string name="dialog_message_error_init">初期化中にエラーが発生しました。通信状態を確認の上、しばらく経ってからもう一度、お試し下さい。</string>
 
     <string name="query_mail_subject">お問い合わせ</string>
     <string name="query_mail_text"></string>

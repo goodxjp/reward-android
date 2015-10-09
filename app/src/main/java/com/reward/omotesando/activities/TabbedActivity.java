@@ -21,6 +21,8 @@ import com.reward.omotesando.components.Terminal;
 import com.reward.omotesando.components.VolleyApi;
 import com.reward.omotesando.components.api.PostUser;
 import com.reward.omotesando.fragments.AboutFragment;
+import com.reward.omotesando.fragments.AlertDialogFragment;
+import com.reward.omotesando.fragments.ExchangeDialogFragment;
 import com.reward.omotesando.fragments.HelpFragment;
 import com.reward.omotesando.fragments.OfferDetailFragment;
 import com.reward.omotesando.fragments.OfferFragment;
@@ -37,8 +39,7 @@ import org.json.JSONObject;
  * メイン (案件一覧表示) アクティビティ。
  */
 public class TabbedActivity extends BaseActivity
-        implements ActionBar.TabListener,
-                   GcmManager.GcmManagerCallbacks,
+        implements GcmManager.GcmManagerCallbacks,
                    OfferListFragment.OnFragmentInteractionListener {
 
     protected String TAG = TabbedActivity.class.getName();
@@ -60,6 +61,11 @@ public class TabbedActivity extends BaseActivity
      */
     ViewPager mViewPager;
 
+
+    /*
+     * ライフサイクル
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,13 +73,7 @@ public class TabbedActivity extends BaseActivity
 
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
-
-        // アクションバーでタブ表示するのは廃止
-//        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
         actionBar.setTitle(getString(R.string.app_name));
-        //actionBar.setDisplayShowTitleEnabled(false);
-        //actionBar.setDisplayShowHomeEnabled(false);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -81,72 +81,14 @@ public class TabbedActivity extends BaseActivity
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
-        //mViewPager.setAdapter(mSectionsPagerAdapter);
+        //mViewPager.setAdapter(mSectionsPagerAdapter); → 初期化処理完了後。
 
-        // アクションバーでタブ表示するのは廃止
-        // When swiping between different sections, select the corresponding
-        // tab. We can also use ActionBar.Tab#select() to do this if we have
-        // a reference to the Tab.
-//        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-//            @Override
-//            public void onPageSelected(int position) {
-//                actionBar.setSelectedNavigationItem(position);
-//            }
-//        });
-
-        // アクションバーでタブ表示するのは廃止
-        // For each of the sections in the app, add a tab to the action bar.
-//        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-//            // Create a tab with text corresponding to the page title defined by
-//            // the adapter. Also specify this Activity object, which implements
-//            // the TabListener interface, as the callback (listener) for when
-//            // this tab is selected.
-//            actionBar.addTab(
-//                    actionBar.newTab()
-//                            .setText(mSectionsPagerAdapter.getPageTitle(i))
-//                            .setTabListener(this));
-//        }
-
-        state.start(this);
+        // TODO: 状態を保存しておかないと回転の時に状態が初期化されてしまう。
+        if (state == State.INITIAL) {
+            state.start(this);
+        }
     }
 
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_tabbed, menu);
-//        return true;
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
-
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        // When the given tab is selected, switch to the corresponding page in
-        // the ViewPager.
-        mViewPager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
 
     /*
      * GcmManager.GcmManagerCallbacks
@@ -158,20 +100,14 @@ public class TabbedActivity extends BaseActivity
         state.gcmRegisterd(this, regId);
     }
 
+
     /*
      * OfferListFragment.OnFragmentInteractionListener
      */
     @Override
     public void onFragmentInteraction(Offer offer) {
-//        Fragment fragment = OfferDetailFragment.newInstance(offer);
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        fragmentManager.beginTransaction()
-//                .replace(R.id.container, fragment)
-//                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-//                .addToBackStack(null)
-//                .commit();
         Intent intent = new Intent(this, OfferDetailActivity.class);
-        intent.putExtra("xxx", offer);
+        intent.putExtra("xxx", offer);  // TODO: 名前調整
         startActivity(intent);
     }
 
@@ -188,10 +124,11 @@ public class TabbedActivity extends BaseActivity
             public void start(TabbedActivity activity) {
 
                 GcmManager gcmManager = GcmManager.getInstance(activity.getApplicationContext());
-                if (gcmManager.tryToRegister(activity, activity)) {
+                String regId;
+                if ((regId = gcmManager.tryToRegister(activity, activity)) == null) {
                     //activity.showProgressDialog(null, activity.getString(R.string.dialog_message_initializing));
                     activity.transit(GCM_REGISTERING);
-                } else if (activity.tryToRegisterUser(null)) {
+                } else if (activity.tryToRegisterUser(regId)) {
                     //activity.showProgressDialog(null, activity.getString(R.string.dialog_message_initializing));
                     activity.transit(USER_REGISTERING);
                 } else {
@@ -233,15 +170,25 @@ public class TabbedActivity extends BaseActivity
 
             @Override
             public void failureUserRegister(TabbedActivity activity) {
-                // TODO: ユーザー登録に失敗したときのエラー処理
                 //activity.transit(READY);
                 //activity.readyGo();
                 //activity.dismissProgressDialog();
+
+                activity.transit(ERROR);
+
+                // TODO: ダイアログを汎用にしておいて、複数の種類のダイアログのコールバック受けられるようにしておいた方がよさげ？
+                AlertDialogFragment dialog = AlertDialogFragment.newInstance(
+                        activity.getString(R.string.dialog_title_error_init),
+                        activity.getString(R.string.dialog_message_error_init));
+                dialog.show(activity.getSupportFragmentManager(), "alert_dialog");
             }
         },
 
         // 操作可能状態
-        READY;
+        READY,
+
+        // エラー状態
+        ERROR;
 
         /*
          * イベント
@@ -288,7 +235,7 @@ public class TabbedActivity extends BaseActivity
     // ユーザー登録
     private void registerUser(String regId) {
         // ユーザー登録 API
-        final PostUser api = new PostUser(this, Terminal.getAndroidId(this), new JSONObject(Terminal.getBuildInfo()), regId);
+        final PostUser api = new PostUser(this, Terminal.getTerminalId(this), new JSONObject(Terminal.getBuildInfo()), regId);
 
         JsonObjectRequest request = new JsonObjectRequest(api.getUrl(this), api.getJsonRequest(),
 
@@ -319,10 +266,6 @@ public class TabbedActivity extends BaseActivity
     // 準備完了後の初期処理
     private void readyGo() {
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        User user = User.getUser(this);
-        // TODO: 文字列リソース化
-        //getSupportActionBar().setTitle("現在のポイント" + " " + String.valueOf(user.point) + " pt");
     }
 
 

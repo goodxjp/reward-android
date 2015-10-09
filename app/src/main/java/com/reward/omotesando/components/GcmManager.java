@@ -59,25 +59,26 @@ public class GcmManager {
     }
 
     // とりあえず、登録されているかどうかにかかわらず、登録しようとしてみる。
-    // TODO: 不整合が起きたときに強制的に registration ID を取得するしくみを追加。
-    public boolean tryToRegister(Activity activity, GcmManagerCallbacks callbacks) {
+    // TODO: 不整合が起きたときに強制的に registration ID を取得するしくみを追加したい。
+    public String tryToRegister(Activity activity, GcmManagerCallbacks callbacks) {
         // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
         if (checkPlayServices(activity) == false) {
             Logger.d(TAG, "gcm = " + mGcm);  // Google 開発者サービスをインストールしていなくても gcm インスタンスはできるようだ。
             Logger.i(TAG, "No valid Google Play Services APK found.");
-            return false;
+            return "";
         }
 
         String regId = getRegistrationId(mApplicationContext);
         //regId = ""; // TODO: 強制的に送信
+        Logger.v(TAG, "regId = " + regId);
 
         if (regId.isEmpty()) {
             // GCM 未登録
             registerInBackground(callbacks);
-            return true;
+            return null;
         }
 
-        return false;
+        return regId;
     }
 
     /**

@@ -28,6 +28,12 @@ public class PostPurchases extends RewardApi<Void> {
         this.media = Media.getMedia(context);
         this.user = User.getUser(context);
 
+        // mid と uid は必須
+        if (this.media == null || this.user == null) {
+            // バグ。本来はこのクラスの外で責任を持つ。
+            throw new IllegalStateException("Media or User is null.");
+        }
+
         // メソッド
         this.method = "POST";
 

@@ -56,7 +56,7 @@ public class GetUser extends RewardApi<User> {
             return null;
         }
 
-        return new User(userId, userKey, null, point);  // TODO: やっぱり、端末 ID がモデルに入ってるのは微妙。
+        return new User(userId, userKey, point);  // TODO: やっぱり、端末 ID がモデルに入ってるのは微妙。
     }
 
     @Override

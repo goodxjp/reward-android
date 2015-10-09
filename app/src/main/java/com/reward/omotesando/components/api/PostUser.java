@@ -17,14 +17,18 @@ import com.reward.omotesando.models.User;
 public class PostUser extends RewardApi<User> {
     private static final String TAG = PostUser.class.getName();
 
-    String terminalId;
-
     /*
      * HTTP リクエスト仕様
      */
-    public PostUser(Context context, String terminalId, JSONObject terminalInfo, String androidRegistrationId) {
+    public PostUser(Context context, JSONObject terminalId, JSONObject terminalInfo, String androidRegistrationId) {
         this.media = Media.getMedia(context);
         this.user = null;
+
+        // mid は必須
+        if (this.media == null) {
+            // バグ。本来はこのクラスの外で責任を持つ。
+            throw new IllegalStateException("Media is null.");
+        }
 
         // メソッド
         this.method = "POST";
@@ -53,9 +57,6 @@ public class PostUser extends RewardApi<User> {
             e.printStackTrace();
             throw new IllegalStateException();
         }
-
-        // レスポンスでも使用するので、端末 ID を保持。
-        this.terminalId = terminalId;
     }
 
     /*
@@ -77,7 +78,7 @@ public class PostUser extends RewardApi<User> {
             return null;
         }
 
-        return new User(userId, userKey, this.terminalId, point);
+        return new User(userId, userKey, point);
     }
 
     @Override

@@ -2,10 +2,6 @@
 <resources>
     <string name="app_name">奖励的应用程序（临时）</string>
 
-    <string name="title_section1">项目列表</string>
-    <string name="title_section2">救命</string>
-    <string name="title_section3">应用信息</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

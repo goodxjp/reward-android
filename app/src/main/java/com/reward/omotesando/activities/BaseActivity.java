@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.reward.omotesando.BuildConfig;
 import com.reward.omotesando.R;
 import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.fragments.ProgressDialogFragment;
@@ -49,8 +50,8 @@ public abstract class BaseActivity extends ActionBarActivity implements Showable
         menu.findItem(R.id.action_help).setVisible(false);
         menu.findItem(R.id.action_settings).setVisible(false);
 
-        // TODO: 開発版との切り替え判定はもうちょっと真面目に考える。
-        if (this.getString(R.string.api_scheme).equals("http") == false) {
+        // デバッグ版でなければデバッグメニュー非表示
+        if (BuildConfig.DEBUG == false) {
             menu.findItem(R.id.action_debug).setVisible(false);
         }
         return true;

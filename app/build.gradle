@@ -17,16 +17,19 @@ android {
         targetSdkVersion 21
         versionCode 1
         versionName "0.0.3"
-        manifestPlaceholders = [activityLabel: "defaultName"]
     }
     productFlavors {
         development {
             applicationId 'com.reward.omotesando.development'
-            manifestPlaceholders = [activityLabel: "defaultName"]
-            buildConfigField "String", "BASE_URL", "\"http://kyuuki.jp:3000/api/v1\""
+            // http://sakebook.hatenablog.com/entry/2014/12/30/030654
+            // 現在は configs.xml を使用
+            //buildConfigField "String", "BASE_URL", "\"http://kyuuki.jp:3000/api/v1\""
+        }
+        staging {
+            applicationId 'com.reward.omotesando.staging'
         }
         production {
-            buildConfigField "String", "BASE_URL", "\"https://reward-staging.herokuapp.com/api/v1\""
+            //buildConfigField "String", "BASE_URL", "\"https://reward-staging.herokuapp.com/api/v1\""
         }
     }
     buildTypes {

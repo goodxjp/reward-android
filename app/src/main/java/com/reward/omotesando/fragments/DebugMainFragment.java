@@ -10,10 +10,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.reward.omotesando.BuildConfig;
 import com.reward.omotesando.R;
+import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.models.User;
 
 public class DebugMainFragment extends Fragment {
+    private static final String TAG = DebugMainFragment.class.getName();
+
     // View
     TextView mMediaUserIdText;
     TextView mUserKeyText;

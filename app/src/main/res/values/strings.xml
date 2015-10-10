@@ -47,4 +47,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_point_exchange">PointExchangeActivity</string>
+
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">Cancel</string>
 </resources>

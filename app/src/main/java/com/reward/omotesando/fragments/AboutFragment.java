@@ -85,7 +85,7 @@ public class AboutFragment extends BaseFragment {
         mQueryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = Uri.parse ("mailto:kyuuki.japan@gmail.com");
+                Uri uri = Uri.parse ("mailto:" +  getActivity().getString(R.string.inquiry_email_address));
                 Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
                 intent.putExtra(Intent.EXTRA_SUBJECT, getActivity().getString(R.string.query_mail_subject));
                 intent.putExtra(Intent.EXTRA_TEXT, getActivity().getString(R.string.query_mail_text));

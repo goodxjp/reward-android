@@ -41,4 +41,7 @@
     <string name="error_communication">通信エラー</string>
 
     <string name="message_critical_server_error">不徳の致すところ...</string>
+
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">キャンセル</string>
 </resources>

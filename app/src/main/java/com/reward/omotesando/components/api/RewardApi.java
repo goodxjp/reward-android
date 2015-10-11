@@ -122,11 +122,11 @@ abstract public class RewardApi<T> {
         } else {
             key = mediaKey + "&" + userKey;
         }
-        Logger.v(TAG, key);
+        //Logger.v(TAG, key);
 
         // データ
         String data = method.toUpperCase() + "\n" + path + "\n" + sortedQuery;
-        Logger.v(TAG, data);
+        //Logger.v(TAG, data);
 
         // 署名作成
         SecretKey sk = new SecretKeySpec(key.getBytes(), "HmacSHA1");
@@ -149,7 +149,7 @@ abstract public class RewardApi<T> {
 
         byte[] result = mac.doFinal(data.getBytes());
         String resultString = new String(Hex.encodeHex(result));
-        Logger.v(TAG, resultString);
+        //Logger.v(TAG, resultString);
 
         return resultString;
     }

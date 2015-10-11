@@ -49,7 +49,7 @@ public class VolleyApi {
     }
 
     public static void Log(String tag, RewardApi api, VolleyError error) {
-        Logger.e(tag, "HTTP: [" + api.getClass().getSimpleName() + "] error = " + error.getMessage());
+        Logger.e(tag, "HTTP: [" + api.getClass().getSimpleName() + "] error.getMessage = " + error.getMessage());
         if (error.networkResponse != null) {
             Logger.e(tag, "HTTP: [" + api.getClass().getSimpleName() + "] statusCode = " + error.networkResponse.statusCode);
             if (error.networkResponse.data != null) {

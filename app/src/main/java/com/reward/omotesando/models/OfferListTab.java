@@ -18,7 +18,7 @@ public enum OfferListTab {
 
     public int resource;
 
-    private OfferListTab(int resource) {
+    OfferListTab(int resource) {
         this.resource = resource;
     }
 }

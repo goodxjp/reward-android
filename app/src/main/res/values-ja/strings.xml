@@ -40,7 +40,12 @@
 
     <string name="error_communication">通信エラー</string>
 
-    <string name="message_critical_server_error">不徳の致すところ...</string>
+    <string name="message_critical_server_error">申し訳ございません。しばらく経ってからもう一度、お試しください。</string>
+
+    <string name="message_sorry_inconvenience">ご不便をおかけして申し訳ございません。今しばらくお待ちください。</string>
+    <string name="message_repair_work">現在、復旧作業中です。今しばらくお待ちください。</string>
+    <string name="message_please_retry">お手数ですが、最初からやり直してください。</string>
+
 
     <string name="button_ok">OK</string>
     <string name="button_cancel">キャンセル</string>

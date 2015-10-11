@@ -41,6 +41,10 @@
 
     <string name="message_critical_server_error">Server error</string>
 
+    <string name="message_sorry_inconvenience">Sorry for the inconvenience. Please wait for a while.</string>
+    <string name="message_repair_work">Under repair. Please wait for a while.</string>
+    <string name="message_please_retry">Please retry again.</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_tabbed">TabbedActivity</string>

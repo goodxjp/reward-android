@@ -11,30 +11,27 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.List;
-
 import com.reward.omotesando.R;
-import com.reward.omotesando.activities.ShowableProgressDialog;
 import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.commons.VolleyUtils;
-import com.reward.omotesando.components.api.GetUser;
+import com.reward.omotesando.components.UserManager;
+import com.reward.omotesando.components.VolleyApi;
 import com.reward.omotesando.components.api.GetPointHistories;
 import com.reward.omotesando.models.PointHistory;
 import com.reward.omotesando.models.User;
 
+import org.json.JSONArray;
+
+import java.util.List;
+
 /**
  * ポイント履歴一覧フラグメント。
  */
-public class PointHistoryListFragment extends BaseFragment {
+public class PointHistoryListFragment extends BaseFragment
+        implements UserManager.UserManagerCallbacks {
 
     private static final String TAG = PointHistoryListFragment.class.getName();
     @Override
@@ -49,12 +46,6 @@ public class PointHistoryListFragment extends BaseFragment {
     private AbsListView mListView;
 
     private ListAdapter mAdapter;
-
-    // 進捗ダイアログを表示してくれる人
-    private ShowableProgressDialog mShowableProgressDialog;
-
-    // 通信
-    public RequestQueue mRequestQueue;
 
     /*
      * 初期処理
@@ -79,21 +70,11 @@ public class PointHistoryListFragment extends BaseFragment {
 
         // このフラグメントは回転しても作り直さない。
         setRetainInstance(true);
-
-        mShowableProgressDialog = (ShowableProgressDialog) getActivity();
-        mRequestQueue = VolleyUtils.getRequestQueue(getActivity());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
-        // バックスタックから戻ったときに状態は遷移したままで onCreateView のみが呼ばれる。
-        // ポイント履歴画面から他の Activity 呼び出さないので、onCreateView のみ呼ばれるパターンが存在する？！
-        // とりあえず、オファー一覧フラグメント共通にしておく。
-        if (state == State.INITIAL) {
-            state.start(this);
-        }
 
         View view = inflater.inflate(R.layout.fragment_point_history_list_list, container, false);
 
@@ -104,6 +85,13 @@ public class PointHistoryListFragment extends BaseFragment {
         if (state == State.READY) {
             mCurrentPointText.setText(String.valueOf(mPoint));
             ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
+        }
+
+        // バックスタックから戻ったときに状態は遷移したままで onCreateView のみが呼ばれる。
+        // ポイント履歴画面から他の Activity 呼び出さないので、onCreateView のみ呼ばれるパターンが存在する？！
+        // とりあえず、オファー一覧フラグメント共通にしておく。
+        if (state == State.INITIAL) {
+            state.start(this);
         }
 
         return view;
@@ -119,7 +107,7 @@ public class PointHistoryListFragment extends BaseFragment {
         super.onDetach();
     }
 
-    // TODO: ポイント履歴が一件もないときの表示も考える (優先度低め)
+    // TODO: ポイント履歴が一件もないときの表示
     /**
      * The default content for this Fragment has a TextView that is shown when
      * the list is empty. If you would like to change the text, call this method
@@ -135,6 +123,20 @@ public class PointHistoryListFragment extends BaseFragment {
 
 
     /*
+     * UserManager.UserManagerCallbacks
+     */
+    @Override
+    public void onSuccessGetUser(User user) {
+        state.successGetMediaUser(this, user);
+    }
+
+    @Override
+    public void onErrorGetUser(String message) {
+        state.failureGetMediaUser(this, message);
+    }
+
+
+    /*
      * 状態管理
      *
      * - 参考: http://idios.hatenablog.com/entry/2012/07/07/235137
@@ -146,9 +148,12 @@ public class PointHistoryListFragment extends BaseFragment {
         INITIAL {
             @Override
             public void start(PointHistoryListFragment fragment) {
-                fragment.getMediaUser();
-
-                fragment.transit(GETTING_USER);
+                if (fragment.getUser()) {
+                    fragment.getPointHistories();
+                    fragment.transit(GETTING_POINT_HISTORIES);
+                } else {
+                    fragment.transit(GETTING_USER);
+                }
             }
         },
 
@@ -157,20 +162,21 @@ public class PointHistoryListFragment extends BaseFragment {
             @Override
             public void successGetMediaUser(PointHistoryListFragment fragment, User user) {
                 // ポイント表示を更新
-                fragment.mPoint = user.point;
-                fragment.mCurrentPointText.setText(String.valueOf(fragment.mPoint));
+                fragment.updateUser(user);
+
                 fragment.getPointHistories();
 
                 fragment.transit(GETTING_POINT_HISTORIES);
             }
 
             @Override
-            public void failureGetMediaUser(PointHistoryListFragment fragment) {
-                // TODO: 端末の通信状態を確認
-                // TODO: サーバーの状態を確認
-                // TODO: エラーダイアログを表示
-                fragment.mShowableProgressDialog.dismissProgressDialog();
-                Toast.makeText(fragment.getActivity(), fragment.getString(R.string.error_communication), Toast.LENGTH_LONG).show();
+            public void failureGetMediaUser(PointHistoryListFragment fragment, String message) {
+                // TODO: エラーの表示方法をちゃんと考えた方がよさげ
+                if (message != null) {
+                    Toast.makeText(fragment.getActivity(), message, Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(fragment.getActivity(), fragment.getString(R.string.error_communication), Toast.LENGTH_LONG).show();
+                }
 
                 fragment.transit(ERROR);
             }
@@ -181,7 +187,6 @@ public class PointHistoryListFragment extends BaseFragment {
             @Override
             public void successGetPointHistories(PointHistoryListFragment fragment, List<PointHistory> pointHistories) {
                 fragment.showPointHistories();
-                fragment.mShowableProgressDialog.dismissProgressDialog();
 
                 fragment.transit(READY);
             }
@@ -191,7 +196,6 @@ public class PointHistoryListFragment extends BaseFragment {
                 // TODO: 端末の通信状態を確認
                 // TODO: サーバーの状態を確認
                 // TODO: エラーダイアログを表示
-                fragment.mShowableProgressDialog.dismissProgressDialog();
                 Toast.makeText(fragment.getActivity(), fragment.getString(R.string.error_communication), Toast.LENGTH_LONG).show();
 
                 fragment.transit(ERROR);
@@ -218,7 +222,7 @@ public class PointHistoryListFragment extends BaseFragment {
         }
 
         // ユーザー情報取得失敗
-        public void failureGetMediaUser(PointHistoryListFragment fragment) {
+        public void failureGetMediaUser(PointHistoryListFragment fragment, String message) {
             throw new IllegalStateException();
         }
 
@@ -239,39 +243,32 @@ public class PointHistoryListFragment extends BaseFragment {
         state = nextState;
     }
 
-    // ユーザー情報取得
-    private void getMediaUser() {
-        final GetUser api = new GetUser(getActivity());
+    /**
+     * ユーザー情報取得。
+     *
+     * @return true: 取得成功 / false: 取得待ち
+     */
+    private boolean getUser() {
+        User user = UserManager.getUser(getActivity().getApplicationContext(), this);
 
-        JsonObjectRequest request = new JsonObjectRequest(api.getUrl(getActivity()),
+        if (user != null) {
+            updateUser(user);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-            new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Logger.i(TAG, "HTTP: body is " + response.toString());
-
-                    User user = api.parseJsonResponse(response);
-                    state.successGetMediaUser(PointHistoryListFragment.this, user);
-                }
-            },
-
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Logger.e(TAG, "HTTP: error = " + error.getMessage());
-
-                    state.failureGetMediaUser(PointHistoryListFragment.this);
-                }
-            }
-        );
-
-        mShowableProgressDialog.showProgressDialog(null, getString(R.string.dialog_message_communicating));
-        mRequestQueue.add(request);
+    /**
+     * ユーザー情報更新。
+     */
+    private void updateUser(User user) {
+        mPoint = user.point;
+        mCurrentPointText.setText(String.valueOf(mPoint));
     }
 
     // キャンペーン情報 (案件情報) 取得
     private void getPointHistories() {
-        // TODO: メディア ID 取得
         final GetPointHistories api = new GetPointHistories(getActivity());
 
         JsonArrayRequest request = new JsonArrayRequest(api.getUrl(getActivity()),
@@ -279,7 +276,7 @@ public class PointHistoryListFragment extends BaseFragment {
             new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
-                    Logger.i(TAG, "HTTP: body is " + response.toString());
+                    VolleyApi.Log(TAG, api, response);
 
                     mPointHistories = api.parseJsonResponse(response);
                     state.successGetPointHistories(PointHistoryListFragment.this, mPointHistories);
@@ -289,14 +286,14 @@ public class PointHistoryListFragment extends BaseFragment {
             new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Logger.e(TAG, "HTTP: error = " + error.getMessage());
+                    VolleyApi.Log(TAG, api, error);
 
                     state.failureGetPointHistories(PointHistoryListFragment.this);
                 }
             }
         );
 
-        mRequestQueue.add(request);
+        VolleyUtils.getRequestQueue(getActivity().getApplicationContext()).add(request);
     }
 
     // ポイント履歴を表示

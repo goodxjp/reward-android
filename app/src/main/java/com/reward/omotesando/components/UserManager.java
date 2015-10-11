@@ -79,7 +79,7 @@ public class UserManager {
                             } else {
                                 // message をそのまま表示するエラーコード
                                 // 未知 (多分、新設) のエラーコードは message をそのまま表示する。
-                                callbacks.onErrorGetUser(ErrorCode.getMessage(context, apiError.code));
+                                callbacks.onErrorGetUser(ErrorCode.getMessage(context, apiError.code, apiError.message));
                             }
                         }
                     }

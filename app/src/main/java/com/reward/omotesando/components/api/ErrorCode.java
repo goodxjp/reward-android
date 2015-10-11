@@ -32,7 +32,7 @@ public enum ErrorCode {
         this.messageResourceId = messageResourceId;
     }
 
-    public static String getMessage(Context context, int code) {
+    public static String getMessage(Context context, int code, String defaultMessage) {
         // ハッシュにすべきだけど、そんなに頻繁に起こるわけじゃないからぐるぐる回しでいいや。
         ErrorCode errorCode = null;
         for (ErrorCode ec : ErrorCode.values()) {
@@ -43,8 +43,8 @@ public enum ErrorCode {
         }
 
         if (errorCode == null) {
-            // バグ
-            return "";
+            // バグか、アプリに未登録のエラーコード
+            return defaultMessage + " (A" + code + ")";
         }
 
         return getMessage(context, errorCode);

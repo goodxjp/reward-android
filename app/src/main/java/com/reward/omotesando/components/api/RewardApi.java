@@ -18,6 +18,7 @@ import java.util.TreeMap;
 
 import com.reward.omotesando.R;
 import com.reward.omotesando.commons.Logger;
+import com.reward.omotesando.commons.Utils;
 import com.reward.omotesando.models.Media;
 import com.reward.omotesando.models.User;
 
@@ -81,14 +82,15 @@ abstract public class RewardApi<T> {
         return query.put(key, value);
     };
 
-    // メディアとユーザーをクエリー文字列に設定
-    protected void setQueryMediaAndUser() {
+    // 全 API で共通に付ける値をクエリー文字列に設定
+    protected void setQueryCommonValues(Context context) {
         if (this.media != null) {
             this.queryPut("mid", String.valueOf(this.media.mediaId));
         }
         if (this.user != null) {
             this.queryPut("uid", String.valueOf(this.user.userId));
         }
+        this.queryPut("avc", String.valueOf(Utils.getVersionCode(context)));
     }
 
     abstract public T parseJsonResponse(JSONObject jsonResponse);

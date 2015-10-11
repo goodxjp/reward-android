@@ -41,7 +41,7 @@ public class GetItems extends RewardApi<List<Item>> {
         this.path = context.getString(R.string.api_path_base) + "/items.json";
 
         // クエリー文字
-        setQueryMediaAndUser();
+        setQueryCommonValues(context);
 
         // ボディ
         this.jsonRequest = null;

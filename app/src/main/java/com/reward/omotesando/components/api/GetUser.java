@@ -31,7 +31,7 @@ public class GetUser extends RewardApi<User> {
         this.path = context.getString(R.string.api_path_base) + "/user.json";
 
         // クエリー文字
-        setQueryMediaAndUser();
+        setQueryCommonValues(context);
 
         // ボディ
         this.jsonRequest = null;

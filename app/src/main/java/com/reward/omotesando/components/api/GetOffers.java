@@ -43,7 +43,7 @@ public class GetOffers extends RewardApi<List<Offer>> {
         this.path = context.getString(R.string.api_path_base) + "/offers.json";
 
         // クエリー文字
-        setQueryMediaAndUser();
+        setQueryCommonValues(context);
 
         // ボディ
         this.jsonRequest = null;

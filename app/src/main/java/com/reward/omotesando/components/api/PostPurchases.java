@@ -41,7 +41,7 @@ public class PostPurchases extends RewardApi<Void> {
         this.path = context.getString(R.string.api_path_base) + "/purchases.json";
 
         // クエリー文字
-        setQueryMediaAndUser();
+        setQueryCommonValues(context);
 
         // ボディ
         this.jsonRequest = new JSONObject();

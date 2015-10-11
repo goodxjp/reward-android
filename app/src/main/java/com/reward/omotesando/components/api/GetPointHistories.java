@@ -40,7 +40,7 @@ public class GetPointHistories extends RewardApi<List<PointHistory>> {
         this.path = context.getString(R.string.api_path_base) + "/point_histories.json";
 
         // クエリー文字
-        setQueryMediaAndUser();
+        setQueryCommonValues(context);
 
         // ボディ
         this.jsonRequest = null;

@@ -31,23 +31,43 @@ public final class Utils {
         }
     }
 
-    private static String mVersionName;
+    private static int versionCode = -1;
 
-    public static String getVersionName(Context context) {
-        if (mVersionName != null) {
-            return mVersionName;
+    public static int getVersionCode(Context context) {
+        if (versionCode >= 0) {
+            return versionCode;
         }
 
         PackageManager pm = context.getPackageManager();
         PackageInfo packageInfo;
         try {
-            packageInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_ACTIVITIES);
-            mVersionName = packageInfo.versionName;
+            packageInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            versionCode = packageInfo.versionCode;
+        } catch (NameNotFoundException e) {
+            e.printStackTrace();
+            return -1;
+        }
+
+        return versionCode;
+    }
+
+    private static String versionName;
+
+    public static String getVersionName(Context context) {
+        if (versionName != null) {
+            return versionName;
+        }
+
+        PackageManager pm = context.getPackageManager();
+        PackageInfo packageInfo;
+        try {
+            packageInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            versionName = packageInfo.versionName;
         } catch (NameNotFoundException e) {
             e.printStackTrace();
             return null;
         }
 
-        return mVersionName;
+        return versionName;
     }
 }

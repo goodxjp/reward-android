@@ -31,7 +31,7 @@ import java.util.List;
  * ポイント履歴一覧フラグメント。
  */
 public class PointHistoryListFragment extends BaseFragment
-        implements UserManager.UserManagerCallbacks {
+        implements UserManager.UserManagerCallback {
 
     private static final String TAG = PointHistoryListFragment.class.getName();
     @Override
@@ -105,6 +105,7 @@ public class PointHistoryListFragment extends BaseFragment
     @Override
     public void onDetach() {
         super.onDetach();
+        UserManager.cancelGetUser(this);  // 送信していなくても呼んで大丈夫
     }
 
     // TODO: ポイント履歴が一件もないときの表示

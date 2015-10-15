@@ -60,7 +60,7 @@ public class GcmManager {
 
     // とりあえず、登録されているかどうかにかかわらず、登録しようとしてみる。
     // TODO: 不整合が起きたときに強制的に registration ID を取得するしくみを追加したい。
-    public String tryToRegister(Activity activity, GcmManagerCallbacks callbacks) {
+    public String tryToRegister(Activity activity, GcmManagerCallback callbacks) {
         // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
         if (checkPlayServices(activity) == false) {
             Logger.d(TAG, "gcm = " + mGcm);  // Google 開発者サービスをインストールしていなくても gcm インスタンスはできるようだ。
@@ -156,7 +156,7 @@ public class GcmManager {
      * Stores the registration ID and the app versionCode in the application's
      * shared preferences.
      */
-    private void registerInBackground(final GcmManagerCallbacks callbacks) {
+    private void registerInBackground(final GcmManagerCallback callbacks) {
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
@@ -233,7 +233,7 @@ public class GcmManager {
     }
 
     // コールバック
-    public static interface GcmManagerCallbacks {
+    public static interface GcmManagerCallback {
         void onRegistered(String regId);
     }
 }

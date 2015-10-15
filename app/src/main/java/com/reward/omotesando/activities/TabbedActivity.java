@@ -1,18 +1,17 @@
 package com.reward.omotesando.activities;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBar;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.reward.omotesando.BuildConfig;
 import com.reward.omotesando.R;
 import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.commons.VolleyUtils;
@@ -32,7 +31,7 @@ import org.json.JSONObject;
  * メイン (案件一覧表示) アクティビティ。
  */
 public class TabbedActivity extends BaseActivity
-        implements GcmManager.GcmManagerCallbacks,
+        implements GcmManager.GcmManagerCallback,
                    OfferListFragment.OnFragmentInteractionListener {
 
     protected String TAG = TabbedActivity.class.getName();

@@ -29,7 +29,7 @@ public class ItemManager {
 
     // 商品一覧取得
     // - 戻り値が null の場合はコールバックにて、商品一覧が通知される。
-    public static List<Item> getItems(final Context context, final ItemManagerCallbacks callbacks) {
+    public static List<Item> getItems(final Context context, final ItemManagerCallback callbacks) {
         if (items != null) {
             return items;
         }
@@ -78,7 +78,7 @@ public class ItemManager {
     }
 
     // テスト用
-    public static List<Item> getItems2(Context context, final ItemManagerCallbacks callbacks) {
+    public static List<Item> getItems2(Context context, final ItemManagerCallback callbacks) {
         final Handler mHandler = new Handler();
 
         Thread thread = new Thread(new Runnable() {
@@ -127,9 +127,9 @@ public class ItemManager {
     }
 
     // コールバック
-    // http://d.hatena.ne.jp/esmasui/20130628/1372386328
-    // - 冗長な方がわかりやすい気がするけど…
-    public static interface ItemManagerCallbacks {
+    // - http://d.hatena.ne.jp/esmasui/20130628/1372386328
+    //   冗長な方がわかりやすい気がするけど…
+    public static interface ItemManagerCallback {
         public void onSuccessGetItems(List<Item> items);
         public void onErrorGetItems(String message);
     }

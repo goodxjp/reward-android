@@ -26,10 +26,8 @@ import com.reward.omotesando.components.*;
 import com.reward.omotesando.components.api.PostPurchases;
 import com.reward.omotesando.models.Item;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -37,7 +35,7 @@ import java.util.List;
  */
 public class ItemFragment extends BaseFragment
         implements AbsListView.OnItemClickListener,
-                   ItemManager.ItemManagerCallbacks,
+        ItemManager.ItemManagerCallback,
                    View.OnClickListener,  // わかりにくい…リスト内のボタンのリスナー
                    ExchangeDialogFragment.OnExchangeDialogListener {
 

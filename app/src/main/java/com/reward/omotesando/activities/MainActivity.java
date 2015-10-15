@@ -45,7 +45,7 @@ import com.reward.omotesando.models.User;
  */
 public class MainActivity extends BaseActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks,
-                   GcmManager.GcmManagerCallbacks,
+                   GcmManager.GcmManagerCallback,
                    OfferListFragment.OnFragmentInteractionListener {
 
     private static final String TAG = MainActivity.class.getName();

@@ -1,8 +1,12 @@
 package com.reward.omotesando.components;
 
+import android.content.Context;
+
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.reward.omotesando.commons.Logger;
+import com.reward.omotesando.commons.VolleyUtils;
 import com.reward.omotesando.components.api.RewardApi;
 
 import org.json.JSONArray;
@@ -39,6 +43,23 @@ public class VolleyApi {
         String m = method.toUpperCase();
         return methodMap.get(m);
     }
+
+    // 共通のパラメータで送信処理
+    private static int INITIAL_TIMEOUT_MS = 30000;  // 頑張りすぎかも
+    private static DefaultRetryPolicy policy = new DefaultRetryPolicy(INITIAL_TIMEOUT_MS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+
+    public static Request send(Context context, Request request) {
+        request.setRetryPolicy(policy);
+        return VolleyUtils.getRequestQueue(context).add(request);
+    }
+
+    // API によってはタイムアウト値を変えた方がいいかも
+    public static Request send(Context context, Request request, int initialTimeoutMs) {
+        DefaultRetryPolicy policy = new DefaultRetryPolicy(initialTimeoutMs, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        request.setRetryPolicy(policy);
+        return VolleyUtils.getRequestQueue(context).add(request);
+    }
+
 
     public static void Log(String tag, RewardApi api, JSONObject response) {
         Logger.i(tag, "HTTP: [" + api.getClass().getSimpleName() + "] response = " + response.toString());
@@ -92,11 +113,10 @@ public class VolleyApi {
             apiError.code = o.getInt("code");
             apiError.message = o.getString("message");
         } catch (UnsupportedEncodingException e) {
-            // TODO 致命的エラー検出
             e.printStackTrace();
             return null;
         } catch (JSONException e) {
-            // TODO 致命的エラー検出
+            // API でエラーを返さない場合にありうる
             e.printStackTrace();
             return null;
         }

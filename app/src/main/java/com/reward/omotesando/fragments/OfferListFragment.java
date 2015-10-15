@@ -34,8 +34,8 @@ import com.reward.omotesando.models.User;
  */
 public class OfferListFragment extends BaseFragment
         implements AbsListView.OnItemClickListener,
-                   UserManager.UserManagerCallback,
-                   OfferListManager.OfferListManagerCallback {
+        UserManager.Callback,
+        OfferListManager.Callback {
 
     private static final String TAG = OfferListFragment.class.getName();
     @Override
@@ -193,12 +193,12 @@ public class OfferListFragment extends BaseFragment
      * OfferListManager.OfferListManagerCallback
      */
     @Override
-    public void onSuccess(List<Offer> offers) {
+    public void onSuccessGetOfferList(List<Offer> offers) {
         state.successGetOfferList(this, offers);
     }
 
     @Override
-    public void onError(String message) {
+    public void onErrorGetOfferList(String message) {
         state.failureGetOfferList(this, message);
     }
 

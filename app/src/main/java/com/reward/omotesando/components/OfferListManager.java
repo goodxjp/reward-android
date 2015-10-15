@@ -6,7 +6,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.reward.omotesando.R;
 import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.components.api.ErrorCode;
@@ -14,7 +13,6 @@ import com.reward.omotesando.components.api.GetOffers;
 import com.reward.omotesando.models.Offer;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,14 +38,14 @@ public class OfferListManager {
     private static Request request = null;
 
     // コールバック対象
-    private static List<OfferListManagerCallback> callbackList = new ArrayList<>();
+    private static List<Callback> callbackList = new ArrayList<>();
 
     /**
      * オファー一覧取得。
      *
      * - 戻り値が null の場合はコールバックにて、取得完了が通知される。
      */
-    public static List<Offer> getOfferList(final Context context, final OfferListManagerCallback callback) {
+    public static List<Offer> getOfferList(final Context context, final Callback callback) {
         // すでに取得情報が存在し、そんなに時間が経っていなければ、取得済みの情報を返す。
         if (offers != null && System.currentTimeMillis() < offersGotAt + OFFERS_TIMEOUT_MS) {
             Logger.d(TAG, "getOfferList have already got offers. offersGotAt = " + offersGotAt);
@@ -128,7 +126,7 @@ public class OfferListManager {
         return null;
     }
 
-    public static void cancelGetOfferList(OfferListManagerCallback callback) {
+    public static void cancelGetOfferList(Callback callback) {
         callbackList.remove(callback);
         // 待っている人が誰もいなくなったら、リクエスト自体もキャンセル
         if (callbackList.size() == 0) {
@@ -145,24 +143,24 @@ public class OfferListManager {
     }
 
     private static void allCallbackOnSuccess(List<Offer> offers) {
-        for (Iterator<OfferListManagerCallback> it = callbackList.iterator(); it.hasNext(); ) {
-            OfferListManagerCallback callback = it.next();
-            callback.onSuccess(offers);
+        for (Iterator<Callback> it = callbackList.iterator(); it.hasNext(); ) {
+            Callback callback = it.next();
+            callback.onSuccessGetOfferList(offers);
             it.remove();
         }
     }
 
     private static void allCallbackOnError(String message) {
-        for (Iterator<OfferListManagerCallback> it = callbackList.iterator(); it.hasNext(); ) {
-            OfferListManagerCallback callback = it.next();
-            callback.onError(message);
+        for (Iterator<Callback> it = callbackList.iterator(); it.hasNext(); ) {
+            Callback callback = it.next();
+            callback.onErrorGetOfferList(message);
             it.remove();
         }
     }
 
     // コールバック
-    public static interface OfferListManagerCallback {
-        public void onSuccess(List<Offer> offers);
-        public void onError(String message);
+    public static interface Callback {
+        public void onSuccessGetOfferList(List<Offer> offers);
+        public void onErrorGetOfferList(String message);
     }
 }

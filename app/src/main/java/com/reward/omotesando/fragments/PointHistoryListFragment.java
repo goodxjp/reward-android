@@ -31,7 +31,7 @@ import java.util.List;
  * ポイント履歴一覧フラグメント。
  */
 public class PointHistoryListFragment extends BaseFragment
-        implements UserManager.UserManagerCallback {
+        implements UserManager.Callback {
 
     private static final String TAG = PointHistoryListFragment.class.getName();
     @Override

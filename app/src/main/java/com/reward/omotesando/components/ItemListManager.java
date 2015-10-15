@@ -3,17 +3,19 @@ package com.reward.omotesando.components;
 import android.content.Context;
 import android.os.Handler;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.reward.omotesando.R;
-import com.reward.omotesando.commons.VolleyUtils;
+import com.reward.omotesando.components.api.ErrorCode;
 import com.reward.omotesando.components.api.GetItems;
 import com.reward.omotesando.models.Item;
 
 import org.json.JSONArray;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -24,14 +26,29 @@ import java.util.List;
 public class ItemListManager {
     static final String TAG = ItemListManager.class.getName();
 
-    // 商品一覧を保持しておく
-    private static List<Item> items;
+    // 商品一覧
+    private static List<Item> itemList;
 
-    // 商品一覧取得
-    // - 戻り値が null の場合はコールバックにて、商品一覧が通知される。
-    public static List<Item> getItems(final Context context, final ItemManagerCallback callbacks) {
-        if (items != null) {
-            return items;
+    // 通信中は非 null
+    private static Request request = null;
+
+    // コールバック対象
+    private static List<Callback> callbackList = new ArrayList<>();
+
+    /**
+     * 商品一覧取得。
+     *
+     * - 戻り値が null の場合はコールバックにて、取得完了が通知される。
+     */
+    public static List<Item> getItemList(final Context context, final Callback callback) {
+        if (itemList != null) {
+            return itemList;
+        }
+
+        // リクエスト送信中ならコールバック追加のみ
+        if (request != null) {
+            callbackList.add(callback);
+            return null;
         }
 
         final GetItems api = new GetItems(context);
@@ -42,12 +59,13 @@ public class ItemListManager {
                     @Override
                     public void onResponse(JSONArray response) {
                         VolleyApi.Log(TAG, api, response);
+                        ItemListManager.request = null;
 
-                        items  = api.parseJsonResponse(response);
-                        if (items != null) {
-                            callbacks.onSuccessGetItems(items);
+                        itemList = api.parseJsonResponse(response);
+                        if (itemList != null) {
+                            allCallbackOnSuccess(itemList);
                         } else {
-                            callbacks.onErrorGetItems(Error.getMessageCriticalSeverError(context, Error.API_GET_ITEMS));
+                            allCallbackOnError(Error.getMessageCriticalSeverError(context, Error.API_GET_ITEMS));
                         }
                     }
                 },
@@ -56,29 +74,64 @@ public class ItemListManager {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         VolleyApi.Log(TAG, api, error);
+                        ItemListManager.request = null;
 
-                        // TODO: 通信エラー内容によって、処理を変える
+                        VolleyApi.ApiError apiError = VolleyApi.parseVolleyError(error);
+
                         if (error.networkResponse == null) {
-                            // 通信状態が悪いか、サーバー停止
-                            // サーバーの停止は他の監視方法によって検知するので、通信状態が悪い方のケアを行う。
-                            callbacks.onErrorGetItems(context.getString(R.string.error_communication));
+                            // レスポンスなし
+
+                            // - 通信できない
+                            // - サーバー停止
+                            allCallbackOnError(context.getString(R.string.error_communication));
+                        } else if (apiError == null) {
+                            // レスポンスは返ってきてるけど、よくわかんないエラー (Heroku メンテナンス中に起こるかも)
+                            allCallbackOnError(Error.getMessageCriticalSeverError(context, Error.GET_OFFERS_ERROR_RESPONSE_WRONG));
                         } else {
-                            // - アカウント停止
-                            // - メンテナンス中
-                            // - サーバーエラー (DB おかしいとか、予期せぬ例外発生)
-                            callbacks.onErrorGetItems(Error.getMessageCriticalSeverError(context, 0));
+                            // message をそのまま表示するエラーコード
+                            // 未知 (多分、新設) のエラーコードは message をそのまま表示する。
+                            allCallbackOnError(ErrorCode.getMessage(context, apiError.code, apiError.message));
                         }
                     }
                 }
         );
 
-        VolleyUtils.getRequestQueue(context).add(request);
+        // 送信処理
+        ItemListManager.request = VolleyApi.send(context, request);
+        ItemListManager.callbackList.add(callback);
 
         return null;
     }
 
+    public static void cancelGetItems(Callback callback) {
+        callbackList.remove(callback);
+        // 待っている人が誰もいなくなったら、リクエスト自体もキャンセル
+        if (callbackList.size() == 0) {
+            if (request != null) {  // 無条件でこのメソッド呼んでいいのでリクエスト中じゃないこともある
+                request.cancel();
+                request = null;
+            }
+        }
+    }
+
+    private static void allCallbackOnSuccess(List<Item> items) {
+        for (Iterator<Callback> it = callbackList.iterator(); it.hasNext(); ) {
+            Callback callback = it.next();
+            callback.onSuccessGetItemList(items);
+            it.remove();
+        }
+    }
+
+    private static void allCallbackOnError(String message) {
+        for (Iterator<Callback> it = callbackList.iterator(); it.hasNext(); ) {
+            Callback callback = it.next();
+            callback.onErrorGetItemList(message);
+            it.remove();
+        }
+    }
+
     // テスト用
-    public static List<Item> getItems2(Context context, final ItemManagerCallback callbacks) {
+    public static List<Item> getItems2(Context context, final Callback callback) {
         final Handler mHandler = new Handler();
 
         Thread thread = new Thread(new Runnable() {
@@ -115,7 +168,7 @@ public class ItemListManager {
                         item.point = 1000;
                         items.add(item);
 
-                        callbacks.onSuccessGetItems(items);
+                        callback.onSuccessGetItemList(items);
                     }
                 });
             }
@@ -129,8 +182,8 @@ public class ItemListManager {
     // コールバック
     // - http://d.hatena.ne.jp/esmasui/20130628/1372386328
     //   冗長な方がわかりやすい気がするけど…
-    public static interface ItemManagerCallback {
-        public void onSuccessGetItems(List<Item> items);
-        public void onErrorGetItems(String message);
+    public static interface Callback {
+        public void onSuccessGetItemList(List<Item> items);
+        public void onErrorGetItemList(String message);
     }
 }

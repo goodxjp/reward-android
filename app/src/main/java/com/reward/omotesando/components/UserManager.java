@@ -2,14 +2,12 @@ package com.reward.omotesando.components;
 
 import android.content.Context;
 
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.reward.omotesando.R;
 import com.reward.omotesando.commons.Logger;
-import com.reward.omotesando.commons.VolleyUtils;
 import com.reward.omotesando.components.api.ErrorCode;
 import com.reward.omotesando.components.api.GetUser;
 import com.reward.omotesando.models.User;
@@ -43,14 +41,14 @@ public class UserManager {
     private static Request request = null;
 
     // コールバック対象
-    private static List<UserManagerCallback> callbackList = new ArrayList<>();
+    private static List<Callback> callbackList = new ArrayList<>();
 
     /**
      * ユーザー情報取得。
      *
      * - 戻り値が null の場合はコールバックにて、取得完了が通知される。
      */
-    public static User getUser(final Context context, final UserManagerCallback callback) {
+    public static User getUser(final Context context, final Callback callback) {
         // とりあえず、毎回取得
 //        if (user != null) {
 //            return user;
@@ -125,7 +123,7 @@ public class UserManager {
         return null;
     }
 
-    public static void cancelGetUser(UserManagerCallback callback) {
+    public static void cancelGetUser(Callback callback) {
         Logger.e(TAG, "cancel");
         callbackList.remove(callback);
         // 待っている人が誰もいなくなったら、リクエスト自体もキャンセル
@@ -139,8 +137,8 @@ public class UserManager {
     }
 
     private static void allCallbackOnSuccessGetUser(User user) {
-        for (Iterator<UserManagerCallback> it = callbackList.iterator(); it.hasNext(); ) {
-            UserManagerCallback callback = it.next();
+        for (Iterator<Callback> it = callbackList.iterator(); it.hasNext(); ) {
+            Callback callback = it.next();
             Logger.e(TAG, "callback success");
             callback.onSuccessGetUser(user);
             it.remove();
@@ -148,8 +146,8 @@ public class UserManager {
     }
 
     private static void allCallbackOnErrorGetUser(String message) {
-        for (Iterator<UserManagerCallback> it = callbackList.iterator(); it.hasNext(); ) {
-            UserManagerCallback callback = it.next();
+        for (Iterator<Callback> it = callbackList.iterator(); it.hasNext(); ) {
+            Callback callback = it.next();
             Logger.e(TAG, "callback error");
             callback.onErrorGetUser(message);
             it.remove();
@@ -159,7 +157,7 @@ public class UserManager {
     // コールバック
     // - http://d.hatena.ne.jp/esmasui/20130628/1372386328
     //   冗長な方がわかりやすい気がするけど…
-    public static interface UserManagerCallback {
+    public static interface Callback {
         public void onSuccessGetUser(User user);
         public void onErrorGetUser(String message);
     }

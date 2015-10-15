@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class ItemFragment extends BaseFragment
         implements AbsListView.OnItemClickListener,
-        ItemListManager.ItemManagerCallback,
+                   ItemListManager.Callback,
                    View.OnClickListener,  // わかりにくい…リスト内のボタンのリスナー
                    ExchangeDialogFragment.OnExchangeDialogListener {
 
@@ -130,6 +130,7 @@ public class ItemFragment extends BaseFragment
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        state.detach(this);
     }
 
 
@@ -152,12 +153,12 @@ public class ItemFragment extends BaseFragment
      */
 
     @Override
-    public void onSuccessGetItems(List<Item> items) {
+    public void onSuccessGetItemList(List<Item> items) {
         state.successGetItems(this, items);
     }
 
     @Override
-    public void onErrorGetItems(String message) {
+    public void onErrorGetItemList(String message) {
         state.failureGetItems(this, message);
     }
 
@@ -271,9 +272,9 @@ public class ItemFragment extends BaseFragment
             @Override
             public void start(ItemFragment fragment) {
                 if (fragment.getItems()) {
-                    fragment.transit(READY);
+                    transit(fragment, READY);
                 } else {
-                    fragment.transit(GETTING_ITEMS);
+                    transit(fragment, GETTING_ITEMS);
                 }
             }
         },
@@ -284,18 +285,21 @@ public class ItemFragment extends BaseFragment
             public void successGetItems(ItemFragment fragment, List<Item> items) {
                 fragment.showItems(items);
 
-                fragment.transit(READY);
+                transit(fragment, READY);
             }
 
             @Override
             public void failureGetItems(ItemFragment fragment, String message) {
-                // TODO: 端末の通信状態を確認
-                // TODO: サーバーの状態を確認
-                // TODO: エラーダイアログを表示
-                // TODO: ダイアログでエラーメッセージ表示。
                 Toast.makeText(fragment.getActivity(), message, Toast.LENGTH_LONG).show();
 
-                fragment.transit(ERROR);
+                transit(fragment, ERROR);
+            }
+
+            @Override
+            public void detach(ItemFragment fragment) {
+                ItemListManager.cancelGetItems(fragment);
+
+                transit(fragment, INITIAL);
             }
         },
 
@@ -307,9 +311,9 @@ public class ItemFragment extends BaseFragment
             @Override
             public void start(ItemFragment fragment) {
                 if (fragment.getItems()) {
-                    fragment.transit(READY);
+                    transit(fragment, READY);
                 } else {
-                    fragment.transit(GETTING_ITEMS);
+                    transit(fragment, GETTING_ITEMS);
                 }
             }
         };
@@ -331,12 +335,20 @@ public class ItemFragment extends BaseFragment
         public void failureGetItems(ItemFragment fragment, String message) {
             throw new IllegalStateException();
         }
-    }
 
-    // 状態遷移 (enum State 内でのみ使用すること)
-    private void transit(State nextState) {
-        Logger.d(TAG, "STATE: " + state + " -> " + nextState);
-        state = nextState;
+        // Detach
+        public void detach(ItemFragment fragment) {
+            // どの状態でも Detach イベントが発生する可能性あり
+            // 通信中でなければ何もしない。
+        }
+
+        /*
+         * 状態遷移 (enum State 内でのみ使用すること)
+        */
+        private static void transit(ItemFragment fragment, State nextState) {
+            Logger.d(TAG, "STATE: " + fragment.state + " -> " + nextState);
+            fragment.state = nextState;
+        }
     }
 
     /**
@@ -347,7 +359,7 @@ public class ItemFragment extends BaseFragment
     private boolean getItems() {
         List<Item> items;
 
-        items = ItemListManager.getItems(getActivity().getApplicationContext(), this);
+        items = ItemListManager.getItemList(getActivity().getApplicationContext(), this);
 
         if (items != null) {
             showItems(items);

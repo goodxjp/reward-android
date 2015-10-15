@@ -25,7 +25,7 @@ import static com.reward.omotesando.components.api.ErrorCode.*;
 /**
  * ユーザーマネージャー。
  *
- * - ユーザー情報の取得、保存を管理する
+ * - ユーザー情報の取得、データを管理する
  *
  * - シングルトンにすべきか、ユーティリティクラス (クラス変数、クラスメソッド) にすべきか？
  *   - http://qiita.com/mo12ino/items/abf2e31e34278ebea42c

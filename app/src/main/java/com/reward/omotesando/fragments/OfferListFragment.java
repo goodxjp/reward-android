@@ -11,26 +11,13 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.List;
 
 import com.reward.omotesando.R;
 
-import com.reward.omotesando.activities.ShowableProgressDialog;
 import com.reward.omotesando.commons.Logger;
-import com.reward.omotesando.commons.VolleyUtils;
+import com.reward.omotesando.components.OfferListManager;
 import com.reward.omotesando.components.UserManager;
-import com.reward.omotesando.components.api.GetUser;
-import com.reward.omotesando.components.api.GetOffers;
 import com.reward.omotesando.models.Offer;
 import com.reward.omotesando.models.User;
 
@@ -47,7 +34,8 @@ import com.reward.omotesando.models.User;
  */
 public class OfferListFragment extends BaseFragment
         implements AbsListView.OnItemClickListener,
-                   UserManager.UserManagerCallback {
+                   UserManager.UserManagerCallback,
+                   OfferListManager.OfferListManagerCallback {
 
     private static final String TAG = OfferListFragment.class.getName();
     @Override
@@ -73,9 +61,6 @@ public class OfferListFragment extends BaseFragment
      */
     private ListAdapter mAdapter;
 
-    // 通信
-    private RequestQueue mRequestQueue;
-    private Request mRequest;
 
     /*
      * 初期処理
@@ -115,14 +100,15 @@ public class OfferListFragment extends BaseFragment
             Logger.v(TAG, "Create time  = " + getArguments().getLong(ARG_CREATE_TIME));
             Logger.v(TAG, "Current time = " + System.currentTimeMillis());
         }
-
-        mRequestQueue = VolleyUtils.getRequestQueue(getActivity());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // TODO: ログだけのために無理やり感が強い。もっときれいな方法ないか？
         super.onCreateView(inflater, container, savedInstanceState);
+
+        // やっぱり、onDetach -> onAttach -> onCreate で変数が初期化されないのが腑に落ちない。
+        Logger.v(TAG, "state = " + state);
 
         // バックスタックから戻ったときに状態は遷移したままで onCreateView のみが呼ばれる。
         if (state == State.INITIAL) {
@@ -162,12 +148,12 @@ public class OfferListFragment extends BaseFragment
     @Override
     public void onDetach() {
         super.onDetach();
-        state.detach(this);
 
-        if (mRequest != null) {
-            mRequest.cancel();
-        }
-        mListener = null;
+        // ここで通信を止めていいか微妙だけど、ここが Fragment 終了時の最後の砦なのでしょうがない。
+        // ただし、回転したときなどは onDetach -> onAttach -> onCreateView となり、終了されないこともあるので注意。
+
+        // 取得中の通信止めちゃうので、onAttach で再取得するために初期状態に戻す。
+        state.detach(this);
     }
 
 
@@ -182,31 +168,41 @@ public class OfferListFragment extends BaseFragment
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
             //mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
+
+            // アクティビティにオファー詳細表示依頼
             mListener.onFragmentInteraction(offer);
         }
-
-        // TODO: オファー詳細表示
-
-        //Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(offer.getExecuteUrl()));
-        //startActivity(i);
     }
 
 
     /*
-     * UserManager.UserManagerCallbacks
+     * UserManager.UserManagerCallback
      */
     @Override
     public void onSuccessGetUser(User user) {
-        state.successGetMediaUser(this, user);
+        state.successGetUser(this, user);
     }
 
     @Override
     public void onErrorGetUser(String message) {
-        state.failureGetMediaUser(this, message);
+        state.failureGetUser(this, message);
     }
 
 
-    // このフラグメントにデータ取得の責任も持たせてしまう。
+    /*
+     * OfferListManager.OfferListManagerCallback
+     */
+    @Override
+    public void onSuccess(List<Offer> offers) {
+        state.successGetOfferList(this, offers);
+    }
+
+    @Override
+    public void onError(String message) {
+        state.failureGetOfferList(this, message);
+    }
+
+
     /*
      * 状態管理
      *
@@ -221,11 +217,12 @@ public class OfferListFragment extends BaseFragment
         INITIAL {
             @Override
             public void start(OfferListFragment fragment) {
-                if (fragment.getUser()) {
-                    fragment.getCampaignData();
-                    fragment.transit(GETTING_OFFERS);
+                if (fragment.getUser() == false) {
+                    transit(fragment, GETTING_USER);
+                } else if (fragment.getOfferList() == false) {
+                    transit(fragment, GETTING_OFFERS);
                 } else {
-                    fragment.transit(GETTING_USER);
+                    transit(fragment, READY);
                 }
             }
         },
@@ -233,17 +230,19 @@ public class OfferListFragment extends BaseFragment
         // ユーザー情報取得中
         GETTING_USER {
             @Override
-            public void successGetMediaUser(OfferListFragment fragment, User user) {
+            public void successGetUser(OfferListFragment fragment, User user) {
                 // ポイント表示を更新
 //                fragment.mPoint = user.point;
 //                fragment.mCurrentPointText.setText(String.valueOf(fragment.mPoint));
-                fragment.getCampaignData();
-
-                fragment.transit(GETTING_OFFERS);
+                if (fragment.getOfferList() == false) {
+                    transit(fragment, GETTING_OFFERS);
+                } else {
+                    transit(fragment, READY);
+                }
             }
 
             @Override
-            public void failureGetMediaUser(OfferListFragment fragment, String message) {
+            public void failureGetUser(OfferListFragment fragment, String message) {
                 // TODO: エラーの表示方法をちゃんと考えた方がよさげ
                 if (message != null) {
                     Toast.makeText(fragment.getActivity(), message, Toast.LENGTH_LONG).show();
@@ -251,45 +250,44 @@ public class OfferListFragment extends BaseFragment
                     Toast.makeText(fragment.getActivity(), fragment.getString(R.string.error_communication), Toast.LENGTH_LONG).show();
                 }
 
-                fragment.transit(ERROR);
+                transit(fragment, ERROR);
+            }
+
+            @Override
+            public void detach(OfferListFragment fragment) {
+                UserManager.cancelGetUser(fragment);
+
+                transit(fragment, INITIAL);
             }
         },
 
         // オファー情報取得中
         GETTING_OFFERS {
             @Override
-            public void successGetCampaginData(OfferListFragment fragment, List<Offer> offers) {
-                fragment.mRequest = null;
+            public void successGetOfferList(OfferListFragment fragment, List<Offer> offers) {
+                fragment.offers = offers;
+                fragment.showOfferList(offers);
 
-                fragment.showCampaignData();
-
-                ShowableProgressDialog activity = (ShowableProgressDialog) fragment.getActivity();
-                if (activity != null) {
-                    activity.dismissProgressDialog();
-                }
-
-                fragment.transit(READY);
+                transit(fragment, READY);
             }
 
             @Override
-            public void failureGetCampaginData(OfferListFragment fragment) {
-                fragment.mRequest = null;
-
-                // TODO: 端末の通信状態を確認
-                // TODO: サーバーの状態を確認
-                // TODO: エラーダイアログを表示
-                ShowableProgressDialog activity = (ShowableProgressDialog) fragment.getActivity();
-                if (activity != null) {
-                    activity.dismissProgressDialog();
+            public void failureGetOfferList(OfferListFragment fragment, String message) {
+                // TODO: エラーの表示方法をちゃんと考えた方がよさげ
+                if (message != null) {
+                    Toast.makeText(fragment.getActivity(), message, Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(fragment.getActivity(), fragment.getString(R.string.error_communication), Toast.LENGTH_LONG).show();
                 }
 
-                // TODO: 名前真面目に考える
-                Activity activity2 = fragment.getActivity();
-                if (activity2 != null) {
-                    Toast.makeText(activity2, activity2.getString(R.string.error_communication), Toast.LENGTH_LONG).show();
-                }
+                transit(fragment, ERROR);
+            }
 
-                fragment.transit(ERROR);
+            @Override
+            public void detach(OfferListFragment fragment) {
+                OfferListManager.cancelGetOfferList(fragment);
+
+                transit(fragment, INITIAL);
             }
         },
 
@@ -297,11 +295,7 @@ public class OfferListFragment extends BaseFragment
         READY,
 
         // エラー状態
-        ERROR,
-
-        // 終了状態
-        EXIT;
-
+        ERROR;
 
         /*
          * イベント
@@ -312,39 +306,38 @@ public class OfferListFragment extends BaseFragment
         }
 
         // ユーザー情報取得成功
-        public void successGetMediaUser(OfferListFragment fragment, User user) {
+        public void successGetUser(OfferListFragment fragment, User user) {
             throw new IllegalStateException();
         }
 
         // ユーザー情報取得失敗
-        public void failureGetMediaUser(OfferListFragment fragment, String message) {
+        public void failureGetUser(OfferListFragment fragment, String message) {
             throw new IllegalStateException();
         }
 
         // キャンペーン情報取得成功
-        public void successGetCampaginData(OfferListFragment fragment, List<Offer> offers) {
+        public void successGetOfferList(OfferListFragment fragment, List<Offer> offers) {
             throw new IllegalStateException();
         }
 
         // キャンペーン情報取得失敗
-        public void failureGetCampaginData(OfferListFragment fragment) {
+        public void failureGetOfferList(OfferListFragment fragment, String message) {
             throw new IllegalStateException();
         }
 
-        // 終了 (どの状態でも終了イベントがくる可能性がある)
+        // Detach
         public void detach(OfferListFragment fragment) {
-            // 上位で処理した方がいい？終了処理を忘れないように独立した状態を作った方がいい？
-            UserManager.cancelGetUser(fragment);  // 送信していなくても呼んで大丈夫
-
-            // Detach のときに終了状態にしてしまうと、Fragment が復活したときに直前の状態がわからなくなってしまう。
-            //fragment.transit(EXIT);
+            // どの状態でも Detach イベントが発生する可能性あり
+            // 通信中でなければ何もしない。
         }
-    }
 
-    // 状態遷移 (enum State 内でのみ使用すること)
-    private void transit(State nextState) {
-        Logger.d(TAG, "STATE: " + state + " -> " + nextState);
-        state = nextState;
+        /*
+         * 状態遷移 (enum State 内でのみ使用すること)
+         */
+        private static void transit(OfferListFragment fragment, State nextState) {
+            Logger.d(TAG, "STATE: " + fragment.state + " -> " + nextState);
+            fragment.state = nextState;
+        }
     }
 
     /**
@@ -363,51 +356,32 @@ public class OfferListFragment extends BaseFragment
         }
     }
 
-    // キャンペーン情報 (案件情報) 取得
-    private void getCampaignData() {
-        // 途中で Detach された場合
-        if (getActivity() == null) {
-            return;
+    /**
+     * オファー情報取得。
+     *
+     * @return true: 取得成功 / false: 取得待ち
+     */
+    private boolean getOfferList() {
+        List<Offer> offerList = OfferListManager.getOfferList(getActivity().getApplicationContext(), this);
+
+        if (offerList != null) {
+            this.offers = offerList;
+            showOfferList(offerList);
+            return true;
+        } else {
+            return false;
         }
-
-        Logger.e(TAG, "getCampaignData Activity = " + getActivity());
-        //final GetOffers api = new GetOffers(getActivity());  // こっちだと null で落ちる？
-        final GetOffers api = new GetOffers(getActivity().getApplicationContext());
-
-        JsonArrayRequest request = new JsonArrayRequest(api.getUrl(getActivity()),
-
-            new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-                    Logger.i(TAG, "HTTP: body is " + response.toString());
-
-                    offers = api.parseJsonResponse(response);
-                    state.successGetCampaginData(OfferListFragment.this, offers);
-                }
-            },
-
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Logger.e(TAG, "HTTP: error = " + error.getMessage());
-
-                    state.failureGetCampaginData(OfferListFragment.this);
-                }
-            }
-        );
-
-        mRequestQueue.add(request);
-        mRequest = request;
     }
 
-    private void showCampaignData() {
-        // この時点で Activity が存在しないパターンがある
+    private void showOfferList(List<Offer> offerList) {
+        // この時点で Activity が存在しないパターンがある？
         if (getActivity() == null) {
-            Logger.e(TAG, "showCampaignData() getActivity is null.");
-            return;
+            Logger.e(TAG, "showOfferList() getActivity is null.");
+            throw new NullPointerException();  // TODO: あとで消す
+            //return;
         }
 
-        mAdapter = new OfferArrayAdapter(getActivity(), R.layout.list_item_offer, offers);
+        mAdapter = new OfferArrayAdapter(getActivity(), R.layout.list_item_offer, offerList);
         // http://skyarts.com/blog/jp/skyarts/?p=3964
 //        // API 9 で動かすための苦肉の策。
 //        if (mListView instanceof ListView) {

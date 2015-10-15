@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class ItemFragment extends BaseFragment
         implements AbsListView.OnItemClickListener,
-        ItemManager.ItemManagerCallback,
+        ItemListManager.ItemManagerCallback,
                    View.OnClickListener,  // わかりにくい…リスト内のボタンのリスナー
                    ExchangeDialogFragment.OnExchangeDialogListener {
 
@@ -347,7 +347,7 @@ public class ItemFragment extends BaseFragment
     private boolean getItems() {
         List<Item> items;
 
-        items = ItemManager.getItems(getActivity().getApplicationContext(), this);
+        items = ItemListManager.getItems(getActivity().getApplicationContext(), this);
 
         if (items != null) {
             showItems(items);

@@ -22,6 +22,14 @@ public final class Error {
     public static final int GET_USER_ERROR_RESPONSE_WRONG = 1002;
 
     /*
+     * GET offers
+     */
+    // レスポンス不正
+    public static final int GET_OFFERS_RESPONSE_WRONG = 2001;
+    // エラーレスポンス不正
+    public static final int GET_OFFERS_ERROR_RESPONSE_WRONG = 2002;
+
+    /*
      * GET items
      */
     public static final int API_GET_ITEMS = 9005;  // API GetItems が致命的

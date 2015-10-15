@@ -17,12 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 商品マネージャー。
+ * 商品一覧マネージャー。
  *
- * - 賞品情報の取得、保存を管理する
+ * - 商品情報の取得、データを管理する
  */
-public class ItemManager {
-    static final String TAG = ItemManager.class.getName();
+public class ItemListManager {
+    static final String TAG = ItemListManager.class.getName();
 
     // 商品一覧を保持しておく
     private static List<Item> items;

@@ -11,6 +11,12 @@ import com.reward.omotesando.R;
  */
 public enum ErrorCode {
     /*
+     * 購入系
+     */
+    ERROR_CODE_2005(2005, R.string.message_restricted_one_day),
+    ERROR_CODE_2007(2007, R.string.message_out_of_stock),
+
+    /*
      * 共通
      */
     // 想定外の例外

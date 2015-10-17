@@ -8,6 +8,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.reward.omotesando.R;
+import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.components.api.ErrorCode;
 import com.reward.omotesando.components.api.GetItems;
 import com.reward.omotesando.models.Item;
@@ -47,6 +48,7 @@ public class ItemListManager {
 
         // リクエスト送信中ならコールバック追加のみ
         if (request != null) {
+            Logger.e(TAG, "getItemList() Already sending request.");
             callbackList.add(callback);
             return null;
         }
@@ -65,7 +67,7 @@ public class ItemListManager {
                         if (itemList != null) {
                             allCallbackOnSuccess(itemList);
                         } else {
-                            allCallbackOnError(Error.getMessageCriticalSeverError(context, Error.API_GET_ITEMS));
+                            allCallbackOnError(Error.getMessageCriticalSeverError(context, Error.GET_ITEMS_RESPONSE_WRONG));
                         }
                     }
                 },
@@ -86,7 +88,7 @@ public class ItemListManager {
                             allCallbackOnError(context.getString(R.string.error_communication));
                         } else if (apiError == null) {
                             // レスポンスは返ってきてるけど、よくわかんないエラー (Heroku メンテナンス中に起こるかも)
-                            allCallbackOnError(Error.getMessageCriticalSeverError(context, Error.GET_OFFERS_ERROR_RESPONSE_WRONG));
+                            allCallbackOnError(Error.getMessageCriticalSeverError(context, Error.GET_ITEMS_ERROR_RESPONSE_WRONG));
                         } else {
                             // message をそのまま表示するエラーコード
                             // 未知 (多分、新設) のエラーコードは message をそのまま表示する。

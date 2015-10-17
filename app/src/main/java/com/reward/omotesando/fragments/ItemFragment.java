@@ -2,6 +2,7 @@ package com.reward.omotesando.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,23 +13,28 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.RequestQueue;
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.reward.omotesando.R;
-
+import com.reward.omotesando.activities.PointHistoryActivity;
 import com.reward.omotesando.activities.ShowableProgressDialog;
 import com.reward.omotesando.commons.Logger;
-import com.reward.omotesando.commons.VolleyUtils;
-import com.reward.omotesando.components.*;
+import com.reward.omotesando.components.Error;
+import com.reward.omotesando.components.ItemListManager;
+import com.reward.omotesando.components.VolleyApi;
+import com.reward.omotesando.components.api.ErrorCode;
 import com.reward.omotesando.components.api.PostPurchases;
 import com.reward.omotesando.models.Item;
 
 import org.json.JSONObject;
 
 import java.util.List;
+
+import static com.reward.omotesando.components.api.ErrorCode.ERROR_CODE_2005;
+import static com.reward.omotesando.components.api.ErrorCode.ERROR_CODE_2007;
+import static com.reward.omotesando.components.api.ErrorCode.ERROR_CODE_9999;
 
 /**
  * 商品一覧 (ポイント交換) フラグメント。
@@ -60,7 +66,6 @@ public class ItemFragment extends BaseFragment
     /*
      * 初期処理
      */
-
     public static ItemFragment newInstance() {
         ItemFragment fragment = new ItemFragment();
         Bundle args = new Bundle();
@@ -79,10 +84,13 @@ public class ItemFragment extends BaseFragment
     /*
      * ライフサイクル
      */
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 回転しても作り直さない。
+        // 通信直後に回転すると Fragment が作り直されちゃって、ダイアログで落ちる。
+        setRetainInstance(true);
 
         if (getArguments() != null) {
         }
@@ -131,13 +139,24 @@ public class ItemFragment extends BaseFragment
         super.onDetach();
         mListener = null;
         state.detach(this);
+
+        // 回転の時はリクエストを続けたいので、ここでキャンセルはしないほうがよさげ
+//        // 購入リクエストキャンセル
+//        // サーバーに到達してしまっていたらしょうがないが、送信で手間取っているときはキャンセルできるはず。
+//        if (purchaseRequest != null) {
+//            purchaseRequest.cancel();
+//            purchaseRequest = null;
+//        }
+
+        // やっぱり、回転と終了の区別がつかないのが問題。
+        // 回転の時は通信続けたい。
+        // 終了の時は通信続けると、ダイアログで落ちる。
     }
 
 
     /*
      * AbsListView.OnItemClickListener
      */
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (null != mListener) {
@@ -151,7 +170,6 @@ public class ItemFragment extends BaseFragment
     /*
      * ItemManager.ItemManagerCallbacks
      */
-
     @Override
     public void onSuccessGetItemList(List<Item> items) {
         state.successGetItems(this, items);
@@ -171,8 +189,7 @@ public class ItemFragment extends BaseFragment
     @Override
     public void onClick(View v) {
         Item item = (Item) v.getTag();
-        // TODO: リソース化、文字列リソース整理
-        ExchangeDialogFragment dialog = ExchangeDialogFragment.newInstance(item.name, "交換してもよいですか？", item);
+        ExchangeDialogFragment dialog = ExchangeDialogFragment.newInstance(item.name, getActivity().getString(R.string.message_confirm_exchange), item);
         dialog.setTargetFragment(this, 0);  // コールバック用のイベントリスナー登録のため。これが定型パターンらしい。
         dialog.show(getActivity().getSupportFragmentManager(), "exchange_dialog");
     }
@@ -186,78 +203,113 @@ public class ItemFragment extends BaseFragment
     // TODO: Item はパラメータがいい？Fragment で保持する？
     @Override
     public void onExchangeDialogClick(int which, Item item) {
-        Logger.e(TAG, "onExchangeDialogClick " + which);
+        Logger.d(TAG, "onExchangeDialogClick " + which);
         exchange(item);
     }
 
+    // 購入リクエストを送信中かどうか
+    private static Request purchaseRequest = null;
+
+    /**
+     * ギフト券交換処理。
+     *
+     * @param item  交換対象の商品
+     */
     private void exchange(Item item) {
-        Context applicationContext = getActivity().getApplicationContext();
+        // TODO: 全部名前変える。
+        final Context appContext = getActivity().getApplicationContext();
+
+        // すでに購入リクエスト送信中なら何もしない。
+        if (purchaseRequest != null) {
+            Logger.e(TAG, "exchange() Already sending purchaseRequest.");
+            return;
+        }
 
         // 購入 API
-        final PostPurchases api = new PostPurchases(applicationContext, item);
+        final PostPurchases api = new PostPurchases(appContext, item);
 
-        JsonObjectRequest request = new JsonObjectRequest(VolleyApi.getVolleyMethod(api), api.getUrl(applicationContext), api.getJsonRequest(),
+        JsonObjectRequest request = new JsonObjectRequest(VolleyApi.getVolleyMethod(api), api.getUrl(appContext), api.getJsonRequest(),
 
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        purchaseRequest = null;
+
                         VolleyApi.Log(TAG, api, response);
 
-                        ShowableProgressDialog showableDialog = (ShowableProgressDialog) getActivity();
-                        if (showableDialog != null) {
-                            showableDialog.dismissProgressDialog();
-                        }
-
-                        // TODO: 交換後の画面遷移をどうするか？
-                        // TODO: リソース化、文字列リソース整理
-                        Toast.makeText(getActivity(), "交換完了！ (交換後の画面遷移要検討)", Toast.LENGTH_LONG).show();
+                        // TODO: 交換後の処理をきちんと実装
+                        Toast.makeText(appContext, "交換完了！ (交換後の画面遷移要検討)", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(appContext, PointHistoryActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        startActivity(intent);
                     }
                 },
 
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        purchaseRequest = null;
+
                         VolleyApi.Log(TAG, api, error);
                         VolleyApi.ApiError apiError = VolleyApi.parseVolleyError(error);
 
-                        ShowableProgressDialog showableDialog = (ShowableProgressDialog) getActivity();
-                        if (showableDialog != null) {
-                            showableDialog.dismissProgressDialog();
-                        }
-
                         Activity activity = getActivity();
 
-                        // TODO: 通信エラー内容によって、処理を変える
-                        if (apiError == null) {
-                        //if (error.networkResponse == null) {
-                            // 通信状態が悪いか、サーバー停止
-                            // サーバーの停止は他の監視方法によって検知するので、通信状態が悪い方のケアを行う。
-                            Toast.makeText(activity, activity.getString(R.string.error_communication), Toast.LENGTH_LONG).show();
+                        if (error.networkResponse == null) {
+                            // レスポンスなし
+                            Toast.makeText(appContext, Error.getMessageCommunicationError(appContext), Toast.LENGTH_LONG).show();
+                        } else if (apiError == null) {
+                            // レスポンスは返ってきてるけど、よくわかんないエラー (Heroku メンテナンス中に起こるかも)
+                            Toast.makeText(appContext, Error.getMessageCriticalSeverError(appContext, Error.POST_PURCHASES_ERROR_RESPONSE_WRONG), Toast.LENGTH_LONG).show();
                         } else {
-                            // TODO: 在庫切れなどエラーによりメッセージ出し分け
-                            // 購入 API
-                            // - ポイント不足
-                            // - 在庫切れ
-                            // - ポイント不一致 (ポイント変更)
-                            // - 1 日 1 回の制限
-                            // - 何からの制限がかかって購入不可
+                            // API からの正常なエラーレスポンス
 
-                            // - アカウント停止
-                            // - メンテナンス中
-                            // - サーバーエラー (DB おかしいとか、予期せぬ例外発生)
-                            Toast.makeText(activity, apiError.message + "(" + apiError.code + ")", Toast.LENGTH_LONG).show();
+                            if (apiError.code == ERROR_CODE_9999.code) {
+                                // 強制終了
+                                // 本当はダメ。上位にこの種類のエラーを渡して、上位で処理すべき。
+                                System.exit(0);
+                                // TODO: 全 API で共通で起こりうるエラーの処理を共通化したい。
+                            } else if (apiError.code == ERROR_CODE_2005.code) {
+                                // 1 日 1 回までしか交換できない
+
+                                // Detach 時に通信キャンセルしていないのでレスポンス受信時に Activity がない場合がある。
+                                if (activity == null) {
+                                    Toast.makeText(appContext, ErrorCode.getMessage(appContext, apiError.code, apiError.message), Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+
+                                // TODO: とりあえず簡易的にダイアログ表示。ちゃんと汎用化したい。
+                                AlertDialogFragment dialog = AlertDialogFragment.newInstance(
+                                        activity.getString(R.string.dialog_title_error_exchange),
+                                        activity.getString(R.string.message_restricted_one_day));
+                                dialog.show(getActivity().getSupportFragmentManager(), "alert_dialog");
+                            } else if (apiError.code == ERROR_CODE_2007.code) {
+                                // 在庫切れ
+
+                                // Detach 時に通信キャンセルしていないのでレスポンス受信時に Activity がない場合がある。
+                                if (activity == null) {
+                                    Toast.makeText(appContext, ErrorCode.getMessage(appContext, apiError.code, apiError.message), Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+
+                                // TODO: とりあえず簡易的にダイアログ表示。ちゃんと汎用化したい。
+                                AlertDialogFragment dialog = AlertDialogFragment.newInstance(
+                                        activity.getString(R.string.dialog_title_error_exchange),
+                                        activity.getString(R.string.message_out_of_stock));
+                                dialog.show(getActivity().getSupportFragmentManager(), "alert_dialog");
+                            } else {
+                                // message をそのまま表示するエラーコード
+                                // 未知 (多分、新設) のエラーコードは message をそのまま表示する。
+                                Toast.makeText(appContext, ErrorCode.getMessage(appContext, apiError.code, apiError.message), Toast.LENGTH_LONG).show();
+                            }
                         }
                     }
                 });
 
-        // TODO: 全ての API でタイムアウト時間変更
-        DefaultRetryPolicy policy = new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        request.setRetryPolicy(policy);
+        // 送信処理
+        purchaseRequest = VolleyApi.send(appContext, request);
 
         ((ShowableProgressDialog) getActivity()).showProgressDialog(null, getString(R.string.dialog_message_communicating));
-
-        RequestQueue requestQueue = VolleyUtils.getRequestQueue(getActivity().getApplicationContext());
-        requestQueue.add(request);
     }
 
 
@@ -403,5 +455,4 @@ public class ItemFragment extends BaseFragment
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
     }
-
 }

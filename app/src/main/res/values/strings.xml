@@ -34,10 +34,18 @@
     <string name="dialog_title_error_init">Initializing Error</string>
     <string name="dialog_message_error_init">Initializing error occurred. Please retry after checking network.</string>
 
+    <string name="dialog_title_error_exchange">Exchange Error</string>
+
     <string name="query_mail_subject">Inquiry</string>
     <string name="query_mail_text"></string>
 
+    <!-- 汎用メッセージ (トーストやダイアログなどで使用する) -->
     <string name="error_communication">Communication error</string>
+
+    <!-- ギフト券交換 -->
+    <string name="message_confirm_exchange">Exchange OK?</string>
+    <string name="message_restricted_one_day">Restricted to once exchange a day</string>
+    <string name="message_out_of_stock">Out of stock</string>
 
     <string name="message_critical_server_error">Server error</string>
 

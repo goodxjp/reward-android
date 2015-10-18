@@ -1,10 +1,14 @@
 package com.reward.omotesando.activities;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentTabHost;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TabHost;
 
 import com.reward.omotesando.R;
+import com.reward.omotesando.fragments.GiftListFragment;
+import com.reward.omotesando.fragments.PointHistoryListFragment;
 
 public class PointHistoryActivity extends BaseActivity {
 
@@ -12,6 +16,15 @@ public class PointHistoryActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_point_history);
+
+        FragmentTabHost host = (FragmentTabHost)findViewById(android.R.id.tabhost);
+        host.setup(this, getSupportFragmentManager(), R.id.content);
+
+        TabHost.TabSpec tabSpec1 = host.newTabSpec("tab1").setIndicator("獲得履歴");
+        host.addTab(tabSpec1, PointHistoryListFragment.class, null);
+
+        TabHost.TabSpec tabSpec2 = host.newTabSpec("tab2").setIndicator("交換履歴");
+        host.addTab(tabSpec2, GiftListFragment.class, null);
     }
 
 

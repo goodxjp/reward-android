@@ -19,8 +19,8 @@ import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.commons.VolleyUtils;
 import com.reward.omotesando.components.UserManager;
 import com.reward.omotesando.components.VolleyApi;
-import com.reward.omotesando.components.api.GetPointHistories;
-import com.reward.omotesando.models.PointHistory;
+import com.reward.omotesando.components.api.GetGifts;
+import com.reward.omotesando.models.Gift;
 import com.reward.omotesando.models.User;
 
 import org.json.JSONArray;
@@ -28,21 +28,19 @@ import org.json.JSONArray;
 import java.util.List;
 
 /**
- * ポイント履歴一覧フラグメント。
+ * ギフト券一覧フラグメント。
  */
-public class PointHistoryListFragment extends BaseFragment
+public class GiftListFragment extends BaseFragment
         implements UserManager.Callback {
 
-    private static final String TAG = PointHistoryListFragment.class.getName();
+    private static final String TAG = GiftListFragment.class.getName();
     @Override
     protected String getLogTag() { return TAG; }
 
     // Model
-    long mPoint;
-    List<PointHistory> mPointHistories;
+    List<Gift> mGifts;
 
     // View
-    //private TextView mCurrentPointText;
     private AbsListView mListView;
 
     private ListAdapter mAdapter;
@@ -50,14 +48,12 @@ public class PointHistoryListFragment extends BaseFragment
     /*
      * 初期処理
      */
-    public static PointHistoryListFragment newInstance() {
-        PointHistoryListFragment fragment = new PointHistoryListFragment();
+    public static GiftListFragment newInstance() {
+        GiftListFragment fragment = new GiftListFragment();
         return fragment;
     }
 
-    // 空のコンストラクタが必要。
-    // http://y-anz-m.blogspot.jp/2012/04/androidfragment-setarguments.html
-    public PointHistoryListFragment() {
+    public GiftListFragment() {
     }
 
 
@@ -76,14 +72,12 @@ public class PointHistoryListFragment extends BaseFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View view = inflater.inflate(R.layout.fragment_point_history_list_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_gift_list_list, container, false);
 
-        //mCurrentPointText = (TextView) view.findViewById(R.id.current_point_text);
         mListView = (AbsListView) view.findViewById(android.R.id.list);
 
         // View の再設定は毎回せなあかんものだろうか？
         if (state == State.READY) {
-            //mCurrentPointText.setText(String.valueOf(mPoint));
             ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
         }
 
@@ -108,7 +102,7 @@ public class PointHistoryListFragment extends BaseFragment
         state.detach(this);
     }
 
-    // TODO: ポイント履歴が一件もないときの表示
+    // TODO: ギフト券が一件もないときの表示
     /**
      * The default content for this Fragment has a TextView that is shown when
      * the list is empty. If you would like to change the text, call this method
@@ -139,8 +133,6 @@ public class PointHistoryListFragment extends BaseFragment
 
     /*
      * 状態管理
-     *
-     * - 参考: http://idios.hatenablog.com/entry/2012/07/07/235137
      */
     private State state = State.INITIAL;
 
@@ -148,10 +140,10 @@ public class PointHistoryListFragment extends BaseFragment
         // 初期状態
         INITIAL {
             @Override
-            public void start(PointHistoryListFragment fragment) {
+            public void start(GiftListFragment fragment) {
                 if (fragment.getUser()) {
                     fragment.getPointHistories();
-                    transit(fragment, GETTING_POINT_HISTORIES);
+                    transit(fragment, GETTING_GIFTS);
                 } else {
                     transit(fragment, GETTING_USER);
                 }
@@ -161,17 +153,17 @@ public class PointHistoryListFragment extends BaseFragment
         // ユーザー情報取得中
         GETTING_USER {
             @Override
-            public void successGetUser(PointHistoryListFragment fragment, User user) {
+            public void successGetUser(GiftListFragment fragment, User user) {
                 // ポイント表示を更新
                 fragment.updateUser(user);
 
                 fragment.getPointHistories();
 
-                transit(fragment, GETTING_POINT_HISTORIES);
+                transit(fragment, GETTING_GIFTS);
             }
 
             @Override
-            public void failureGetUser(PointHistoryListFragment fragment, String message) {
+            public void failureGetUser(GiftListFragment fragment, String message) {
                 // TODO: エラーの表示方法をちゃんと考えた方がよさげ
                 if (message != null) {
                     Toast.makeText(fragment.getActivity(), message, Toast.LENGTH_LONG).show();
@@ -183,23 +175,23 @@ public class PointHistoryListFragment extends BaseFragment
             }
 
             @Override
-            public void detach(PointHistoryListFragment fragment) {
+            public void detach(GiftListFragment fragment) {
                 UserManager.cancelGetUser(fragment);
                 transit(fragment, INITIAL);
             }
         },
 
         // ポイント履歴取得中
-        GETTING_POINT_HISTORIES {
+        GETTING_GIFTS {
             @Override
-            public void successGetPointHistories(PointHistoryListFragment fragment, List<PointHistory> pointHistories) {
+            public void successGetGifts(GiftListFragment fragment, List<Gift> pointHistories) {
                 fragment.showPointHistories();
 
                 transit(fragment, READY);
             }
 
             @Override
-            public void failureGetPointHistories(PointHistoryListFragment fragment) {
+            public void failureGetGifts(GiftListFragment fragment) {
                 // TODO: 端末の通信状態を確認
                 // TODO: サーバーの状態を確認
                 // TODO: エラーダイアログを表示
@@ -219,40 +211,40 @@ public class PointHistoryListFragment extends BaseFragment
          * イベント
          */
         // 初期処理開始
-        public void start(PointHistoryListFragment fragment) {
+        public void start(GiftListFragment fragment) {
             throw new IllegalStateException();
         }
 
         // ユーザー情報取得成功
-        public void successGetUser(PointHistoryListFragment fragment, User user) {
+        public void successGetUser(GiftListFragment fragment, User user) {
             throw new IllegalStateException();
         }
 
         // ユーザー情報取得失敗
-        public void failureGetUser(PointHistoryListFragment fragment, String message) {
+        public void failureGetUser(GiftListFragment fragment, String message) {
             throw new IllegalStateException();
         }
 
-        // ポイント履歴取得成功
-        public void successGetPointHistories(PointHistoryListFragment fragment, List<PointHistory> pointHistories) {
+        // ギフト券取得成功
+        public void successGetGifts(GiftListFragment fragment, List<Gift> gifts) {
             throw new IllegalStateException();
         }
 
-        // ポイント履歴取得失敗
-        public void failureGetPointHistories(PointHistoryListFragment fragment) {
+        // ギフト券取得失敗
+        public void failureGetGifts(GiftListFragment fragment) {
             throw new IllegalStateException();
         }
 
         // Detach
-        public void detach(PointHistoryListFragment fragment) {
+        public void detach(GiftListFragment fragment) {
             // どの状態でも Detach イベントが発生する可能性あり
             // 通信中でなければ何もしない。
         }
 
         /*
-         * 状態遷移 (State 内でのみ使用すること)
-         */
-        private static void transit(PointHistoryListFragment fragment, State nextState) {
+         * 状態遷移 (enum State 内でのみ使用すること)
+        */
+        private static void transit(GiftListFragment fragment, State nextState) {
             Logger.d(TAG, "STATE: " + fragment.state + " -> " + nextState);
             fragment.state = nextState;
         }
@@ -278,14 +270,16 @@ public class PointHistoryListFragment extends BaseFragment
      * ユーザー情報更新。
      */
     private void updateUser(User user) {
-        mPoint = user.point;
-        //mCurrentPointText.setText(String.valueOf(mPoint));
+//        mPoint = user.point;
+//        mCurrentPointText.setText(String.valueOf(mPoint));
     }
 
     // TODO: キャンセルに対応
-    // キャンペーン情報 (案件情報) 取得
+    /**
+     * ギフト券取得。
+     */
     private void getPointHistories() {
-        final GetPointHistories api = new GetPointHistories(getActivity());
+        final GetGifts api = new GetGifts(getActivity());
 
         JsonArrayRequest request = new JsonArrayRequest(api.getUrl(getActivity()),
 
@@ -294,8 +288,8 @@ public class PointHistoryListFragment extends BaseFragment
                 public void onResponse(JSONArray response) {
                     VolleyApi.Log(TAG, api, response);
 
-                    mPointHistories = api.parseJsonResponse(response);
-                    state.successGetPointHistories(PointHistoryListFragment.this, mPointHistories);
+                    mGifts = api.parseJsonResponse(response);
+                    state.successGetGifts(GiftListFragment.this, mGifts);
                 }
             },
 
@@ -304,7 +298,7 @@ public class PointHistoryListFragment extends BaseFragment
                 public void onErrorResponse(VolleyError error) {
                     VolleyApi.Log(TAG, api, error);
 
-                    state.failureGetPointHistories(PointHistoryListFragment.this);
+                    state.failureGetGifts(GiftListFragment.this);
                 }
             }
         );
@@ -312,7 +306,9 @@ public class PointHistoryListFragment extends BaseFragment
         VolleyUtils.getRequestQueue(getActivity().getApplicationContext()).add(request);
     }
 
-    // ポイント履歴を表示
+    /*
+     * ギフト券表示。
+     */
     private void showPointHistories() {
         // この時点で Activity が存在しないパターンがある
         if (getActivity() == null) {
@@ -320,7 +316,7 @@ public class PointHistoryListFragment extends BaseFragment
             return;
         }
 
-        mAdapter = new PointHistoryArrayAdapter(getActivity(), R.layout.list_item_point_history, mPointHistories);
+        mAdapter = new GiftArrayAdapter(getActivity(), R.layout.list_item_gift, mGifts);
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
     }
 }

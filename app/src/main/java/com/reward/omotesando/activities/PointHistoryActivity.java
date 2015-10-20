@@ -20,10 +20,10 @@ public class PointHistoryActivity extends BaseActivity {
         FragmentTabHost host = (FragmentTabHost)findViewById(android.R.id.tabhost);
         host.setup(this, getSupportFragmentManager(), R.id.content);
 
-        TabHost.TabSpec tabSpec1 = host.newTabSpec("tab1").setIndicator("獲得履歴");
+        TabHost.TabSpec tabSpec1 = host.newTabSpec("tab_get_history").setIndicator(getString(R.string.tab_point_history));
         host.addTab(tabSpec1, PointHistoryListFragment.class, null);
 
-        TabHost.TabSpec tabSpec2 = host.newTabSpec("tab2").setIndicator("交換履歴");
+        TabHost.TabSpec tabSpec2 = host.newTabSpec("tab_exchange_history").setIndicator(getString(R.string.tab_exchange_history));
         host.addTab(tabSpec2, GiftListFragment.class, null);
     }
 

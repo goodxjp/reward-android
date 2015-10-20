@@ -18,6 +18,15 @@
     <string name="tab_movie">動画</string>
     <string name="tab_fb">FB いいね</string>
 
+    <!-- ポイント履歴画面 -->
+    <string name="tab_point_history">獲得履歴</string>
+    <string name="tab_exchange_history">交換履歴</string>
+    <string name="table_header_datetime">日時</string>
+    <string name="table_header_point">ポイント</string>
+    <string name="table_header_point_history_detail">詳細</string>
+    <string name="table_header_gift_name">種別</string>
+    <string name="table_header_gift_code">コード</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

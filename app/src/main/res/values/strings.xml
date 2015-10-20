@@ -17,6 +17,16 @@
     <string name="tab_movie">Movie</string>
     <string name="tab_fb">FB Like</string>
 
+    <!-- ポイント履歴画面 -->
+    <string name="tab_point_history">Point</string>
+    <string name="tab_exchange_history">Exchange</string>
+    <string name="table_header_datetime">Date</string>
+    <string name="table_header_point">Point</string>
+    <string name="table_header_point_history_detail">Detail</string>
+    <string name="table_header_gift_name">Name</string>
+    <string name="table_header_gift_code">Code</string>
+
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

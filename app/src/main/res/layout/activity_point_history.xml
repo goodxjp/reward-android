@@ -5,11 +5,13 @@
               android:orientation="vertical"
               tools:context=".PointHistoryActivity">
 
+    <!-- 現在のポイント表示 -->
     <fragment
         android:id="@+id/navigation_drawer"
         android:name="com.reward.omotesando.fragments.CurrentPointFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        tools:layout="@layout/fragment_current_point"/>
 
     <android.support.v4.app.FragmentTabHost
         android:id="@android:id/tabhost"

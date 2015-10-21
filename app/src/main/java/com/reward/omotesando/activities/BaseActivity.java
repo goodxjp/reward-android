@@ -10,6 +10,7 @@ import com.reward.omotesando.BuildConfig;
 import com.reward.omotesando.R;
 import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.fragments.ProgressDialogFragment;
+import com.reward.omotesando.models.PointHistory;
 
 public abstract class BaseActivity extends ActionBarActivity implements ShowableProgressDialog {
 
@@ -71,8 +72,9 @@ public abstract class BaseActivity extends ActionBarActivity implements Showable
                 startActivity(intent);
                 return true;
             case R.id.action_point_history:
-                intent = new Intent(this, PointHistoryActivity.class);
-                startActivity(intent);
+//                intent = new Intent(this, PointHistoryActivity.class);
+//                startActivity(intent);
+                PointHistoryActivity.start(this, PointHistoryActivity.TAB_POINT_HISTORY, false);
                 return true;
             case R.id.action_help:
                 intent = new Intent(this, HelpActivity.class);

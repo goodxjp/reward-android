@@ -237,11 +237,18 @@ public class ItemFragment extends BaseFragment
 
                         VolleyApi.Log(TAG, api, response);
 
-                        // TODO: 交換後の処理をきちんと実装
-                        Toast.makeText(appContext, "交換完了！ (交換後の画面遷移要検討)", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(appContext, PointHistoryActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        startActivity(intent);
+                        // Detach 時に通信キャンセルしていないのでレスポンス受信時に Activity がない場合がある。
+                        // 本当は、購入処理中はくるくる表示するなどして Fragment を Detach させないようにするほうがよさげ。
+                        if (getActivity() != null) {
+                            //PointHistoryActivity.start(getActivity(), PointHistoryActivity.TAB_EXCHANGE_HISTORY, true);  // うーん、これだけだと戻るボタンで戻っちゃう。FLAG_ACTIVITY_NO_HISTORY フラグ意味ある？
+                            PointHistoryActivity.start(getActivity(), PointHistoryActivity.TAB_EXCHANGE_HISTORY, false);
+                            getActivity().finish();
+
+                            Toast.makeText(appContext, getString(R.string.message_complete_exchange), Toast.LENGTH_LONG).show();
+                        } else {
+                            // こっちは getString もダメ。
+                            Toast.makeText(appContext, appContext.getString(R.string.message_complete_exchange_no_transit), Toast.LENGTH_LONG).show();
+                        }
                     }
                 },
 

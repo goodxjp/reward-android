@@ -18,6 +18,13 @@
     <string name="tab_movie">動画</string>
     <string name="tab_fb">FB いいね</string>
 
+    <!-- 案件詳細画面 -->
+    <string name="offer_detail_name">名称</string>
+    <string name="offer_detail_point">ポイント</string>
+    <string name="offer_detail_requirement">成果条件</string>
+    <string name="offer_detail_requirement_detail">条件詳細</string>
+    <string name="action_execute">案件実行</string>
+
     <!-- ポイント履歴画面 -->
     <string name="tab_point_history">獲得履歴</string>
     <string name="tab_exchange_history">交換履歴</string>
@@ -54,6 +61,10 @@
 
     <!-- ギフト券交換 -->
     <string name="message_confirm_exchange">交換してもよいですか？</string>
+
+    <string name="message_complete_exchange">交換が完了しました。</string>
+    <string name="message_complete_exchange_no_transit">交換が完了しました。交換履歴をご確認下さい。</string>
+
     <string name="message_restricted_one_day">交換は 1 日に 1 回までになります。明日以降にもう一度、お試しください。</string>
     <string name="message_out_of_stock">該当の商品の在庫がございません。今しばらくお待ち下さい。</string>
 

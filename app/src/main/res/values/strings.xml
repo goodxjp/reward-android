@@ -83,4 +83,7 @@
 
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
+
+    <string name="license">Copyright © 2014 Hawcons Gesture Stroke Icons by Yannick Lung</string>
+
 </resources>

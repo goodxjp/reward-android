@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">リワードアプリ（仮）</string>
-    <string name="app_name_drawer">リワード（仮）</string>
+    <string name="app_name">こゆび太郎</string>
+    <string name="app_name_drawer">こゆび太郎</string>
     <string name="app_name_drawer_tab">リワードタブ</string>
 
     <string name="menu_offer_list">お仕事一覧</string>

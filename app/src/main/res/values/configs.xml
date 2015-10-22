@@ -13,6 +13,5 @@
     <string name="gcm_sender_id">857237989884</string>
 
     <!-- 問い合わせ先 -->
-    <string name="inquiry_email_address">kyuuki0@gmail.com</string>
-    <!-- TODO: 変更 -->
+    <string name="inquiry_email_address">sup.reward@gmail.com</string>
 </resources>

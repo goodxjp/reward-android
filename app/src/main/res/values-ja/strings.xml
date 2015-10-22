@@ -54,7 +54,7 @@
     <string name="dialog_title_error_exchange">交換エラー</string>
 
     <string name="query_mail_subject">お問い合わせ</string>
-    <string name="query_mail_text"></string>
+    <string name="query_mail_text">\nここから上は編集しないでください。\n----------------------------------------\n■お問い合わせ内容\n</string>
 
     <!-- 汎用メッセージ (トーストやダイアログなどで使用する) -->
     <string name="error_communication">通信エラー</string>

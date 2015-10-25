@@ -1,6 +1,5 @@
 package com.reward.omotesando.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -8,13 +7,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.reward.omotesando.R;
 import com.reward.omotesando.commons.Logger;
-import com.reward.omotesando.commons.VolleyUtils;
 import com.reward.omotesando.components.GcmManager;
 import com.reward.omotesando.components.Terminal;
 import com.reward.omotesando.components.VolleyApi;
@@ -28,13 +25,16 @@ import com.reward.omotesando.models.User;
 import org.json.JSONObject;
 
 /**
- * メイン (案件一覧表示) アクティビティ。
+ * トップ画面 (案件一覧) アクティビティ。
+ *
+ * - 初期処理
+ * - 案件一覧の表示
  */
-public class TabbedActivity extends BaseActivity
+public class TopTabbedActivity extends BaseActivity
         implements GcmManager.GcmManagerCallback,
                    OfferListFragment.OnFragmentInteractionListener {
 
-    protected String TAG = TabbedActivity.class.getName();
+    private static final String TAG = TopTabbedActivity.class.getName();
     @Override
     protected String getLogTag() { return TAG; }
 
@@ -57,11 +57,10 @@ public class TabbedActivity extends BaseActivity
     /*
      * ライフサイクル
      */
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tabbed);
+        setContentView(R.layout.activity_top_tabbed);
 
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
@@ -75,32 +74,43 @@ public class TabbedActivity extends BaseActivity
         mViewPager = (ViewPager) findViewById(R.id.pager);
         //mViewPager.setAdapter(mSectionsPagerAdapter); → 初期化処理完了後。
 
-        // TODO: 状態を保存しておかないと回転の時に状態が初期化されてしまう。
+        // 状態を保存しておかないと回転の時に状態が初期化されてしまう。
         if (state == State.INITIAL) {
             state.start(this);
         }
+        // TODO: 本当は通信中に回転しちゃうと複数回初期処理走ってしまったりするので、もっと、ちゃんと状態保存や制御しないといけないけど、現状は、とりあえず落ちない程度の実装
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // 公式ドキュメントによると onResume() でもチェックするのがお作法らしい。
+        // http://developer.android.com/google/gcm/client.html#sample-play
+        GcmManager gcmManager = GcmManager.getInstance(getApplicationContext());
+        gcmManager.checkPlayServices(this);
     }
 
 
     /*
      * GcmManager.GcmManagerCallbacks
      */
+    // GCM 登録完了。
     @Override
     public void onRegistered(String regId) {
         Logger.v(getLogTag(), "[" + this.hashCode() + "] onRegistered");
 
-        state.gcmRegisterd(this, regId);
+        state.gcmRegistered(this, regId);
     }
 
 
     /*
      * OfferListFragment.OnFragmentInteractionListener
      */
+    // 案件一覧フラグメントからのオファー詳細表示依頼。
     @Override
     public void onFragmentInteraction(Offer offer) {
-        Intent intent = new Intent(this, OfferDetailActivity.class);
-        intent.putExtra("xxx", offer);  // TODO: 名前調整
-        startActivity(intent);
+        OfferDetailActivity.start(this, offer, false);
     }
 
 
@@ -113,18 +123,18 @@ public class TabbedActivity extends BaseActivity
         // 初期状態
         INITIAL {
             @Override
-            public void start(TabbedActivity activity) {
+            public void start(TopTabbedActivity activity) {
 
                 GcmManager gcmManager = GcmManager.getInstance(activity.getApplicationContext());
                 String regId;
                 if ((regId = gcmManager.tryToRegister(activity, activity)) == null) {
                     //activity.showProgressDialog(null, activity.getString(R.string.dialog_message_initializing));
-                    activity.transit(GCM_REGISTERING);
+                    transit(activity, GCM_REGISTERING);
                 } else if (activity.tryToRegisterUser(regId)) {
                     //activity.showProgressDialog(null, activity.getString(R.string.dialog_message_initializing));
-                    activity.transit(USER_REGISTERING);
+                    transit(activity, USER_REGISTERING);
                 } else {
-                    activity.transit(READY);
+                    transit(activity, READY);
                     activity.readyGo();
 
                     // TODO: activity.showProgressDialog() の直後に呼ぶと落ちるのはなぜか要調査;
@@ -137,11 +147,11 @@ public class TabbedActivity extends BaseActivity
         // GCM 登録中
         GCM_REGISTERING {
             @Override
-            public void gcmRegisterd(TabbedActivity activity, String regId) {
+            public void gcmRegistered(TopTabbedActivity activity, String regId) {
                 if (activity.tryToRegisterUser(regId)) {
-                    activity.transit(USER_REGISTERING);
+                    transit(activity, USER_REGISTERING);
                 } else {
-                    activity.transit(READY);
+                    transit(activity, READY);
                     activity.readyGo();
                     //activity.dismissProgressDialog();
                 }
@@ -151,22 +161,22 @@ public class TabbedActivity extends BaseActivity
         // ユーザー登録中
         USER_REGISTERING {
             @Override
-            public void successUserRegister(TabbedActivity activity, User user) {
+            public void successUserRegister(TopTabbedActivity activity, User user) {
                 // 登録に成功したら保存
                 User.storeUser(activity, user);
 
-                activity.transit(READY);
+                transit(activity, READY);
                 activity.readyGo();
                 //activity.dismissProgressDialog();
             }
 
             @Override
-            public void failureUserRegister(TabbedActivity activity) {
+            public void failureUserRegister(TopTabbedActivity activity) {
                 //activity.transit(READY);
                 //activity.readyGo();
                 //activity.dismissProgressDialog();
 
-                activity.transit(ERROR);
+                transit(activity, ERROR);
 
                 // TODO: ダイアログを汎用にしておいて、複数の種類のダイアログのコールバック受けられるようにしておいた方がよさげ？
                 AlertDialogFragment dialog = AlertDialogFragment.newInstance(
@@ -186,37 +196,43 @@ public class TabbedActivity extends BaseActivity
          * イベント
          */
         // 初期処理開始
-        public void start(TabbedActivity activity) {
+        public void start(TopTabbedActivity activity) {
             throw new IllegalStateException();
         }
 
         // GCM 登録完了
-        public void gcmRegisterd(TabbedActivity activity, String regId) {
+        public void gcmRegistered(TopTabbedActivity activity, String regId) {
             throw new IllegalStateException();
         }
 
         // ユーザー登録成功
-        public void successUserRegister(TabbedActivity activity, User user) {
+        public void successUserRegister(TopTabbedActivity activity, User user) {
             throw new IllegalStateException();
         }
 
         // ユーザー登録失敗
-        public void failureUserRegister(TabbedActivity activity) {
+        public void failureUserRegister(TopTabbedActivity activity) {
             throw new IllegalStateException();
+        }
+
+        /*
+         * 状態遷移 (State 内でのみ使用すること)
+         */
+        private static void transit(TopTabbedActivity activity, State nextState) {
+            Logger.d(TAG, "STATE: " + activity.state + " -> " + nextState);
+            activity.state = nextState;
         }
     }
 
-    // 状態遷移 (enum State 内でのみ使用すること、なら中に入れちゃえばいいんじゃね？)
-    private void transit(State nextState) {
-        Logger.d(TAG, "STATE: " + state + " -> " + nextState);
-        state = nextState;
-    }
-
-    // ユーザー登録してみる
+    /**
+     * ユーザー登録してみる。
+     *
+     * @return true: 登録してみた / false: 登録しなかった
+     */
     private boolean tryToRegisterUser(String regId) {
         if  (User.getUser(getApplicationContext()) != null) {
             // 登録済みなら、できるだけユーザー登録は送らないようにしたい。
-            // 同一端末かどうかのチェックは完全にできないため。
+            // 同一端末かどうかのチェックをサーバーで完全にはできないため。
             return false;
         }
 
@@ -238,7 +254,7 @@ public class TabbedActivity extends BaseActivity
 
                     User user = api.parseJsonResponse(response);
 
-                    state.successUserRegister(TabbedActivity.this, user);
+                    state.successUserRegister(TopTabbedActivity.this, user);
                 }
             },
 
@@ -247,12 +263,11 @@ public class TabbedActivity extends BaseActivity
                 public void onErrorResponse(VolleyError error) {
                     VolleyApi.Log(TAG, api, error);
 
-                    state.failureUserRegister(TabbedActivity.this);
+                    state.failureUserRegister(TopTabbedActivity.this);
                 }
             });
 
-        RequestQueue requestQueue = VolleyUtils.getRequestQueue(getApplicationContext());
-        requestQueue.add(request);
+        VolleyApi.send(getApplicationContext(), request);
     }
 
     // 準備完了後の初期処理
@@ -303,14 +318,8 @@ public class TabbedActivity extends BaseActivity
 
         @Override
         public CharSequence getPageTitle(int position) {
-            // ナビゲーションメニューの文字列を取得
-            String[] menuStrings = new String[OfferListTab.values().length];
-            for (OfferListTab menu: OfferListTab.values()) {
-                menuStrings[menu.ordinal()] = getString(menu.resource);
-            }
-
-            return menuStrings[position];
+            OfferListTab[] values = OfferListTab.values();
+            return getString(values[position].resource);
         }
     }
-
 }

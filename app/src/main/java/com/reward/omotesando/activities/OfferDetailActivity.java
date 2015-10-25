@@ -1,5 +1,6 @@
 package com.reward.omotesando.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,15 +15,39 @@ import com.reward.omotesando.fragments.OfferDetailFragment;
 import com.reward.omotesando.models.Offer;
 
 public class OfferDetailActivity extends BaseActivity {
+
+    private static final String TAG = OfferDetailActivity.class.getName();
+    @Override
+    protected String getLogTag() { return TAG; }
+
+    // Model
     Offer mOffer;
 
+    /*
+     * 初期処理
+     */
+    private static final String ARG_OFFER = "offer";
+
+    public static void start(Context packageContext, Offer offer, boolean noHistory) {
+        Intent i = new Intent(packageContext, OfferDetailActivity.class);
+        i.putExtra(ARG_OFFER, offer);
+        if (noHistory) {
+            i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        }
+        packageContext.startActivity(i);
+    }
+
+
+    /*
+     * ライフサイクル
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offer_detail);
 
         Intent intent = getIntent();
-        mOffer = (Offer) intent.getSerializableExtra("xxx");
+        mOffer = (Offer) intent.getSerializableExtra(ARG_OFFER);
 
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(getString(R.string.title_offer_detail));

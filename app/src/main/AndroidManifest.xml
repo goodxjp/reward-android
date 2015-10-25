@@ -54,14 +54,14 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.TopNavigationDrawerActivity"
             android:label="@string/app_name_drawer"
             android:launchMode="singleTop">
         </activity>
 
         <!-- タブ切り替えバージョン -->
         <activity
-            android:name=".activities.TabbedActivity"
+            android:name=".activities.TopTabbedActivity"
             android:label="@string/app_name_drawer"
             android:launchMode="singleTop">
             <intent-filter>
@@ -75,42 +75,42 @@
         <activity
             android:name=".activities.OfferDetailActivity"
             android:label="@string/app_name_drawer"
-            android:parentActivityName=".activities.TabbedActivity">
+            android:parentActivityName=".activities.TopTabbedActivity">
         </activity>
 
         <!-- ポイント交換 -->
         <activity
             android:name=".activities.PointExchangeActivity"
             android:label="@string/menu_point_exchange"
-            android:parentActivityName=".activities.TabbedActivity">
+            android:parentActivityName=".activities.TopTabbedActivity">
         </activity>
 
         <!-- ポイント履歴 -->
         <activity
             android:name=".activities.PointHistoryActivity"
             android:label="@string/menu_point_history"
-            android:parentActivityName=".activities.TabbedActivity">
+            android:parentActivityName=".activities.TopTabbedActivity">
         </activity>
 
         <!-- ヘルプ -->
         <activity
             android:name=".activities.HelpActivity"
             android:label="@string/menu_help"
-            android:parentActivityName=".activities.TabbedActivity">
+            android:parentActivityName=".activities.TopTabbedActivity">
         </activity>
 
         <!-- アプリ情報 -->
         <activity
             android:name=".activities.AboutActivity"
             android:label="@string/menu_about"
-            android:parentActivityName=".activities.TabbedActivity">
+            android:parentActivityName=".activities.TopTabbedActivity">
         </activity>
 
         <!-- デバッグ用 -->
         <activity
             android:name=".activities.DebugActivity"
             android:label="@string/menu_debug"
-            android:parentActivityName=".activities.TabbedActivity">
+            android:parentActivityName=".activities.TopTabbedActivity">
         </activity>
 
         <!--

@@ -29,7 +29,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.reward.omotesando.R;
-import com.reward.omotesando.activities.MainActivity;
+import com.reward.omotesando.activities.TopNavigationDrawerActivity;
 import com.reward.omotesando.receivers.GcmBroadcastReceiver;
 
 /**
@@ -97,7 +97,7 @@ public class GcmIntentService extends IntentService {
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), 0);
+                new Intent(this, TopNavigationDrawerActivity.class), 0);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)

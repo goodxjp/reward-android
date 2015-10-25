@@ -38,17 +38,17 @@ import com.reward.omotesando.models.Offer;
 import com.reward.omotesando.models.User;
 
 /**
- * メインアクティビティ (廃棄！！！)
+ * トップ画面 (案件一覧) アクティビティ (廃棄)。
  *
  * - 初期処理
  * - メニューによるフラグメント切り替えの管理
  */
-public class MainActivity extends BaseActivity
+public class TopNavigationDrawerActivity extends BaseActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks,
                    GcmManager.GcmManagerCallback,
                    OfferListFragment.OnFragmentInteractionListener {
 
-    private static final String TAG = MainActivity.class.getName();
+    private static final String TAG = TopNavigationDrawerActivity.class.getName();
     @Override
     protected String getLogTag() { return TAG; }
 
@@ -70,7 +70,7 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_top_navigation_drawer);
 
         //mTitle = getTitle();
         mTitle = getString(R.string.app_name);
@@ -212,7 +212,7 @@ public class MainActivity extends BaseActivity
         // 初期状態
         INITIAL {
             @Override
-            public void start(MainActivity activity) {
+            public void start(TopNavigationDrawerActivity activity) {
 
                 GcmManager gcmManager = GcmManager.getInstance(activity.getApplicationContext());
                 if (gcmManager.tryToRegister(activity, activity) == null) {
@@ -235,7 +235,7 @@ public class MainActivity extends BaseActivity
         // GCM 登録中
         GCM_REGISTERING {
             @Override
-            public void gcmRegisterd(MainActivity activity, String regId) {
+            public void gcmRegisterd(TopNavigationDrawerActivity activity, String regId) {
                 if (activity.tryToRegisterUser(null)) {
                     activity.transit(USER_REGISTERING);
                 } else {
@@ -249,7 +249,7 @@ public class MainActivity extends BaseActivity
         // ユーザー登録中
         USER_REGISTERING {
             @Override
-            public void successUserRegister(MainActivity activity, User user) {
+            public void successUserRegister(TopNavigationDrawerActivity activity, User user) {
                 // 登録に成功したら保存
                 //MediaUser.storeMediaUserId(activity, mediaUser.mediaUserId, mediaUser.terminalId);
 
@@ -259,7 +259,7 @@ public class MainActivity extends BaseActivity
             }
 
             @Override
-            public void failureUserRegister(MainActivity activity) {
+            public void failureUserRegister(TopNavigationDrawerActivity activity) {
                 // TODO: ユーザー登録に失敗したときのエラー処理
                 activity.transit(READY);
                 activity.onNavigationDrawerItemSelected(0);  // TODO: もっとうまいやり方がないか？
@@ -274,22 +274,22 @@ public class MainActivity extends BaseActivity
          * イベント
          */
         // 初期処理開始
-        public void start(MainActivity activity) {
+        public void start(TopNavigationDrawerActivity activity) {
             throw new IllegalStateException();
         }
 
         // GCM 登録完了
-        public void gcmRegisterd(MainActivity activity, String regId) {
+        public void gcmRegisterd(TopNavigationDrawerActivity activity, String regId) {
             throw new IllegalStateException();
         }
 
         // ユーザー登録成功
-        public void successUserRegister(MainActivity activity, User user) {
+        public void successUserRegister(TopNavigationDrawerActivity activity, User user) {
             throw new IllegalStateException();
         }
 
         // ユーザー登録失敗
-        public void failureUserRegister(MainActivity activity) {
+        public void failureUserRegister(TopNavigationDrawerActivity activity) {
             throw new IllegalStateException();
         }
     }
@@ -333,7 +333,7 @@ public class MainActivity extends BaseActivity
                 public void onErrorResponse(VolleyError error) {
                     Logger.e(TAG, "HTTP: error = " + error.getMessage());
 
-                    state.failureUserRegister(MainActivity.this);
+                    state.failureUserRegister(TopNavigationDrawerActivity.this);
                 }
             });
 
@@ -411,7 +411,7 @@ public class MainActivity extends BaseActivity
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
+            ((TopNavigationDrawerActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }

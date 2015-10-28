@@ -11,8 +11,8 @@
         android:id="@+id/pager_tab_strip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#33B5E5"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp"
-        android:textColor="#FFFFFF"/>
+        android:background="@color/white"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:textColor="@color/grey600"/>
 </android.support.v4.view.ViewPager>

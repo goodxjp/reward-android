@@ -1,9 +1,10 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
                 android:id="@+id/rowOfferLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content" >
-
-
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/corner_round_item_offer"
+                android:layout_margin="10dp">
 
     <LinearLayout
         android:id="@+id/linearLayout1"
@@ -20,39 +21,119 @@
             android:layout_gravity="center_vertical"
             android:layout_margin="10dp"
             android:src="@drawable/ic_drawer" />
-
-        <TextView
-            android:id="@+id/name_text"
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:orientation="vertical"
+           android:layout_marginTop="10dp"
+           android:layout_marginBottom="10dp">
+            <TextView
+                android:id="@+id/name_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="0dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textIsSelectable="false"
+                android:ellipsize="end"
+                android:singleLine="true"/>
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="インストールして再起動"
+               android:textSize="15dp"/>
+       </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:gravity="center_vertical">
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="0dp"
-            android:layout_weight="1"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textIsSelectable="false" />
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/corner_round_item_offer_btn"
+                android:layout_marginRight="0dp"
+                android:padding="8dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:text="STEP1"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:text="インストールする"/>
+            </LinearLayout>
+        </LinearLayout>
+        <!-- ▼ ホームから起動する非アクティブ -->
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:text=">" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/grey600"
+                    android:textSize="13sp"
+                    android:text="STEP2"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/grey600"
+                    android:textSize="13sp"
+                    android:text="ホームから起動する"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ▲ ホームから起動する非アクティブ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:text=">"/>
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="74dp"
-            android:layout_height="match_parent">
-
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="right|top">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/theme500"
+                android:textSize="12sp"
+                android:text="POINT GET"/>
             <TextView
                 android:id="@+id/point_text"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center|bottom"
                 android:textColor="#ff0000"
+                android:text="90"
                 android:textSize="24sp" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center|top"
-                android:textColor="#ff0000"
-                android:textSize="12sp"
-                android:text="@string/point_unit"
-                />
         </LinearLayout>
 
     </LinearLayout>
@@ -61,6 +142,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/grey600" />
+        />
 
-</RelativeLayout>
+</LinearLayout>

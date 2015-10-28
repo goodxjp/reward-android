@@ -13,7 +13,6 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:orientation="horizontal" >
-
         <ImageView
             android:id="@+id/icon_image"
             android:layout_width="74dp"

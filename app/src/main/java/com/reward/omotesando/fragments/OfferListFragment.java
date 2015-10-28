@@ -22,7 +22,7 @@ import com.reward.omotesando.models.Offer;
 import com.reward.omotesando.models.User;
 
 /**
- * オファー一覧フラグメント。
+ * 案件一覧フラグメント。
  *
  * A fragment representing a list of Items.
  * <p/>
@@ -41,11 +41,9 @@ public class OfferListFragment extends BaseFragment
     @Override
     protected String getLogTag() { return TAG; }
 
-    private OnFragmentInteractionListener mListener;
-
     // Model
     //long mPoint;  // TODO: ポイントを表示を一時停止中
-    List<Offer> offers;
+    List<Offer> mOffers;
 
     // View
     //private TextView mCurrentPointText;
@@ -60,6 +58,8 @@ public class OfferListFragment extends BaseFragment
      * Views.
      */
     private ListAdapter mAdapter;
+
+    private OnFragmentInteractionListener mListener;
 
 
     /*
@@ -265,7 +265,7 @@ public class OfferListFragment extends BaseFragment
         GETTING_OFFERS {
             @Override
             public void successGetOfferList(OfferListFragment fragment, List<Offer> offers) {
-                fragment.offers = offers;
+                fragment.mOffers = offers;
                 fragment.showOfferList(offers);
 
                 transit(fragment, READY);
@@ -365,7 +365,7 @@ public class OfferListFragment extends BaseFragment
         List<Offer> offerList = OfferListManager.getOfferList(getActivity().getApplicationContext(), this);
 
         if (offerList != null) {
-            this.offers = offerList;
+            this.mOffers = offerList;
             showOfferList(offerList);
             return true;
         } else {

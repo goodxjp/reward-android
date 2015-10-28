@@ -3,7 +3,7 @@ package com.reward.omotesando.models;
 import java.io.Serializable;
 
 /**
- * オファー。
+ * オファー (案件)。
  */
 public class Offer implements Serializable {
     public String name;
@@ -27,19 +27,6 @@ public class Offer implements Serializable {
         this.requirement = requirement;
         this.requirementDetail = requirementDetail;
         this.period = period;
-    }
-
-    // TODO: ゲッターは廃止。
-    public String getName() {
-        return name;
-    }
-
-    public int getPoint() {
-        return point;
-    }
-
-    public String getIconUrl() {
-        return iconUrl;
     }
 
     public String getExecuteUrl() {

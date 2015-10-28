@@ -8,12 +8,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.view.Menu;
-import android.view.MenuItem;
 
 import com.reward.omotesando.R;
 import com.reward.omotesando.fragments.OfferDetailFragment;
 import com.reward.omotesando.models.Offer;
 
+/**
+ * 案件詳細アクティビティ。
+ *
+ * - 案件詳細の表示
+ * - 案件の実行
+ */
 public class OfferDetailActivity extends BaseActivity {
 
     private static final String TAG = OfferDetailActivity.class.getName();
@@ -46,18 +51,23 @@ public class OfferDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offer_detail);
 
+        // 引数処理
         Intent intent = getIntent();
         mOffer = (Offer) intent.getSerializableExtra(ARG_OFFER);
 
+        // アクションバー
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(getString(R.string.title_offer_detail));
 
-        Fragment fragment = OfferDetailFragment.newInstance(mOffer);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .commit();
+        // http://www.garunimo.com/program/p17.xhtml
+        if (savedInstanceState == null) {
+            Fragment fragment = OfferDetailFragment.newInstance(mOffer);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, fragment)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .commit();
+        }
     }
 
 
@@ -66,20 +76,5 @@ public class OfferDetailActivity extends BaseActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.menu_point_exchange, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

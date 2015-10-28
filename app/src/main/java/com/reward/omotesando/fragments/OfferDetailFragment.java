@@ -1,10 +1,8 @@
 package com.reward.omotesando.fragments;
 
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,20 +13,22 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageLoader.ImageContainer;
 import com.android.volley.toolbox.ImageLoader.ImageListener;
-
 import com.reward.omotesando.R;
 import com.reward.omotesando.commons.VolleyUtils;
 import com.reward.omotesando.models.Offer;
 
 /**
+ * 案件詳細フラグメント。
+ *
  * A fragment with a Google +1 button.
  * Use the {@link OfferDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class OfferDetailFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_OFFER = "offer";
+public class OfferDetailFragment extends BaseFragment {
+
+    private static final String TAG = OfferDetailFragment.class.getName();
+    @Override
+    protected String getLogTag() { return TAG; }
 
     // Model
     private Offer mOffer;
@@ -46,6 +46,11 @@ public class OfferDetailFragment extends Fragment {
     private Button mExecuteButton;
 
 
+    /*
+     * 初期処理
+     */
+    private static final String ARG_OFFER = "offer";
+
     public static OfferDetailFragment newInstance(Offer offer) {
         OfferDetailFragment fragment = new OfferDetailFragment();
         Bundle args = new Bundle();
@@ -58,11 +63,21 @@ public class OfferDetailFragment extends Fragment {
         // Required empty public constructor
     }
 
+
+    /*
+     * ライフサイクル
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setRetainInstance(true);
+
         if (getArguments() != null) {
             mOffer = (Offer) getArguments().getSerializable(ARG_OFFER);
+        } else {
+            // バグ
+            throw new IllegalArgumentException("OfferDetailFragment getArguments is null.");
         }
     }
 
@@ -83,10 +98,10 @@ public class OfferDetailFragment extends Fragment {
         ImageLoader imageLoader = VolleyUtils.getImageLoader(getActivity());
         // TODO: 画像をちゃんとしたものに変更
         ImageListener listener = ImageLoader.getImageListener(mIconImage, android.R.drawable.ic_menu_rotate, android.R.drawable.ic_delete);
-        mIconImage.setTag(imageLoader.get(mOffer.getIconUrl(), listener));
+        mIconImage.setTag(imageLoader.get(mOffer.iconUrl, listener));
 
         mName = (TextView) view.findViewById(R.id.name_text);
-        mName.setText(mOffer.getName());
+        mName.setText(mOffer.name);
 
         mPoint = (TextView) view.findViewById(R.id.point_text);
         mPoint.setText("" + mOffer.point);
@@ -104,6 +119,7 @@ public class OfferDetailFragment extends Fragment {
         mExecuteButton.setOnClickListener(new View.OnClickListener() {
             @Override
                 public void onClick(View v) {
+                    // 案件実行
                     Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(mOffer.getExecuteUrl()));
                     startActivity(i);
                 }
@@ -112,12 +128,4 @@ public class OfferDetailFragment extends Fragment {
 
         return view;
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-    }
-
-
 }

@@ -48,8 +48,8 @@ public class OfferArrayAdapter extends ArrayAdapter<Offer> {
         // View
 
         // 各種表示データ更新
-        holder.rensouText.setText(offer.getName());
-        holder.pointText.setText("" + offer.getPoint());
+        holder.rensouText.setText(offer.name);
+        holder.pointText.setText("" + offer.point);
 
         // http://qiita.com/gari_jp/items/829a54bfa937f4733e29
         ImageContainer imageContainer = (ImageContainer) holder.iconImage.getTag();
@@ -60,7 +60,7 @@ public class OfferArrayAdapter extends ArrayAdapter<Offer> {
         ImageLoader imageLoader = VolleyUtils.getImageLoader(getContext());
         // TODO: 画像をちゃんとしたものに変更
         ImageListener listener = ImageLoader.getImageListener(holder.iconImage, android.R.drawable.ic_menu_rotate, android.R.drawable.ic_delete);
-        holder.iconImage.setTag(imageLoader.get(offer.getIconUrl(), listener));
+        holder.iconImage.setTag(imageLoader.get(offer.iconUrl, listener));
 
         return view;
     }

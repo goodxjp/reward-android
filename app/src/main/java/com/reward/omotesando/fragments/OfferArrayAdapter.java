@@ -11,12 +11,11 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageLoader.ImageContainer;
 import com.android.volley.toolbox.ImageLoader.ImageListener;
-
-import java.util.List;
-
-import com.reward.omotesando.R;;
+import com.reward.omotesando.R;
 import com.reward.omotesando.commons.VolleyUtils;
 import com.reward.omotesando.models.Offer;
+
+import java.util.List;
 
 public class OfferArrayAdapter extends ArrayAdapter<Offer> {
     LayoutInflater mInflater;
@@ -64,12 +63,11 @@ public class OfferArrayAdapter extends ArrayAdapter<Offer> {
 
         ImageLoader imageLoader = VolleyUtils.getImageLoader(getContext());
         // TODO: 画像をちゃんとしたものに変更
-        ImageListener listener = ImageLoader.getImageListener(holder.iconImage, android.R.drawable.ic_menu_rotate, android.R.drawable.ic_delete);
+        ImageListener listener = ImageLoader.getImageListener(holder.iconImage, R.drawable.ic_reload_grey600_24dp, R.drawable.ic_block_helper_grey600_24dp);
         holder.iconImage.setTag(imageLoader.get(offer.iconUrl, listener));
 
         return view;
     }
-
 
     // ViewHolder パターン
     private static class ViewHolder {

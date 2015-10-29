@@ -104,19 +104,18 @@ public class OfferListFragment extends BaseFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: ログだけのために無理やり感が強い。もっときれいな方法ないか？
-        super.onCreateView(inflater, container, savedInstanceState);
+        super.onCreateView(inflater, container, savedInstanceState);  // ログだけのため
 
         // やっぱり、onDetach -> onAttach -> onCreate で変数が初期化されないのが腑に落ちない。
         Logger.v(TAG, "state = " + state);
 
         // バックスタックから戻ったときに状態は遷移したままで onCreateView のみが呼ばれる。
         if (state == State.INITIAL) {
-            Logger.e(TAG, "Activity = " + getActivity());
+            Logger.v(TAG, "Activity = " + getActivity());
             state.start(this);
         }
 
-        View view = inflater.inflate(R.layout.fragment_offerlist, container, false);
+        View view = inflater.inflate(R.layout.fragment_offer_list, container, false);
 
 //        mCurrentPointText = (TextView) view.findViewById(R.id.current_point_text);
         mListView = (AbsListView) view.findViewById(android.R.id.list);
@@ -381,7 +380,12 @@ public class OfferListFragment extends BaseFragment
             //return;
         }
 
-        mAdapter = new OfferArrayAdapter(getActivity(), R.layout.list_item_offer, offerList);
+        // getView 上書きしているから textViewResourceId は実はなんでもいい。
+        if (getResources().getBoolean(R.bool.is_classic)) {
+            mAdapter = new OfferArrayAdapter(getActivity(), R.layout.list_item_offer_classic, offerList);
+        } else {
+            mAdapter = new OfferArrayAdapter(getActivity(), R.layout.list_item_offer, offerList);
+        }
         // http://skyarts.com/blog/jp/skyarts/?p=3964
 //        // API 9 で動かすための苦肉の策。
 //        if (mListView instanceof ListView) {

@@ -30,6 +30,7 @@ public abstract class BaseFragment extends Fragment {
         Logger.v(getLogTag(), "[" + this.hashCode() +"] onCreate()");
     }
 
+    // 本当は super.onCreateView を呼ぶべきものではない。
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Logger.v(getLogTag(), "[" +  this.hashCode() +"] onCreateView()");

@@ -102,7 +102,7 @@ public class OfferDetailFragment extends BaseFragment {
 
         ImageLoader imageLoader = VolleyUtils.getImageLoader(getActivity());
         // TODO: 画像をちゃんとしたものに変更
-        ImageListener listener = ImageLoader.getImageListener(mIconImage, android.R.drawable.ic_menu_rotate, android.R.drawable.ic_delete);
+        ImageListener listener = ImageLoader.getImageListener(mIconImage, R.drawable.ic_reload_grey600_24dp, R.drawable.ic_block_helper_grey600_24dp);
         mIconImage.setTag(imageLoader.get(mOffer.iconUrl, listener));
 
         mName = (TextView) view.findViewById(R.id.name_text);

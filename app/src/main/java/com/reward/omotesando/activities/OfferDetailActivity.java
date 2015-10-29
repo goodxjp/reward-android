@@ -49,15 +49,17 @@ public class OfferDetailActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_offer_detail);
 
         // 引数処理
         Intent intent = getIntent();
         mOffer = (Offer) intent.getSerializableExtra(ARG_OFFER);
 
+        setContentView(R.layout.activity_offer_detail);
+
         // アクションバー
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(getString(R.string.title_offer_detail));
+        // AndroidManifest.xml の android:label で指定しているから、いらないかも。
 
         // http://www.garunimo.com/program/p17.xhtml
         if (savedInstanceState == null) {

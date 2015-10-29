@@ -1,6 +1,7 @@
 package com.reward.omotesando.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,31 +12,33 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.reward.omotesando.R;
 import com.reward.omotesando.commons.Logger;
-import com.reward.omotesando.commons.VolleyUtils;
-import com.reward.omotesando.components.UserManager;
+import com.reward.omotesando.components.Error;
 import com.reward.omotesando.components.VolleyApi;
+import com.reward.omotesando.components.api.ErrorCode;
 import com.reward.omotesando.components.api.GetGifts;
 import com.reward.omotesando.models.Gift;
-import com.reward.omotesando.models.User;
 
 import org.json.JSONArray;
 
 import java.util.List;
 
 /**
- * ギフト券一覧フラグメント。
+ * ポイント交換履歴 (ギフト券一覧) フラグメント。
  */
-public class GiftListFragment extends BaseFragment
-        implements UserManager.Callback {
+public class GiftListFragment extends BaseFragment {
 
     private static final String TAG = GiftListFragment.class.getName();
+
     @Override
-    protected String getLogTag() { return TAG; }
+    protected String getLogTag() {
+        return TAG;
+    }
 
     // Model
     List<Gift> mGifts;
@@ -44,6 +47,10 @@ public class GiftListFragment extends BaseFragment
     private AbsListView mListView;
 
     private ListAdapter mAdapter;
+
+    // ギフト券一覧取得リクエストを送信中かどうか
+    private Request mRequestGetGifts = null;
+
 
     /*
      * 初期処理
@@ -102,34 +109,6 @@ public class GiftListFragment extends BaseFragment
         state.detach(this);
     }
 
-    // TODO: ギフト券が一件もないときの表示
-    /**
-     * The default content for this Fragment has a TextView that is shown when
-     * the list is empty. If you would like to change the text, call this method
-     * to supply the text it should use.
-     */
-    public void setEmptyText(CharSequence emptyText) {
-        View emptyView = mListView.getEmptyView();
-
-        if (emptyView instanceof TextView) {
-            ((TextView) emptyView).setText(emptyText);
-        }
-    }
-
-
-    /*
-     * UserManager.UserManagerCallbacks
-     */
-    @Override
-    public void onSuccessGetUser(User user) {
-        state.successGetUser(this, user);
-    }
-
-    @Override
-    public void onErrorGetUser(String message) {
-        state.failureGetUser(this, message);
-    }
-
 
     /*
      * 状態管理
@@ -141,43 +120,8 @@ public class GiftListFragment extends BaseFragment
         INITIAL {
             @Override
             public void start(GiftListFragment fragment) {
-                if (fragment.getUser()) {
-                    fragment.getPointHistories();
-                    transit(fragment, GETTING_GIFTS);
-                } else {
-                    transit(fragment, GETTING_USER);
-                }
-            }
-        },
-
-        // ユーザー情報取得中
-        GETTING_USER {
-            @Override
-            public void successGetUser(GiftListFragment fragment, User user) {
-                // ポイント表示を更新
-                fragment.updateUser(user);
-
                 fragment.getPointHistories();
-
                 transit(fragment, GETTING_GIFTS);
-            }
-
-            @Override
-            public void failureGetUser(GiftListFragment fragment, String message) {
-                // TODO: エラーの表示方法をちゃんと考えた方がよさげ
-                if (message != null) {
-                    Toast.makeText(fragment.getActivity(), message, Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(fragment.getActivity(), fragment.getString(R.string.error_communication), Toast.LENGTH_LONG).show();
-                }
-
-                transit(fragment, ERROR);
-            }
-
-            @Override
-            public void detach(GiftListFragment fragment) {
-                UserManager.cancelGetUser(fragment);
-                transit(fragment, INITIAL);
             }
         },
 
@@ -191,13 +135,25 @@ public class GiftListFragment extends BaseFragment
             }
 
             @Override
-            public void failureGetGifts(GiftListFragment fragment) {
-                // TODO: 端末の通信状態を確認
-                // TODO: サーバーの状態を確認
-                // TODO: エラーダイアログを表示
-                Toast.makeText(fragment.getActivity(), fragment.getString(R.string.error_communication), Toast.LENGTH_LONG).show();
+            public void failureGetGifts(GiftListFragment fragment, String message) {
+                // TODO: エラーの表示方法をちゃんと考えた方がよさげ
+                if (message != null) {
+                    Toast.makeText(fragment.getActivity(), message, Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(fragment.getActivity(), fragment.getString(R.string.error_communication), Toast.LENGTH_LONG).show();
+                }
 
                 transit(fragment, ERROR);
+            }
+
+            @Override
+            public void detach(GiftListFragment fragment) {
+                if (fragment.mRequestGetGifts != null) {
+                    fragment.mRequestGetGifts.cancel();
+                    fragment.mRequestGetGifts = null;
+                }
+
+                transit(fragment, INITIAL);
             }
         },
 
@@ -215,23 +171,13 @@ public class GiftListFragment extends BaseFragment
             throw new IllegalStateException();
         }
 
-        // ユーザー情報取得成功
-        public void successGetUser(GiftListFragment fragment, User user) {
-            throw new IllegalStateException();
-        }
-
-        // ユーザー情報取得失敗
-        public void failureGetUser(GiftListFragment fragment, String message) {
-            throw new IllegalStateException();
-        }
-
-        // ギフト券取得成功
+        // ギフト券一覧取得成功
         public void successGetGifts(GiftListFragment fragment, List<Gift> gifts) {
             throw new IllegalStateException();
         }
 
-        // ギフト券取得失敗
-        public void failureGetGifts(GiftListFragment fragment) {
+        // ギフト券一覧取得失敗
+        public void failureGetGifts(GiftListFragment fragment, String message) {
             throw new IllegalStateException();
         }
 
@@ -250,73 +196,82 @@ public class GiftListFragment extends BaseFragment
         }
     }
 
-    /**
-     * ユーザー情報取得。
-     *
-     * @return true: 取得成功 / false: 取得待ち
-     */
-    private boolean getUser() {
-        User user = UserManager.getUser(getActivity().getApplicationContext(), this);
 
-        if (user != null) {
-            updateUser(user);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * ユーザー情報更新。
-     */
-    private void updateUser(User user) {
-//        mPoint = user.point;
-//        mCurrentPointText.setText(String.valueOf(mPoint));
-    }
-
-    // TODO: キャンセルに対応
     /**
      * ギフト券取得。
      */
     private void getPointHistories() {
+        final Context applicationContext = getActivity().getApplicationContext();
         final GetGifts api = new GetGifts(getActivity());
 
         JsonArrayRequest request = new JsonArrayRequest(api.getUrl(getActivity()),
 
-            new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-                    VolleyApi.Log(TAG, api, response);
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        VolleyApi.Log(TAG, api, response);
+                        mRequestGetGifts = null;
 
-                    mGifts = api.parseJsonResponse(response);
-                    state.successGetGifts(GiftListFragment.this, mGifts);
+                        // TODO: 同じの何回も書いてる。
+                        mGifts = api.parseJsonResponse(response);
+                        if (mGifts == null) {
+                            state.failureGetGifts(GiftListFragment.this,
+                                    com.reward.omotesando.components.Error.getMessageCriticalSeverError(applicationContext, Error.GET_GIFTS_RESPONSE_WRONG));
+                        } else {
+                            state.successGetGifts(GiftListFragment.this, mGifts);
+                        }
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyApi.Log(TAG, api, error);
+                        VolleyApi.ApiError apiError = VolleyApi.parseVolleyError(error);
+                        mRequestGetGifts = null;
+
+                        // TODO: 同じの何回も書いてる。
+                        if (error.networkResponse == null) {
+                            // レスポンスなし
+                            state.failureGetGifts(GiftListFragment.this,
+                                    Error.getMessageCommunicationError(applicationContext));
+                        } else if (apiError == null) {
+                            // レスポンスは返ってきてるけど、よくわかんないエラー (Heroku メンテナンス中に起こるかも)
+                            state.failureGetGifts(GiftListFragment.this,
+                                    Error.getMessageCriticalSeverError(applicationContext, Error.GET_GIFTS_ERROR_RESPONSE_WRONG));
+                        } else {
+                            // API からの正常なエラーレスポンス
+                            state.failureGetGifts(GiftListFragment.this,
+                                    ErrorCode.getMessage(applicationContext, apiError.code, apiError.message));
+                        }
+                    }
                 }
-            },
-
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    VolleyApi.Log(TAG, api, error);
-
-                    state.failureGetGifts(GiftListFragment.this);
-                }
-            }
         );
 
-        VolleyUtils.getRequestQueue(getActivity().getApplicationContext()).add(request);
+        mRequestGetGifts = VolleyApi.send(getActivity().getApplicationContext(), request);
     }
 
     /*
      * ギフト券表示。
      */
     private void showPointHistories() {
-        // この時点で Activity が存在しないパターンがある
-        if (getActivity() == null) {
-            Logger.e(TAG, "showPointHistories() getActivity is null.");
-            return;
-        }
-
         mAdapter = new GiftArrayAdapter(getActivity(), R.layout.list_item_gift, mGifts);
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
+    }
+
+
+    // TODO: ギフト券が一件もないときの表示
+
+    /**
+     * The default content for this Fragment has a TextView that is shown when
+     * the list is empty. If you would like to change the text, call this method
+     * to supply the text it should use.
+     */
+    public void setEmptyText(CharSequence emptyText) {
+        View emptyView = mListView.getEmptyView();
+
+        if (emptyView instanceof TextView) {
+            ((TextView) emptyView).setText(emptyText);
+        }
     }
 }

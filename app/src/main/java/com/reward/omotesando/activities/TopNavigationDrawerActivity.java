@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.commons.VolleyUtils;
 import com.reward.omotesando.components.GcmManager;
+import com.reward.omotesando.components.VolleyApi;
 import com.reward.omotesando.components.api.PostUser;
 import com.reward.omotesando.components.Terminal;
 import com.reward.omotesando.fragments.AboutFragment;
@@ -337,8 +338,8 @@ public class TopNavigationDrawerActivity extends BaseActivity
                 }
             });
 
-        RequestQueue requestQueue = VolleyUtils.getRequestQueue(getApplicationContext());
-        requestQueue.add(request);
+        // 送信処理
+        VolleyApi.send(getApplicationContext(), request);
     }
 
     private void initNavigationDrawer() {

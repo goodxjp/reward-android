@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              tools:context=".PointHistoryListFragment">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context=".fragments.PointHistoryListFragment">
 
     <TextView
         android:id="@+id/achieved_at"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:layout_weight="1"
+        android:gravity="center"
         android:text="@string/table_header_datetime"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textIsSelectable="false"
-        android:layout_gravity="center_vertical"
-        android:gravity="center"/>
+        android:textIsSelectable="false"/>
 
     <TextView
         android:id="@+id/point_text"
@@ -23,9 +24,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
+        android:gravity="center"
         android:text="@string/table_header_point"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:gravity="center"/>
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
 
     <TextView
         android:id="@+id/name_text"
@@ -33,9 +34,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="2"
+        android:gravity="center"
         android:text="@string/table_header_point_history_detail"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textIsSelectable="false"
-        android:gravity="center"/>
-
+        android:textIsSelectable="false"/>
 </LinearLayout>

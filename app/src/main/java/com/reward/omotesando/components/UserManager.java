@@ -94,7 +94,7 @@ public class UserManager {
 
                             // - 通信できない
                             // - サーバー停止
-                            allCallbackOnErrorGetUser(context.getString(R.string.error_communication));
+                            allCallbackOnErrorGetUser(Error.getMessageCommunicationError(context));
                         } else if (apiError == null) {
                             // レスポンスは返ってきてるけど、よくわかんないエラー (Heroku メンテナンス中に起こるかも)
                             allCallbackOnErrorGetUser(Error.getMessageCriticalSeverError(context, Error.GET_USER_ERROR_RESPONSE_WRONG));

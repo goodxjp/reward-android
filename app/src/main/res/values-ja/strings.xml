@@ -11,6 +11,7 @@
     <string name="menu_about">アプリ情報</string>
     <string name="menu_debug">開発用</string>
 
+    <!-- 他はメニュー名をタイトルに使っているがこれだけ例外 -->
     <string name="title_offer_detail">案件詳細</string>
 
     <!-- 案件一覧のタブ名 -->
@@ -26,7 +27,7 @@
     <string name="action_execute">案件実行</string>
 
     <!-- ポイント履歴画面 -->
-    <string name="tab_point_history">獲得履歴</string>
+    <string name="tab_point_history">取得履歴</string>
     <string name="tab_exchange_history">交換履歴</string>
     <string name="table_header_datetime">日時</string>
     <string name="table_header_point">ポイント</string>

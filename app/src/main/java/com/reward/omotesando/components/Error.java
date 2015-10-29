@@ -19,33 +19,49 @@ public final class Error {
      * GET user
      */
     // レスポンス不正
-    public static final int GET_USER_RESPONSE_WRONG = 1001;
+    public static final int GET_USER_RESPONSE_WRONG = 1101;
     // エラーレスポンス不正
-    public static final int GET_USER_ERROR_RESPONSE_WRONG = 1002;
+    public static final int GET_USER_ERROR_RESPONSE_WRONG = 1102;
 
     /*
      * GET offers
      */
     // レスポンス不正
-    public static final int GET_OFFERS_RESPONSE_WRONG = 2001;
+    public static final int GET_OFFERS_RESPONSE_WRONG = 1201;
     // エラーレスポンス不正
-    public static final int GET_OFFERS_ERROR_RESPONSE_WRONG = 2002;
+    public static final int GET_OFFERS_ERROR_RESPONSE_WRONG = 1202;
+
+    /*
+     * GET point_histories
+     */
+    // レスポンス不正
+    public static final int GET_POINT_HISORIES_RESPONSE_WRONG = 1301;
+    // エラーレスポンス不正
+    public static final int GET_POINT_HISORIES_ERROR_RESPONSE_WRONG = 1302;
+
+    /*
+     * GET gifts
+     */
+    // レスポンス不正
+    public static final int GET_GIFTS_RESPONSE_WRONG = 1401;
+    // エラーレスポンス不正
+    public static final int GET_GIFTS_ERROR_RESPONSE_WRONG = 1402;
 
     /*
      * GET items
      */
     // レスポンス不正
-    public static final int GET_ITEMS_RESPONSE_WRONG = 3001;
+    public static final int GET_ITEMS_RESPONSE_WRONG = 1501;
     // エラーレスポンス不正
-    public static final int GET_ITEMS_ERROR_RESPONSE_WRONG = 3002;
+    public static final int GET_ITEMS_ERROR_RESPONSE_WRONG = 1502;
 
     /*
      * POST purchases
      */
     // レスポンス不正 (レスポンス見てない)
-    //public static final int POST_PURCHASES_RESPONSE_WRONG = 4001;
+    //public static final int POST_PURCHASES_RESPONSE_WRONG = 1601;
     // エラーレスポンス不正
-    public static final int POST_PURCHASES_ERROR_RESPONSE_WRONG = 4002;
+    public static final int POST_PURCHASES_ERROR_RESPONSE_WRONG = 1602;
 
     /*
      * 共通

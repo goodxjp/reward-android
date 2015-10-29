@@ -22,7 +22,8 @@
                 android:id="@+id/icon_image"
                 android:layout_width="128dp"
                 android:layout_height="128dp"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:src="@drawable/ic_reload_grey600_24dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -43,9 +44,9 @@
                     android:id="@+id/name_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:layout_margin="3dp"
-                    android:paddingLeft="10dp"/>
+                    android:paddingLeft="10dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -59,10 +60,10 @@
                     android:id="@+id/point_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="#ff0000"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:layout_margin="3dp"
-                    android:paddingLeft="10dp"/>
+                    android:paddingLeft="10dp"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="#ff0000"/>
 
             </LinearLayout>
         </LinearLayout>
@@ -93,11 +94,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="center_horizontal"
                     android:padding="3dp"
                     android:text="@string/offer_detail_requirement"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textStyle="bold"
-                    android:gravity="center_horizontal"/>
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/requirement_text"
@@ -119,11 +120,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="center_horizontal"
                     android:padding="3dp"
                     android:text="@string/offer_detail_requirement_detail"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textStyle="bold"
-                    android:gravity="center_horizontal"/>
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/requirement_detail_text"

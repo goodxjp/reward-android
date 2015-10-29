@@ -1,6 +1,7 @@
 package com.reward.omotesando.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,14 +12,16 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.reward.omotesando.R;
 import com.reward.omotesando.commons.Logger;
-import com.reward.omotesando.commons.VolleyUtils;
+import com.reward.omotesando.components.Error;
 import com.reward.omotesando.components.UserManager;
 import com.reward.omotesando.components.VolleyApi;
+import com.reward.omotesando.components.api.ErrorCode;
 import com.reward.omotesando.components.api.GetPointHistories;
 import com.reward.omotesando.models.PointHistory;
 import com.reward.omotesando.models.User;
@@ -28,7 +31,7 @@ import org.json.JSONArray;
 import java.util.List;
 
 /**
- * ポイント履歴一覧フラグメント。
+ * ポイント取得履歴 (ポイント履歴一覧) フラグメント。
  */
 public class PointHistoryListFragment extends BaseFragment
         implements UserManager.Callback {
@@ -46,6 +49,10 @@ public class PointHistoryListFragment extends BaseFragment
     private AbsListView mListView;
 
     private ListAdapter mAdapter;
+
+    // ポイント履歴一覧取得リクエストを送信中かどうか
+    private Request mRequestGetPointHistories = null;
+
 
     /*
      * 初期処理
@@ -108,20 +115,6 @@ public class PointHistoryListFragment extends BaseFragment
         state.detach(this);
     }
 
-    // TODO: ポイント履歴が一件もないときの表示
-    /**
-     * The default content for this Fragment has a TextView that is shown when
-     * the list is empty. If you would like to change the text, call this method
-     * to supply the text it should use.
-     */
-    public void setEmptyText(CharSequence emptyText) {
-        View emptyView = mListView.getEmptyView();
-
-        if (emptyView instanceof TextView) {
-            ((TextView) emptyView).setText(emptyText);
-        }
-    }
-
 
     /*
      * UserManager.UserManagerCallbacks
@@ -139,8 +132,6 @@ public class PointHistoryListFragment extends BaseFragment
 
     /*
      * 状態管理
-     *
-     * - 参考: http://idios.hatenablog.com/entry/2012/07/07/235137
      */
     private State state = State.INITIAL;
 
@@ -199,13 +190,25 @@ public class PointHistoryListFragment extends BaseFragment
             }
 
             @Override
-            public void failureGetPointHistories(PointHistoryListFragment fragment) {
-                // TODO: 端末の通信状態を確認
-                // TODO: サーバーの状態を確認
-                // TODO: エラーダイアログを表示
-                Toast.makeText(fragment.getActivity(), fragment.getString(R.string.error_communication), Toast.LENGTH_LONG).show();
+            public void failureGetPointHistories(PointHistoryListFragment fragment, String message) {
+                // TODO: エラーの表示方法をちゃんと考えた方がよさげ
+                if (message != null) {
+                    Toast.makeText(fragment.getActivity(), message, Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(fragment.getActivity(), fragment.getString(R.string.error_communication), Toast.LENGTH_LONG).show();
+                }
 
                 transit(fragment, ERROR);
+            }
+
+            @Override
+            public void detach(PointHistoryListFragment fragment) {
+                if (fragment.mRequestGetPointHistories != null) {
+                    fragment.mRequestGetPointHistories.cancel();
+                    fragment.mRequestGetPointHistories = null;
+                }
+
+                transit(fragment, INITIAL);
             }
         },
 
@@ -239,7 +242,7 @@ public class PointHistoryListFragment extends BaseFragment
         }
 
         // ポイント履歴取得失敗
-        public void failureGetPointHistories(PointHistoryListFragment fragment) {
+        public void failureGetPointHistories(PointHistoryListFragment fragment, String message) {
             throw new IllegalStateException();
         }
 
@@ -282,9 +285,13 @@ public class PointHistoryListFragment extends BaseFragment
         //mCurrentPointText.setText(String.valueOf(mPoint));
     }
 
-    // TODO: キャンセルに対応
-    // キャンペーン情報 (案件情報) 取得
+    /**
+     * ポイント履歴取得。
+     *
+     * - ここでしか使わなそうなので共通化しない。
+     */
     private void getPointHistories() {
+        final Context applicationContext = getActivity().getApplicationContext();
         final GetPointHistories api = new GetPointHistories(getActivity());
 
         JsonArrayRequest request = new JsonArrayRequest(api.getUrl(getActivity()),
@@ -293,9 +300,15 @@ public class PointHistoryListFragment extends BaseFragment
                 @Override
                 public void onResponse(JSONArray response) {
                     VolleyApi.Log(TAG, api, response);
+                    mRequestGetPointHistories = null;
 
                     mPointHistories = api.parseJsonResponse(response);
-                    state.successGetPointHistories(PointHistoryListFragment.this, mPointHistories);
+                    if (mPointHistories == null) {
+                        state.failureGetPointHistories(PointHistoryListFragment.this,
+                                Error.getMessageCriticalSeverError(applicationContext, Error.GET_POINT_HISORIES_RESPONSE_WRONG));
+                    } else {
+                        state.successGetPointHistories(PointHistoryListFragment.this, mPointHistories);
+                    }
                 }
             },
 
@@ -303,24 +316,57 @@ public class PointHistoryListFragment extends BaseFragment
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     VolleyApi.Log(TAG, api, error);
+                    VolleyApi.ApiError apiError = VolleyApi.parseVolleyError(error);
+                    mRequestGetPointHistories = null;
 
-                    state.failureGetPointHistories(PointHistoryListFragment.this);
+                    if (error.networkResponse == null) {
+                        // レスポンスなし
+                        state.failureGetPointHistories(PointHistoryListFragment.this,
+                                Error.getMessageCommunicationError(applicationContext));
+                    } else if (apiError == null) {
+                        // レスポンスは返ってきてるけど、よくわかんないエラー (Heroku メンテナンス中に起こるかも)
+                        state.failureGetPointHistories(PointHistoryListFragment.this,
+                                Error.getMessageCriticalSeverError(applicationContext, Error.GET_POINT_HISORIES_ERROR_RESPONSE_WRONG));
+                    } else {
+                        // API からの正常なエラーレスポンス
+                        state.failureGetPointHistories(PointHistoryListFragment.this,
+                                ErrorCode.getMessage(applicationContext, apiError.code, apiError.message));
+                    }
                 }
             }
         );
 
-        VolleyUtils.getRequestQueue(getActivity().getApplicationContext()).add(request);
+        // 送信処理
+        mRequestGetPointHistories = VolleyApi.send(getActivity().getApplicationContext(), request);
     }
 
-    // ポイント履歴を表示
+    /**
+     * ポイント履歴表示。
+     */
     private void showPointHistories() {
-        // この時点で Activity が存在しないパターンがある
+        // この時点で Activity が存在しないパターンがある？
         if (getActivity() == null) {
             Logger.e(TAG, "showPointHistories() getActivity is null.");
-            return;
+            throw new NullPointerException();  // TODO: あとで消す
+            //return;
         }
 
         mAdapter = new PointHistoryArrayAdapter(getActivity(), R.layout.list_item_point_history, mPointHistories);
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
+    }
+
+
+    // TODO: ポイント履歴が一件もないときの表示
+    /**
+     * The default content for this Fragment has a TextView that is shown when
+     * the list is empty. If you would like to change the text, call this method
+     * to supply the text it should use.
+     */
+    public void setEmptyText(CharSequence emptyText) {
+        View emptyView = mListView.getEmptyView();
+
+        if (emptyView instanceof TextView) {
+            ((TextView) emptyView).setText(emptyText);
+        }
     }
 }

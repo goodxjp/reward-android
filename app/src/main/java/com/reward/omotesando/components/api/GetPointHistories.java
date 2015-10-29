@@ -94,7 +94,7 @@ public class GetPointHistories extends RewardApi<List<PointHistory>> {
         try {
             detail = o.getString("detail");
             pointChange = o.getInt("point_change");
-            String s = o.getString("created_at");
+            String s = o.getString("created_at");  // TODO: 成果日に変更
             createdAt = RewardApi.parseDate(s);
         } catch (JSONException e) {
             // TODO Auto-generated catch block

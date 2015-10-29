@@ -12,13 +12,23 @@ import com.reward.omotesando.R;
 import com.reward.omotesando.fragments.GiftListFragment;
 import com.reward.omotesando.fragments.PointHistoryListFragment;
 
+/**
+ * ポイント履歴アクティビティ。
+ */
 public class PointHistoryActivity extends BaseActivity {
+
+    private static final String TAG = PointHistoryActivity.class.getName();
+    @Override
+    protected String getLogTag() { return TAG; }
 
     FragmentTabHost mTabHost;
 
     public static final String TAB_POINT_HISTORY    = "tab_point_history";
     public static final String TAB_EXCHANGE_HISTORY = "tab_exchange_history";
 
+    /*
+     * 初期処理
+     */
     private static final String ARG_START_TAB = "start_tab";
 
     public static void start(Context packageContext, String startTab, boolean noHistory) {
@@ -31,6 +41,9 @@ public class PointHistoryActivity extends BaseActivity {
     }
 
 
+    /*
+     * ライフサイクル
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,11 +60,11 @@ public class PointHistoryActivity extends BaseActivity {
         mTabHost = (FragmentTabHost)findViewById(android.R.id.tabhost);
         mTabHost.setup(this, getSupportFragmentManager(), R.id.content);
 
-        TabHost.TabSpec tabSpec1 = mTabHost.newTabSpec(TAB_POINT_HISTORY).setIndicator(getString(R.string.tab_point_history));
-        mTabHost.addTab(tabSpec1, PointHistoryListFragment.class, null);
+        TabHost.TabSpec tabSpecPointHistory = mTabHost.newTabSpec(TAB_POINT_HISTORY).setIndicator(getString(R.string.tab_point_history));
+        mTabHost.addTab(tabSpecPointHistory, PointHistoryListFragment.class, null);
 
-        TabHost.TabSpec tabSpec2 = mTabHost.newTabSpec(TAB_EXCHANGE_HISTORY).setIndicator(getString(R.string.tab_exchange_history));
-        mTabHost.addTab(tabSpec2, GiftListFragment.class, null);
+        TabHost.TabSpec tabSpecExchangeHistory = mTabHost.newTabSpec(TAB_EXCHANGE_HISTORY).setIndicator(getString(R.string.tab_exchange_history));
+        mTabHost.addTab(tabSpecExchangeHistory, GiftListFragment.class, null);
 
         mTabHost.setCurrentTabByTag(startTab);
     }
@@ -61,25 +74,11 @@ public class PointHistoryActivity extends BaseActivity {
         super.onResume();
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.menu_point_exchange, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

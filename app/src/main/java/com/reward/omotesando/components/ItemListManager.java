@@ -85,7 +85,7 @@ public class ItemListManager {
 
                             // - 通信できない
                             // - サーバー停止
-                            allCallbackOnError(context.getString(R.string.error_communication));
+                            allCallbackOnError(Error.getMessageCommunicationError(context));
                         } else if (apiError == null) {
                             // レスポンスは返ってきてるけど、よくわかんないエラー (Heroku メンテナンス中に起こるかも)
                             allCallbackOnError(Error.getMessageCriticalSeverError(context, Error.GET_ITEMS_ERROR_RESPONSE_WRONG));

@@ -2,7 +2,6 @@ package com.reward.omotesando.fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,13 +38,13 @@ import static com.reward.omotesando.components.api.ErrorCode.ERROR_CODE_9999;
 /**
  * 商品一覧 (ポイント交換) フラグメント。
  */
-public class ItemFragment extends BaseFragment
+public class ItemListFragment extends BaseFragment
         implements AbsListView.OnItemClickListener,
                    ItemListManager.Callback,
                    View.OnClickListener,  // わかりにくい…リスト内のボタンのリスナー
                    ExchangeDialogFragment.OnExchangeDialogListener {
 
-    private static final String TAG = ItemFragment.class.getName();
+    private static final String TAG = ItemListFragment.class.getName();
     @Override
     protected String getLogTag() { return TAG; }
 
@@ -66,8 +65,8 @@ public class ItemFragment extends BaseFragment
     /*
      * 初期処理
      */
-    public static ItemFragment newInstance() {
-        ItemFragment fragment = new ItemFragment();
+    public static ItemListFragment newInstance() {
+        ItemListFragment fragment = new ItemListFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -77,7 +76,7 @@ public class ItemFragment extends BaseFragment
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ItemFragment() {
+    public ItemListFragment() {
     }
 
 
@@ -101,7 +100,7 @@ public class ItemFragment extends BaseFragment
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);  // ログのためだけ
 
-        View view = inflater.inflate(R.layout.fragment_item, container, false);
+        View view = inflater.inflate(R.layout.fragment_item_list, container, false);
 
         // Set the adapter
         mListView = (AbsListView) view.findViewById(android.R.id.list);
@@ -329,7 +328,7 @@ public class ItemFragment extends BaseFragment
         // 初期状態
         INITIAL {
             @Override
-            public void start(ItemFragment fragment) {
+            public void start(ItemListFragment fragment) {
                 if (fragment.getItems()) {
                     transit(fragment, READY);
                 } else {
@@ -341,21 +340,21 @@ public class ItemFragment extends BaseFragment
         // 商品一覧取得中
         GETTING_ITEMS {
             @Override
-            public void successGetItems(ItemFragment fragment, List<Item> items) {
+            public void successGetItems(ItemListFragment fragment, List<Item> items) {
                 fragment.showItems(items);
 
                 transit(fragment, READY);
             }
 
             @Override
-            public void failureGetItems(ItemFragment fragment, String message) {
+            public void failureGetItems(ItemListFragment fragment, String message) {
                 Toast.makeText(fragment.getActivity(), message, Toast.LENGTH_LONG).show();
 
                 transit(fragment, ERROR);
             }
 
             @Override
-            public void detach(ItemFragment fragment) {
+            public void detach(ItemListFragment fragment) {
                 ItemListManager.cancelGetItems(fragment);
 
                 transit(fragment, INITIAL);
@@ -368,7 +367,7 @@ public class ItemFragment extends BaseFragment
         // エラー状態
         ERROR {
             @Override
-            public void start(ItemFragment fragment) {
+            public void start(ItemListFragment fragment) {
                 if (fragment.getItems()) {
                     transit(fragment, READY);
                 } else {
@@ -381,22 +380,22 @@ public class ItemFragment extends BaseFragment
          * イベント
          */
         // 初期処理開始
-        public void start(ItemFragment fragment) {
+        public void start(ItemListFragment fragment) {
             throw new IllegalStateException();
         }
 
         // 商品一覧取得成功
-        public void successGetItems(ItemFragment fragment, List<Item> items) {
+        public void successGetItems(ItemListFragment fragment, List<Item> items) {
             throw new IllegalStateException();
         }
 
         // 商品一覧取得失敗
-        public void failureGetItems(ItemFragment fragment, String message) {
+        public void failureGetItems(ItemListFragment fragment, String message) {
             throw new IllegalStateException();
         }
 
         // Detach
-        public void detach(ItemFragment fragment) {
+        public void detach(ItemListFragment fragment) {
             // どの状態でも Detach イベントが発生する可能性あり
             // 通信中でなければ何もしない。
         }
@@ -404,7 +403,7 @@ public class ItemFragment extends BaseFragment
         /*
          * 状態遷移 (enum State 内でのみ使用すること)
         */
-        private static void transit(ItemFragment fragment, State nextState) {
+        private static void transit(ItemListFragment fragment, State nextState) {
             Logger.d(TAG, "STATE: " + fragment.state + " -> " + nextState);
             fragment.state = nextState;
         }

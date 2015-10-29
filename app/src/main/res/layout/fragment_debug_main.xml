@@ -1,74 +1,76 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="com.reward.omotesando.fragments.DebugMainFragment">
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.reward.omotesando.fragments.DebugMainFragment">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="5dp">
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="MediaUserId" />
+                android:text="MediaUserId"/>
 
             <TextView
+                android:id="@+id/media_user_id_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:id="@+id/media_user_id_text" />
+                android:layout_weight="1"/>
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="5dp">
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="UserKey" />
+                android:text="UserKey"/>
 
             <TextView
+                android:id="@+id/user_key_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:id="@+id/user_key_text" />
+                android:layout_weight="1"/>
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="5dp">
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="TerminalId" />
+                android:text="TerminalId"/>
 
             <TextView
+                android:id="@+id/terminal_id_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:id="@+id/terminal_id_text" />
+                android:layout_weight="1"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -76,17 +78,17 @@
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:layout_alignParentBottom="true"
+        android:layout_gravity="center_horizontal"
         android:layout_margin="10dp">
 
         <Button
+            android:id="@+id/initialize_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Initialize"
-            android:id="@+id/initialize_button"
-            android:layout_gravity="center_horizontal"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:text="Initialize"/>
     </GridLayout>
 </RelativeLayout>

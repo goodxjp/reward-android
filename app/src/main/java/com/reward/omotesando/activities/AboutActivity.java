@@ -6,8 +6,19 @@ import android.view.MenuItem;
 
 import com.reward.omotesando.R;
 
+/**
+ * アプリ情報アクティビティ。
+ */
 public class AboutActivity extends BaseActivity {
 
+    private static final String TAG = AboutActivity.class.getName();
+    @Override
+    protected String getLogTag() { return TAG; }
+
+
+    /*
+     * ライフサイクル
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,20 +31,5 @@ public class AboutActivity extends BaseActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.menu_point_exchange, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

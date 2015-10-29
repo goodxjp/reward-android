@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.zip.ZipFile;
 
+import com.reward.omotesando.BuildConfig;
 import com.reward.omotesando.R;
 import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.commons.Utils;
@@ -79,8 +80,12 @@ public class AboutFragment extends BaseFragment {
         mVersionText.setText("Ver. " + Utils.getVersionName(this.getActivity().getApplicationContext()));
 
         mBuildInfoText = (TextView) v.findViewById(R.id.build_info_text);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
-        mBuildInfoText.setText(sdf.format(getUpdateTime()));
+
+        // デバッグ版のみビルド日時を表示
+        if (BuildConfig.DEBUG) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
+            mBuildInfoText.setText(sdf.format(getUpdateTime()));
+        }
 
         mQueryButton = (Button) v.findViewById(R.id.query_button);
         mQueryButton.setOnClickListener(new View.OnClickListener() {

@@ -7,55 +7,54 @@
     tools:context=".fragments.AboutFragment">
 
     <TextView
+        android:id="@+id/app_name_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:id="@+id/app_name_text"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal|top"
         android:layout_marginTop="100dp"
-        android:textSize="24dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"/>
+        android:text="@string/app_name"
+        android:textSize="24dp"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text=""
         android:id="@+id/version_text"
-        android:layout_gravity="center_horizontal|top"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/app_name_text"
-        android:layout_marginTop="10dp" />
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text=""
-        android:id="@+id/build_info_text"
-        android:layout_gravity="center_horizontal|top"
+        android:layout_below="@+id/app_name_text"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/version_text"
-        android:layout_marginTop="5dp" />
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="10dp"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
 
     <TextView
+        android:id="@+id/build_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/version_text"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="5dp"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+    <TextView
+        android:id="@+id/licence_text"
         android:layout_width="250dp"
         android:layout_height="50dp"
-        android:text="@string/license"
-        android:id="@+id/licence_text"
-        android:layout_marginTop="58dp"
         android:layout_below="@+id/build_info_text"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="58dp"
+        android:text="@string/license"/>
 
     <Button
+        android:id="@+id/query_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/query"
-        android:id="@+id/query_button"
+        android:layout_below="@+id/licence_text"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:layout_marginTop="23dp"
-        android:layout_below="@+id/licence_text"
-        android:layout_centerHorizontal="true"/>
-
+        android:text="@string/query"/>
 </RelativeLayout>

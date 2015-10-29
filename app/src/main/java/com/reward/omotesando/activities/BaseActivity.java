@@ -23,6 +23,10 @@ public abstract class BaseActivity extends ActionBarActivity implements Showable
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Logger.v(getLogTag(), "[" + this.hashCode() + "] onCreate()");
+
+        if (getResources().getBoolean(R.bool.is_classic)) {
+            setTheme(R.style.AppThemeClassic);
+        }
     }
 
     @Override

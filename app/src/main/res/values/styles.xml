@@ -12,4 +12,7 @@
 
     </style>
 
+    <!-- 一時的に昔のデザインを適用するために使用 (無視して大丈夫！) -->
+    <style name="AppThemeClassic" parent="Theme.AppCompat.Light.DarkActionBar">
+    </style>
 </resources>

@@ -85,7 +85,12 @@ public class OfferDetailFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_offer_detail, container, false);
+        View view;
+        if (getResources().getBoolean(R.bool.is_classic)) {
+            view = inflater.inflate(R.layout.fragment_offer_detail_classic, container, false);
+        } else {
+            view = inflater.inflate(R.layout.fragment_offer_detail, container, false);
+        }
 
         mIconImage =  (ImageView) view.findViewById(R.id.icon_image);
 

@@ -31,7 +31,12 @@ public class OfferArrayAdapter extends ArrayAdapter<Offer> {
         View view = convertView;
         ViewHolder holder;
         if (view == null) {
-            view = mInflater.inflate(R.layout.list_item_offer, null);
+
+            if (parent.getResources().getBoolean(R.bool.is_classic)) {
+                view = mInflater.inflate(R.layout.list_item_offer_classic, null);
+            } else {
+                view = mInflater.inflate(R.layout.list_item_offer, null);
+            }
 
             holder = new ViewHolder();
             holder.iconImage = (ImageView) view.findViewById(R.id.icon_image);

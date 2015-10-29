@@ -3,4 +3,7 @@
     <string name="api_scheme">http</string>
     <string name="api_encoded_authority">kyuuki.jp:3000</string>
     <string name="api_path_base">/api/v1</string>
+
+    <!-- 一時的に昔のデザインを使用する -->
+    <bool name="is_classic">true</bool>
 </resources>

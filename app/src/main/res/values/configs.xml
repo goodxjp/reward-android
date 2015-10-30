@@ -14,4 +14,7 @@
 
     <!-- 問い合わせ先 -->
     <string name="inquiry_email_address">sup.reward@gmail.com</string>
+
+    <!-- 一時的に昔のデザインを使用する -->
+    <bool name="is_classic">false</bool>
 </resources>

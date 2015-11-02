@@ -18,28 +18,28 @@
             android:layout_height="wrap_content"
             android:padding="10dp">
 
-        <LinearLayout
-            android:id="@+id/app_disp_area"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@color/grey200">
-
-            <ImageView
-                android:id="@+id/icon_image"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_margin="5dp"
-                android:src="@drawable/ic_reload_grey600_24dp"/>
-
-            <TextView
-                android:id="@+id/name_text"
+            <LinearLayout
+                android:id="@+id/app_disp_area"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:layout_margin="3dp"
-                android:paddingLeft="10dp"/>
-        </LinearLayout>
+                android:orientation="horizontal"
+                android:background="@color/grey200">
+
+                <ImageView
+                    android:id="@+id/icon_image"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/ic_reload_grey600_24dp"/>
+
+                <TextView
+                    android:id="@+id/name_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:layout_margin="3dp"
+                    android:paddingLeft="10dp"/>
+            </LinearLayout>
 
 
             <LinearLayout
@@ -130,6 +130,17 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <Button
+                android:id="@+id/execute_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/corner_round_item_offer_btn"
+                android:text="ポイントをGETする"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="20dp" />
+
             <TextView
                 android:id="@+id/detail_text"
                 android:layout_width="match_parent"
@@ -140,14 +151,6 @@
                 android:text="Small Text"
                 android:textAppearance="?android:attr/textAppearanceSmall"/>
 
-
-
-            <Button
-                android:id="@+id/execute_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="@string/action_execute"/>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

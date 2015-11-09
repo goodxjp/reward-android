@@ -13,8 +13,8 @@
     <string name="gcm_sender_id">857237989884</string>
 
     <!-- 問い合わせ先 -->
-    <string name="inquiry_email_address">sup.reward@gmail.com</string>
+    <string name="inquiry_email_address">points.sup@gmail.com</string>
 
     <!-- 一時的に昔のデザインを使用する -->
-    <bool name="is_classic">false</bool>
+    <bool name="is_classic">true</bool>
 </resources>

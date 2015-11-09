@@ -11,6 +11,7 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.reward.omotesando.R;
@@ -19,6 +20,7 @@ import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.components.OfferListManager;
 import com.reward.omotesando.components.UserManager;
 import com.reward.omotesando.models.Offer;
+import com.reward.omotesando.models.OfferListTab;
 import com.reward.omotesando.models.User;
 
 /**
@@ -43,6 +45,7 @@ public class OfferListFragment extends BaseFragment
 
     // Model
     //long mPoint;  // TODO: ポイントを表示を一時停止中
+    int mCategoryId;  // 表示しているカテゴリ
     List<Offer> mOffers;
 
     // View
@@ -66,11 +69,13 @@ public class OfferListFragment extends BaseFragment
      * 初期処理
      */
     private static final String ARG_CREATE_TIME = "create_time";
+    private static final String ARG_CATEGORY_ID = "category_id";
 
-    public static OfferListFragment newInstance() {
+    public static OfferListFragment newInstance(int categoryId) {
         OfferListFragment fragment = new OfferListFragment();
         Bundle args = new Bundle();
         args.putLong(ARG_CREATE_TIME, System.currentTimeMillis());
+        args.putInt(ARG_CATEGORY_ID, categoryId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -99,6 +104,8 @@ public class OfferListFragment extends BaseFragment
         if (getArguments() != null) {
             Logger.v(TAG, "Create time  = " + getArguments().getLong(ARG_CREATE_TIME));
             Logger.v(TAG, "Current time = " + System.currentTimeMillis());
+
+            mCategoryId = getArguments().getInt(ARG_CATEGORY_ID);
         }
     }
 
@@ -264,8 +271,7 @@ public class OfferListFragment extends BaseFragment
         GETTING_OFFERS {
             @Override
             public void successGetOfferList(OfferListFragment fragment, List<Offer> offers) {
-                fragment.mOffers = offers;
-                fragment.showOfferList(offers);
+                fragment.showOfferList(fragment.filterOfferList(offers, fragment.mCategoryId));
 
                 transit(fragment, READY);
             }
@@ -364,15 +370,30 @@ public class OfferListFragment extends BaseFragment
         List<Offer> offerList = OfferListManager.getOfferList(getActivity().getApplicationContext(), this);
 
         if (offerList != null) {
-            this.mOffers = offerList;
-            showOfferList(offerList);
+            // TODO: 将来的には OfferListManager にカテゴリ分けの責任を持たせる
+            showOfferList(filterOfferList(offerList, mCategoryId));
             return true;
         } else {
             return false;
         }
     }
 
+    private List<Offer> filterOfferList(List<Offer> offers, int categoryId) {
+        List<Offer> result = new ArrayList<>();
+
+        for (Offer offer : offers) {
+            if (offer.campaignCategoryId == categoryId) {
+                result.add(offer);
+            }
+        }
+
+        return result;
+    }
+
     private void showOfferList(List<Offer> offerList) {
+        // 表示しているモデルを更新
+        mOffers = offerList;
+
         // この時点で Activity が存在しないパターンがある？
         if (getActivity() == null) {
             Logger.e(TAG, "showOfferList() getActivity is null.");
@@ -382,9 +403,9 @@ public class OfferListFragment extends BaseFragment
 
         // getView 上書きしているから textViewResourceId は実はなんでもいい。
         if (getResources().getBoolean(R.bool.is_classic)) {
-            mAdapter = new OfferArrayAdapter(getActivity(), R.layout.list_item_offer_classic, offerList);
+            mAdapter = new OfferArrayAdapter(getActivity(), R.layout.list_item_offer_classic, mOffers);
         } else {
-            mAdapter = new OfferArrayAdapter(getActivity(), R.layout.list_item_offer, offerList);
+            mAdapter = new OfferArrayAdapter(getActivity(), R.layout.list_item_offer, mOffers);
         }
         // http://skyarts.com/blog/jp/skyarts/?p=3964
 //        // API 9 で動かすための苦肉の策。

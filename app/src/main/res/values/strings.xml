@@ -14,8 +14,9 @@
 
     <!-- 案件一覧のタブ名 -->
     <string name="tab_app_dl">App</string>
-    <string name="tab_movie">Movie</string>
-    <string name="tab_fb">FB Like</string>
+    <string name="tab_membership">Membership</string>
+    <string name="tab_application">Application</string>
+    <string name="tab_shopping">Shopping</string>
 
     <!-- 案件詳細画面 -->
     <string name="offer_detail_name">Name</string>

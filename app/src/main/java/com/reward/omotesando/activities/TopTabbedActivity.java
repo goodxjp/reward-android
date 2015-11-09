@@ -301,14 +301,17 @@ public class TopTabbedActivity extends BaseActivity
                 case APP_DL:
                     // 現状、OfferFragment を同一画面に複数追加できない。
                     //fragment = OfferFragment.newInstance();
-                    fragment = OfferListFragment.newInstance();
+                    fragment = OfferListFragment.newInstance(1);  // TODO: サーバーの seeds に依存しちゃってるのをちゃんとする
                     break;
-//                case MOVIE:
-//                    fragment = OfferListFragment.newInstance();
-//                    break;
-//                case FB:
-//                    fragment = OfferListFragment.newInstance();
-//                    break;
+                case MEMBERSHIP:
+                    fragment = OfferListFragment.newInstance(2);
+                    break;
+                case APPLICATION:
+                    fragment = OfferListFragment.newInstance(3);
+                    break;
+                case SHOPPING:
+                    fragment = OfferListFragment.newInstance(4);
+                    break;
                 default:
                     throw new IllegalStateException();
             }

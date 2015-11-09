@@ -6,6 +6,7 @@ import java.io.Serializable;
  * オファー (案件)。
  */
 public class Offer implements Serializable {
+    public int campaignCategoryId;
     public String name;
     public String detail;
     public int price;
@@ -16,8 +17,9 @@ public class Offer implements Serializable {
     public String requirementDetail;
     public String period;
 
-    public Offer(String name, String detail, int price, int point, String iconUrl, String executeUrl,
+    public Offer(int campaignCategoryId, String name, String detail, int price, int point, String iconUrl, String executeUrl,
                  String requirement, String requirementDetail,  String period) {
+        this.campaignCategoryId = campaignCategoryId;
         this.name = name;
         this.detail = detail;
         this.price = price;
@@ -33,4 +35,3 @@ public class Offer implements Serializable {
         return executeUrl;
     }
 }
-

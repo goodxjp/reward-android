@@ -86,6 +86,7 @@ public class GetOffers extends RewardApi<List<Offer>> {
 
     // TODO: データが不正の場合の処理
     public static Offer json2Offer(JSONObject o) {
+        int campaignCategoryId = 0;
         String name = "";
         String detail = "";
         String iconUrl = "";
@@ -96,6 +97,7 @@ public class GetOffers extends RewardApi<List<Offer>> {
         int point = 0;
         int price = 0;
         try {
+            campaignCategoryId = o.getInt("campaign_category_id");
             name = o.getString("name");
             detail = o.getString("detail");
             iconUrl = o.getString("icon_url");
@@ -117,7 +119,7 @@ public class GetOffers extends RewardApi<List<Offer>> {
             e.printStackTrace();
         }
 
-        Offer offer = new Offer(name, detail, price, point, iconUrl, executeUrl, requirement, requirementDetail, period);
+        Offer offer = new Offer(campaignCategoryId, name, detail, price, point, iconUrl, executeUrl, requirement, requirementDetail, period);
 
         return offer;
     }

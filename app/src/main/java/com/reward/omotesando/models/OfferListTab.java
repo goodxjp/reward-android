@@ -8,12 +8,15 @@ import com.reward.omotesando.R;
 public enum OfferListTab {
     APP_DL(
             R.string.tab_app_dl
-//    ),
-//    MOVIE(
-//            R.string.tab_movie
-//    ),
-//    FB(
-//            R.string.tab_fb
+    ),
+    MEMBERSHIP(
+            R.string.tab_membership
+    ),
+    APPLICATION(
+            R.string.tab_application
+    ),
+    SHOPPING(
+            R.string.tab_shopping
     );
 
     public int resource;

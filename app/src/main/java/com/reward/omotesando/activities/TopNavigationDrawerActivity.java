@@ -117,7 +117,7 @@ public class TopNavigationDrawerActivity extends BaseActivity
 //                if (fragment instanceof OfferListFragment) {
 //                    return;
 //                }
-                fragment = OfferListFragment.newInstance();
+                fragment = OfferListFragment.newInstance(1);
                 break;
             case POINT_EXCHANGE:
                 fragment = PlaceholderFragment.newInstance(0);

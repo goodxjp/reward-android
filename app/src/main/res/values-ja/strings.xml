@@ -16,8 +16,9 @@
 
     <!-- 案件一覧のタブ名 -->
     <string name="tab_app_dl">オススメ！</string>
-    <string name="tab_movie">動画</string>
-    <string name="tab_fb">FB いいね</string>
+    <string name="tab_membership">会員登録</string>
+    <string name="tab_application">申し込み</string>
+    <string name="tab_shopping">買い物</string>
 
     <!-- 案件詳細画面 -->
     <string name="offer_detail_name">名称</string>

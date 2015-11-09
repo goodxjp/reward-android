@@ -38,8 +38,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_example">交換</string>
-
+    <!-- 共通文言 -->
     <string name="action_settings">設定</string>
     <string name="point_unit">ポイント</string>
     <string name="exchange">交換</string>
@@ -75,7 +74,7 @@
     <string name="message_repair_work">現在、復旧作業中です。今しばらくお待ちください。</string>
     <string name="message_please_retry">お手数ですが、最初からやり直してください。</string>
 
-
+    <!-- ボタン -->
     <string name="button_ok">OK</string>
     <string name="button_cancel">キャンセル</string>
 </resources>

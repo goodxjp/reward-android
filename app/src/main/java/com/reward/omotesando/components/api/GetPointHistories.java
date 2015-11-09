@@ -59,7 +59,16 @@ public class GetPointHistories extends RewardApi<List<PointHistory>> {
         throw new IllegalAccessError();
     }
 
-    // モデルと JSON (通信データ) の変換
+    /*
+     * モデルと JSON (通信データ) の変換
+     */
+
+    /**
+     * JSONArray -> ポイント履歴のリスト
+     *
+     * @param a
+     * @return null 以外: ポイント履歴のリスト / null: JSON 不正
+     */
     public static List<PointHistory> json2PointHistories(JSONArray a) {
         ArrayList<PointHistory> list = new ArrayList<>();
 
@@ -67,43 +76,47 @@ public class GetPointHistories extends RewardApi<List<PointHistory>> {
         // ArrayList では拡張 For 分より、こっちのほうが早いらしい。
         // JSONArray は ArrayList のはず…
         for (int i = 0, len = a.length(); i < len; i++) {
-            JSONObject o = null;
+            JSONObject o;
             try {
                 o = a.getJSONObject(i);
             } catch (JSONException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
-            }
-
-            if (o == null) {
-                continue;
+                return null;
             }
 
             PointHistory pointHistory = json2PointHistory(o);
+            if (pointHistory == null) {
+                return null;
+            }
+
             list.add(pointHistory);
         }
 
         return list;
     }
 
-    // TODO: データが不正の場合の処理
+    /**
+     * JSONObject -> ポイント履歴。
+     *
+     * @param o  JSONObject
+     * @return null 以外: ポイント履歴 / null: JSON 不正
+     */
     public static PointHistory json2PointHistory(JSONObject o) {
-        String detail = "";
-        int pointChange = 0;
-        Date createdAt = null;
+        String detail;
+        int pointChange;
+        Date occurredAt;
         try {
             detail = o.getString("detail");
             pointChange = o.getInt("point_change");
-            String s = o.getString("created_at");  // TODO: 成果日に変更
-            createdAt = RewardApi.parseDate(s);
+            String s = o.getString("occurred_at");
+            occurredAt = RewardApi.parseDate(s);
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+            return null;
         }
 
-        PointHistory pointHistory = new PointHistory(detail, pointChange, createdAt);
+        PointHistory pointHistory = new PointHistory(detail, pointChange, occurredAt);
 
         return pointHistory;
     }
-
 }

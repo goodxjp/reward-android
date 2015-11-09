@@ -305,7 +305,7 @@ public class PointHistoryListFragment extends BaseFragment
                     mPointHistories = api.parseJsonResponse(response);
                     if (mPointHistories == null) {
                         state.failureGetPointHistories(PointHistoryListFragment.this,
-                                Error.getMessageCriticalSeverError(applicationContext, Error.GET_POINT_HISORIES_RESPONSE_WRONG));
+                                Error.getMessageCriticalSeverError(applicationContext, Error.GET_POINT_HISTORIES_RESPONSE_WRONG));
                     } else {
                         state.successGetPointHistories(PointHistoryListFragment.this, mPointHistories);
                     }
@@ -326,7 +326,7 @@ public class PointHistoryListFragment extends BaseFragment
                     } else if (apiError == null) {
                         // レスポンスは返ってきてるけど、よくわかんないエラー (Heroku メンテナンス中に起こるかも)
                         state.failureGetPointHistories(PointHistoryListFragment.this,
-                                Error.getMessageCriticalSeverError(applicationContext, Error.GET_POINT_HISORIES_ERROR_RESPONSE_WRONG));
+                                Error.getMessageCriticalSeverError(applicationContext, Error.GET_POINT_HISTORIES_ERROR_RESPONSE_WRONG));
                     } else {
                         // API からの正常なエラーレスポンス
                         state.failureGetPointHistories(PointHistoryListFragment.this,

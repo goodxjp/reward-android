@@ -30,7 +30,7 @@ public class PointHistoryArrayAdapter extends ArrayAdapter<PointHistory> {
             view = mInflater.inflate(R.layout.list_item_point_history, null);
 
             holder = new ViewHolder();
-            holder.achievedAtText = (TextView) view.findViewById(R.id.achieved_at);
+            holder.occurredAtText = (TextView) view.findViewById(R.id.occurred_at);
             holder.nameText = (TextView) view.findViewById(R.id.name_text);
             holder.pointText = (TextView) view.findViewById(R.id.point_text);
 
@@ -44,7 +44,7 @@ public class PointHistoryArrayAdapter extends ArrayAdapter<PointHistory> {
         // View
 
         // 各種表示データ更新
-        holder.achievedAtText.setText(DateFormatUtils.ISO_DATE_FORMAT.format(pointHistory.createdAt) + "\n" + DateFormatUtils.ISO_TIME_NO_T_FORMAT.format(pointHistory.createdAt));  // TODO: 日付と時刻でちゃんとレイアウトをわける
+        holder.occurredAtText.setText(DateFormatUtils.ISO_DATE_FORMAT.format(pointHistory.occurredAt) + "\n" + DateFormatUtils.ISO_TIME_NO_T_FORMAT.format(pointHistory.occurredAt));  // TODO: 日付と時刻でちゃんとレイアウトをわける
         holder.nameText.setText(pointHistory.detail);
         if (pointHistory.pointChange > 0) {
             holder.pointText.setText("+" + pointHistory.pointChange);
@@ -58,7 +58,7 @@ public class PointHistoryArrayAdapter extends ArrayAdapter<PointHistory> {
 
     // ViewHolder パターン
     private static class ViewHolder {
-        TextView achievedAtText;
+        TextView occurredAtText;
         TextView nameText;
         TextView pointText;
     }

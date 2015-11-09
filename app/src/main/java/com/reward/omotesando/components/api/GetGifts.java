@@ -92,20 +92,20 @@ public class GetGifts extends RewardApi<List<Gift>> {
         String name = "";
         String code = "";
         Date expirationAt = null;
-        Date occurreDAt = null;
+        Date occurredAt = null;
         try {
             name = o.getString("name");
             code = o.getString("code");
             String s = o.getString("expiration_at");
             expirationAt = RewardApi.parseDate(s);
             s = o.getString("occurred_at");
-            occurreDAt = RewardApi.parseDate(s);
+            occurredAt = RewardApi.parseDate(s);
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-        Gift gift = new Gift(name, code, expirationAt, occurreDAt);
+        Gift gift = new Gift(name, code, expirationAt, occurredAt);
 
         return gift;
     }

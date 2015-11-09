@@ -35,9 +35,9 @@ public final class Error {
      * GET point_histories
      */
     // レスポンス不正
-    public static final int GET_POINT_HISORIES_RESPONSE_WRONG = 1301;
+    public static final int GET_POINT_HISTORIES_RESPONSE_WRONG = 1301;
     // エラーレスポンス不正
-    public static final int GET_POINT_HISORIES_ERROR_RESPONSE_WRONG = 1302;
+    public static final int GET_POINT_HISTORIES_ERROR_RESPONSE_WRONG = 1302;
 
     /*
      * GET gifts

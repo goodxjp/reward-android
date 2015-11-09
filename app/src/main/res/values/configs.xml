@@ -16,5 +16,5 @@
     <string name="inquiry_email_address">points.sup@gmail.com</string>
 
     <!-- 一時的に昔のデザインを使用する -->
-    <bool name="is_classic">true</bool>
+    <bool name="is_classic">false</bool>
 </resources>

@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.util.Base64;
 
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -24,9 +25,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * 端末情報。
@@ -83,8 +93,9 @@ public class Terminal {
         return getAndroidId(context);
     }
 
-    // TODO: ファイルの中身を暗号化。したいけど、面倒くさいからやらなくていいや。
     private static final String FILENAME = "44d78098.dat";
+    private static final String SECRET_KEY = "1510ee3b1510ee3b";  // 16 文字
+    // 簡易的に暗号化。ソースの中身から暗号化キーがわかるので端末 ID を変更しての送信が原理的に可能。
 
     // ファイルから端末 ID 情報を取得
     // - ファイルの中身の整合性が取れていることの責任もここで持つ。
@@ -93,39 +104,54 @@ public class Terminal {
         File path = Environment.getExternalStorageDirectory();
         File file = new File(path, FILENAME);
 
-        StringBuilder jsonString = new StringBuilder();
+        StringBuilder encryptedString = new StringBuilder();
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
 
             String line;
             while ((line = reader.readLine()) != null) {
-                jsonString.append(line);
+                encryptedString.append(line);
             }
             reader.close();
 
-            Logger.v(TAG, jsonString.toString());
+            Logger.v(TAG, "File data = " + encryptedString.toString());
         } catch (IOException e) {
             e.printStackTrace();
             Logger.e(TAG, e.getMessage());
             return null;
         }
 
+        String jsonString;
+        try {
+            jsonString = decrypt(encryptedString.toString());
+        } catch (Exception e) {
+            // ファイルを強制的に変更したりされると起こりうるので注意
+            e.printStackTrace();
+            Logger.e(TAG, e.getMessage());
+            return null;
+        }
+
+        Logger.v(TAG, "File string = " + jsonString);
+
         // ファイルの整合性チェック
         JSONObject jsonObject;
         try {
-            jsonObject = new JSONObject(jsonString.toString());
+            jsonObject = new JSONObject(jsonString);
 
             if (jsonObject.getInt(KEY_VERSION) != 1) {
+                Logger.e(TAG, "KEY_VERSION is invalid.");
                 return null;
             }
 
             // TODO 端末 ID 文字列チェックもっと厳密に。
             if (jsonObject.getString(KEY_ID) == null) {
+                Logger.e(TAG, "KEY_ID is invalid.");
                 return null;
             }
 
             // TODO: もっと厳密に。
             if (jsonObject.getString(KEY_CREATED_AT) == null) {
+                Logger.e(TAG, "KEY_CREATED_AT is invalid.");
                 return null;
             }
 
@@ -144,10 +170,19 @@ public class Terminal {
         File path = Environment.getExternalStorageDirectory();
         File file = new File(path, FILENAME);
 
+        String encrypted;
+        try {
+            encrypted = encrypt(terminalId.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Logger.e(TAG, e.getMessage());
+            return false;
+        }
+
         try {
             PrintWriter pw  = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
 
-            pw.append(terminalId.toString());
+            pw.append(encrypted);
             pw.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -156,6 +191,26 @@ public class Terminal {
         }
 
         return true;
+    }
+
+    private static String encrypt(String string)
+            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(SECRET_KEY.getBytes(), "AES");
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+
+        byte[] encrypted = cipher.doFinal(string.getBytes());
+        return Base64.encodeToString(encrypted, Base64.DEFAULT);
+    }
+
+    private static String decrypt(String string)
+            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(SECRET_KEY.getBytes(), "AES");
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+
+        byte[] decrypted = cipher.doFinal(Base64.decode(string, Base64.DEFAULT));
+        return new String(decrypted, "UTF-8");
     }
 
     // <uses-permission android:name="android.permission.READ_PHONE_STATE"/> が必要
@@ -169,10 +224,10 @@ public class Terminal {
     }
 
     // <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    public static String getMacAddress(Context context) {
-        WifiManager manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        return manager.getConnectionInfo().getMacAddress();
-    }
+//    public static String getMacAddress(Context context) {
+//        WifiManager manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+//        return manager.getConnectionInfo().getMacAddress();
+//    }
 
     // メインスレッドじゃダメ
     public static String getAdvertisingId(Context context) {

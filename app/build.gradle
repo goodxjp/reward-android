@@ -3,8 +3,8 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
     }
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 23
+    buildToolsVersion '21.1.2'
     // commons-codec:commons-codec:1.10 組み込みでエラー。
     // http://stackoverflow.com/questions/26352958/duplicate-files-when-adding-compiling-with-gradle-in-android-studio
     packagingOptions {
@@ -14,13 +14,13 @@ android {
     defaultConfig {
         applicationId 'com.reward.omotesando'
         minSdkVersion 9
-        targetSdkVersion 21
+        targetSdkVersion 23
         versionCode 1
         versionName "0.9.0"
     }
     productFlavors {
         development {
-            applicationId 'com.reward.omotesando.development'
+            applicationId 'com.reward.omotesando.dev'
             // http://sakebook.hatenablog.com/entry/2014/12/30/030654
             // 現在は configs.xml を使用
             //buildConfigField "String", "BASE_URL", "\"http://kyuuki.jp:3000/api/v1\""
@@ -45,10 +45,10 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:21.0.3'
-    compile 'com.google.android.gms:play-services:6.5.87'
-    compile 'com.mcxiaoke.volley:library:1.0.+'
-    compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.android.support:appcompat-v7:21.1.2'
+    compile 'com.google.android.gms:play-services:8.3.0'
+    compile 'com.mcxiaoke.volley:library:1.0.19'
+    compile 'com.android.support:support-v4:21.1.2'
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'commons-codec:commons-codec:1.10'
 }

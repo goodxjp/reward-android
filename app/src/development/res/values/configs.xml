@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="api_scheme">http</string>
-    <string name="api_encoded_authority">kyuuki.jp:3000</string>
+    <!--<string name="api_scheme">http</string>-->
+    <!--<string name="api_encoded_authority">kyuuki.jp:3000</string>-->
+    <string name="api_scheme">https</string>
+    <string name="api_encoded_authority">reward-staging.herokuapp.com</string>
     <string name="api_path_base">/api/v1</string>
 </resources>

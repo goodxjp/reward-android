@@ -3,10 +3,10 @@
 
     <item android:state_pressed="true">
         <layer-list>
-            <item android:top="3dp">
+            <item android:top="2dp">
                 <shape>
                     <solid android:color="@color/theme500" />
-                    <corners android:radius="5dp" />
+                    <corners android:radius="4dp" />
                     <stroke android:width="2dp" android:color="#FF4500" />
                 </shape>
             </item>
@@ -15,10 +15,10 @@
 
     <item android:state_focused="true">
         <layer-list>
-            <item android:top="3dp">
+            <item android:top="2dp">
                 <shape>
                     <solid android:color="@color/theme500" />
-                    <corners android:radius="5dp" />
+                    <corners android:radius="4dp" />
                     <stroke android:width="2dp" android:color="#FF4500" />
                 </shape>
             </item>
@@ -29,14 +29,14 @@
         <layer-list>
             <item>
                 <shape>
-                    <solid android:color="#dddddd" />
-                    <corners android:radius="5dp"/>
+                    <solid android:color="#eeeeee" />
+                    <corners android:radius="4dp"/>
                 </shape>
             </item>
-            <item android:bottom="3dp">
+            <item android:bottom="2dp">
                 <shape>
                     <solid android:color="@color/theme500" />
-                    <corners android:radius="5dp"/>
+                    <corners android:radius="4dp"/>
                     <stroke android:width="2dp" android:color="#FF4500" />
                 </shape>
             </item>

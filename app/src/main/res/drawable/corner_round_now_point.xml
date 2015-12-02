@@ -12,7 +12,7 @@
             <solid android:color="@color/white" />
 
             <!-- 角丸 (5dpで設定) -->
-            <corners android:radius="20dp" />
+            <corners android:radius="25dp" />
 
         </shape>
     </item>

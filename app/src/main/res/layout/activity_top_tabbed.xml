@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,6 +11,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingBottom="60dp"
         tools:context=".activities.TopTabbedActivity">
 
         <android.support.v4.view.PagerTabStrip
@@ -23,64 +25,83 @@
     </android.support.v4.view.ViewPager>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom">
-        <LinearLayout
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true">
+        <View
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:orientation="horizontal"
-            android:layout_alignParentBottom="true"
             android:background="@color/grey600"
-            android:paddingLeft="8dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:textColor="@color/white"
-                android:text="現在のポイント"
-                android:textSize="12sp"/>
+            android:layout_alignParentBottom="true"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+
+            android:layout_alignParentBottom="true">
             <LinearLayout
-                android:layout_width="180dp"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:background="@drawable/corner_round_now_point"
-                android:paddingRight="5dp"
-                android:layout_gravity="center_vertical"
-                android:gravity="right"
-                android:layout_margin="4dp"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp">
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:layout_gravity="bottom">
+                <android.support.v4.widget.Space
+                    android:layout_width="8dp"
+                    android:layout_height="0dp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:gravity="right"
-                    android:text="1,500"
-                    android:textSize="30sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/theme500"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:text="pt"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginLeft="5dp"
-                    android:textColor="@color/grey600" />
+                    android:textColor="@color/white"
+                    android:text="現在のポイント"
+                    android:textSize="12sp"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:background="@drawable/corner_round_now_point"
+                    android:paddingRight="5dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="end"
+                    android:layout_margin="4dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:layout_weight="1"
+                    tools:ignore="NestedWeights">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="end"
+                        android:text="1,500"
+                        android:textSize="30sp"
+                        android:textColor="@color/theme500"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:text="pt"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:textColor="@color/black" />
+                </LinearLayout>
             </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="交換"
+                android:gravity="center"
+                android:textSize="24sp"
+                android:textColor="@color/white"
+                android:paddingBottom="2dp"
+                android:background="@drawable/exchange_bg"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="4dp"
+                tools:ignore="RtlHardcoded" />
         </LinearLayout>
-        <TextView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:text="交換"
-            android:gravity="center"
-            android:textSize="24sp"
-            android:textColor="@color/white"
-            android:background="@drawable/offer_list_point_bg"/>
     </RelativeLayout>
-</FrameLayout>
+
+</RelativeLayout>

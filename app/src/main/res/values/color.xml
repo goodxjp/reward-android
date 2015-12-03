@@ -5,7 +5,7 @@
 
     <!-- Theme & Accent -->
     <color name="theme300">#FF8A65</color>
-    <color name="theme500">#FF5722</color>
+    <color name="theme500">#FF552E</color>
     <color name="accent500">#1E88E5</color>
 
     <!-- Greyscales -->
@@ -13,6 +13,10 @@
     <color name="grey600">#757575</color>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
+
+    <color name="default_font_color">#333333</color>
+    <color name="disabled_color">#DBDBDB</color>
+    <color name="enabled_color">#666666</color>
 
     <!-- Others -->
     <color name="green600">#43A047</color>

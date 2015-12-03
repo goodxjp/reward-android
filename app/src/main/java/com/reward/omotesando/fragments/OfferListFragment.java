@@ -223,13 +223,15 @@ public class OfferListFragment extends BaseFragment
         INITIAL {
             @Override
             public void start(OfferListFragment fragment) {
-                if (fragment.getUser() == false) {
+
+                if (!fragment.getUser()) {
                     transit(fragment, GETTING_USER);
-                } else if (fragment.getOfferList() == false) {
+                } else if (!fragment.getOfferList()) {
                     transit(fragment, GETTING_OFFERS);
                 } else {
                     transit(fragment, READY);
                 }
+
             }
         },
 
@@ -240,7 +242,7 @@ public class OfferListFragment extends BaseFragment
                 // ポイント表示を更新
 //                fragment.mPoint = user.point;
 //                fragment.mCurrentPointText.setText(String.valueOf(fragment.mPoint));
-                if (fragment.getOfferList() == false) {
+                if (!fragment.getOfferList()) {
                     transit(fragment, GETTING_OFFERS);
                 } else {
                     transit(fragment, READY);
@@ -352,13 +354,13 @@ public class OfferListFragment extends BaseFragment
      */
     private boolean getUser() {
         User user = UserManager.getUser(getActivity().getApplicationContext(), this);
-
-        if (user != null) {
-            //updateUser(user);
-            return true;
-        } else {
-            return false;
-        }
+//        if (user != null) {
+//            //updateUser(user);
+//            return true;
+//        } else {
+//            return false;
+//        }
+        return user != null;
     }
 
     /**

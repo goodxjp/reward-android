@@ -78,7 +78,7 @@ public abstract class BaseActivity extends ActionBarActivity implements Showable
             case R.id.action_point_history:
 //                intent = new Intent(this, PointHistoryActivity.class);
 //                startActivity(intent);
-                PointHistoryActivity.start(this, PointHistoryActivity.TAB_POINT_HISTORY, false);
+                PointHistoryActivity.start(this, PointHistoryActivity.PointHistoryTab.POINT_HISTORY, false);
                 return true;
             case R.id.action_help:
                 intent = new Intent(this, HelpActivity.class);

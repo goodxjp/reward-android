@@ -36,6 +36,9 @@
     <string name="table_header_gift_name">種別</string>
     <string name="table_header_gift_code">コード</string>
 
+    <!-- 現在のポイント表示部分 -->
+    <string name="current_point_title">現在のポイント</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

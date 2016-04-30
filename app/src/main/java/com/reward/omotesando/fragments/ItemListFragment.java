@@ -240,7 +240,7 @@ public class ItemListFragment extends BaseFragment
                         // 本当は、購入処理中はくるくる表示するなどして Fragment を Detach させないようにするほうがよさげ。
                         if (getActivity() != null) {
                             //PointHistoryActivity.start(getActivity(), PointHistoryActivity.TAB_EXCHANGE_HISTORY, true);  // うーん、これだけだと戻るボタンで戻っちゃう。FLAG_ACTIVITY_NO_HISTORY フラグ意味ある？
-                            PointHistoryActivity.start(getActivity(), PointHistoryActivity.TAB_EXCHANGE_HISTORY, false);
+                            PointHistoryActivity.start(getActivity(), PointHistoryActivity.PointHistoryTab.EXCHANGE_HISTORY, false);
                             getActivity().finish();
 
                             Toast.makeText(appContext, getString(R.string.message_complete_exchange), Toast.LENGTH_LONG).show();

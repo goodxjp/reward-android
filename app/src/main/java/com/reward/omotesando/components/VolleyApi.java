@@ -46,10 +46,10 @@ public class VolleyApi {
 
     // 共通のパラメータで送信処理
     private static int INITIAL_TIMEOUT_MS = 30000;  // 頑張りすぎかも
-    private static DefaultRetryPolicy policy = new DefaultRetryPolicy(INITIAL_TIMEOUT_MS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+    private static DefaultRetryPolicy DEFAULT_RETRY_POLICY = new DefaultRetryPolicy(INITIAL_TIMEOUT_MS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
 
     public static Request send(Context context, Request request) {
-        request.setRetryPolicy(policy);
+        request.setRetryPolicy(DEFAULT_RETRY_POLICY);
         return VolleyUtils.getRequestQueue(context).add(request);
     }
 

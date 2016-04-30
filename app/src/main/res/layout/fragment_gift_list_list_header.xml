@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
+    android:background="@color/grey600"
     tools:context=".fragments.GiftListFragment">
 
     <TextView
@@ -13,10 +14,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
+        android:layout_marginLeft="12dp"
         android:gravity="center"
         android:text="@string/table_header_datetime"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textIsSelectable="false"/>
+        android:textColor="@color/white"
+        android:textIsSelectable="false" />
 
     <TextView
         android:id="@+id/point_text"
@@ -26,16 +29,19 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="@string/table_header_gift_name"
-        android:textAppearance="?android:attr/textAppearanceSmall"/>
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/white" />
 
     <TextView
         android:id="@+id/name_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:layout_marginRight="24dp"
         android:layout_weight="2"
         android:gravity="center"
         android:text="@string/table_header_gift_code"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textIsSelectable="false"/>
+        android:textColor="@color/white"
+        android:textIsSelectable="false" />
 </LinearLayout>

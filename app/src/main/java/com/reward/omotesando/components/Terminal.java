@@ -2,6 +2,7 @@ package com.reward.omotesando.components;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
@@ -57,7 +58,7 @@ public class Terminal {
         JSONObject jsonObject;
 
         // 端末 ID 情報はファイルとして保存しておき、もし、ファイルが存在する場合はそちらを優先する。
-        jsonObject = getTerminalIdFromFile(context);
+        jsonObject = getTerminalIdFromFile();
         if (jsonObject != null) {
             return jsonObject;
         }
@@ -78,7 +79,7 @@ public class Terminal {
         }
 
         // TODO: ユーザー登録が成功した時点で保存した方がよい？！
-        if (!saveTerminalIdToFile(context, o)) {
+        if (saveTerminalIdToFile(o) == false) {
             Logger.e(TAG, "Fail to save terminalId file.");
             // 保存に失敗しても、端末 ID 情報はそのまま使う。保存できない端末は毎回取得し直す。
         }
@@ -98,9 +99,8 @@ public class Terminal {
     // ファイルから端末 ID 情報を取得
     // - ファイルの中身の整合性が取れていることの責任もここで持つ。
     // - 初めての場合やファイルがおかしい場合は null を返す。
-    private static JSONObject getTerminalIdFromFile(Context context) {
-//        File path = Environment.getExternalStorageDirectory();
-        File path = context.getExternalFilesDir(null);
+    private static JSONObject getTerminalIdFromFile() {
+        File path = Environment.getExternalStorageDirectory();  // アンインストールされても使用するため消さない
         File file = new File(path, FILENAME);
 
         StringBuilder encryptedString = new StringBuilder();
@@ -165,9 +165,8 @@ public class Terminal {
     }
 
     // ファイルに端末 ID 情報を保存
-    public static boolean saveTerminalIdToFile(Context context, JSONObject terminalId) {
-//        File path = Environment.getExternalStorageDirectory();
-        File path = context.getExternalFilesDir(null);
+    public static boolean saveTerminalIdToFile(JSONObject terminalId) {
+        File path = Environment.getExternalStorageDirectory();  // アンインストールされても使用するため消さない
         File file = new File(path, FILENAME);
 
         String encrypted;

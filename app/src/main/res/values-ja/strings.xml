@@ -25,7 +25,7 @@
     <string name="offer_detail_point">ポイント</string>
     <string name="offer_detail_requirement">成果条件</string>
     <string name="offer_detail_requirement_detail">条件詳細</string>
-    <string name="action_execute">案件実行</string>
+    <string name="action_execute">ポイントを GET する</string>
 
     <!-- ポイント履歴画面 -->
     <string name="tab_point_history">取得履歴</string>

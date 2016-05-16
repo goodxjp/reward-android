@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center|bottom"
-                android:textColor="#ff0000"
+                android:textColor="@color/theme500"
                 android:textSize="24sp"/>
 
             <TextView
@@ -51,7 +51,7 @@
                 android:layout_weight="1"
                 android:gravity="center|top"
                 android:text="@string/point_unit"
-                android:textColor="#ff0000"
+                android:textColor="@color/theme500"
                 android:textSize="12sp"
                 />
         </LinearLayout>

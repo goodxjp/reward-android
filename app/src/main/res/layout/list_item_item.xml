@@ -38,9 +38,12 @@
             android:id="@+id/exchange_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_margin="10dp"
             android:layout_weight="1"
-            android:text="@string/exchange"/>
+            android:background="@drawable/corner_round_item_offer_btn"
+            android:text="@string/exchange"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
 
     </LinearLayout>
 

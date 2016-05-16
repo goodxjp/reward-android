@@ -1,18 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.view.ViewPager
-    android:id="@+id/pager"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.TopTabbedActivity">
 
-    <android.support.v4.view.PagerTabStrip
-        android:id="@+id/pager_tab_strip"
+    <android.support.v4.view.ViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#33B5E5"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp"
-        android:textColor="#FFFFFF"/>
-</android.support.v4.view.ViewPager>
+        android:layout_height="match_parent"
+        android:paddingBottom="50dp">  <!-- 現在のポイントの高さに合わせる -->
+
+        <android.support.v4.view.PagerTabStrip
+            android:id="@+id/pager_tab_strip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#33B5E5"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:textColor="#FFFFFF" />
+    </android.support.v4.view.ViewPager>
+
+    <!-- 現在のポイント表示 -->
+    <fragment
+        android:id="@+id/navigation_drawer"
+        android:name="com.reward.omotesando.fragments.CurrentPointFragment"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        tools:layout="@layout/fragment_current_point" />
+</RelativeLayout>

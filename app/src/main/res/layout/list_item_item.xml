@@ -2,7 +2,7 @@
 <RelativeLayout
     android:id="@+id/rowOfferLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <LinearLayout
@@ -17,7 +17,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="6dp"
+            android:layout_marginLeft="12dp"
             android:layout_weight="2"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textIsSelectable="false"/>
@@ -31,7 +31,7 @@
             android:layout_weight="1"
             android:gravity="right"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#ff0000"
+            android:textColor="@color/theme500"
             android:textSize="24sp"/>
 
         <Button

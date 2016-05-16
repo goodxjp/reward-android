@@ -12,7 +12,7 @@
         android:id="@+id/header"
         layout="@layout/fragment_gift_list_list_header"
         android:layout_width="match_parent"
-        android:layout_height="30dp"/>
+        android:layout_height="30dp" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -21,13 +21,14 @@
         <ListView
             android:id="@android:id/list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:divider="@null" />
 
         <TextView
             android:id="@android:id/empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"/>
+            android:gravity="center" />
     </FrameLayout>
 
 </LinearLayout>

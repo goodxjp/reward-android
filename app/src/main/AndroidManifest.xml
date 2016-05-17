@@ -106,6 +106,14 @@
             android:parentActivityName=".activities.TopTabbedActivity">
         </activity>
 
+        <!-- ポイント獲得通知 -->
+        <activity
+            android:name=".activities.PointGetActivity"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent">
+            <!-- 透明にしておかないと、アニメーションする途中の背景が黒くなる -->
+        </activity>
+
         <!-- デバッグ用 -->
         <activity
             android:name=".activities.DebugActivity"

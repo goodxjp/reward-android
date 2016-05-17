@@ -24,6 +24,7 @@ import static com.reward.omotesando.components.api.ErrorCode.*;
  * ユーザーマネージャー。
  *
  * - ユーザー情報の取得、データを管理する
+ * - ユーザーのポイント獲得とそれを通知したかも責任を持つ
  *
  * - シングルトンにすべきか、ユーティリティクラス (クラス変数、クラスメソッド) にすべきか？
  *   - http://qiita.com/mo12ino/items/abf2e31e34278ebea42c
@@ -43,6 +44,11 @@ public class UserManager {
     // コールバック対象
     private static List<Callback> callbackList = new ArrayList<>();
 
+    // TODO: 他のは再取得すればいい情報だけど、これは static 変数だと初期化されちゃうので本当はダメ。
+    // ポイント数が変更したか (かつ、未通知)
+    // 上位に初期化まで責任転嫁。
+    public static boolean isChangedPoint = false;
+
     /**
      * ユーザー情報取得。
      *
@@ -56,7 +62,7 @@ public class UserManager {
 
         // リクエスト送信中ならコールバック追加のみ
         if (request != null) {
-            Logger.e(TAG, "Add callback");
+            Logger.v(TAG, "Add callback");
             callbackList.add(callback);
             return null;
         }
@@ -71,8 +77,24 @@ public class UserManager {
                         VolleyApi.Log(TAG, api, response);
                         UserManager.request = null;
 
-                        user = api.parseJsonResponse(response);
+                        // ポイント数の変化をチェック (前半)
+                        // TODO: ギフト件購入も考慮する必要もあるので、本当はサーバーでちゃんと管理しないとダメか。
+                        // TODO: ポイント履歴取得をポイント取得監視に使えるように変更する。
+                        long beforePoint = -1;
                         if (user != null) {
+                            beforePoint = user.point;
+                        }
+
+                        user = api.parseJsonResponse(response);
+
+                        if (user != null) {
+                            // ポイント数の変化をチェック (後半)
+                            Logger.e(TAG, "beforePoint = " + beforePoint);
+                            Logger.e(TAG, "User.point = " + user.point);
+                            if ((beforePoint >= 0) && (user.point > beforePoint)) {
+                                isChangedPoint = true;
+                            }
+
                             allCallbackOnSuccessGetUser(user);
                         } else {
                             allCallbackOnErrorGetUser(Error.getMessageCriticalSeverError(context, Error.GET_USER_RESPONSE_WRONG));

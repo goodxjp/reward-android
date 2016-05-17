@@ -1,6 +1,8 @@
 package com.reward.omotesando.activities;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -14,6 +16,7 @@ import com.reward.omotesando.R;
 import com.reward.omotesando.commons.Logger;
 import com.reward.omotesando.components.GcmManager;
 import com.reward.omotesando.components.Terminal;
+import com.reward.omotesando.components.UserManager;
 import com.reward.omotesando.components.VolleyApi;
 import com.reward.omotesando.components.api.PostUser;
 import com.reward.omotesando.fragments.AlertDialogFragment;
@@ -94,6 +97,46 @@ public class TopTabbedActivity extends BaseActivity
         // http://developer.android.com/google/gcm/client.html#sample-play
         GcmManager gcmManager = GcmManager.getInstance(getApplicationContext());
         gcmManager.checkPlayServices(this);
+
+        // 背景が黒かったり、アニメーションが見えなかったりするので、起動タイミングを遅らせる。
+        mCheckAndNotifyChangedPointHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                checkAndNotifyChangedPoint();
+            }
+        };
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                mCheckAndNotifyChangedPointHandler.sendEmptyMessage(0);
+            }
+        }).start();
+    }
+
+    // TODO: ポイント獲得通知はいろいろ汚いのであとで全面的に直す。
+    // - ポイントの差分じゃなく、ポイント履歴で判別する
+    // - 過去の状態をきちんと保持する
+    // - スレッドの使い方も微妙
+    // - ポイント獲得通知の情報をもっと詳しく
+    private Handler mCheckAndNotifyChangedPointHandler;
+
+    // ユーザーの状態変化をチェックして、ポイント取得を通知し、リストを更新。
+    private void checkAndNotifyChangedPoint() {
+        Logger.v(TAG, "checkAndNotifyChangedPoint()");
+        if ((state == State.READY) && UserManager.isChangedPoint) {
+            // ポイント取得通知 → 案件一覧更新
+            PointGetActivity.start(this);
+            overridePendingTransition(R.anim.point_get_anim, R.anim.point_get_anim);
+            mSectionsPagerAdapter.refreshAll(mViewPager);
+            UserManager.isChangedPoint = false;
+        }
     }
 
 
@@ -328,6 +371,23 @@ public class TopTabbedActivity extends BaseActivity
         public CharSequence getPageTitle(int position) {
             OfferListTab[] values = OfferListTab.values();
             return getString(values[position].resource);
+        }
+
+        // https://ca-14-androiders.github.io/Fragment%E3%82%92PagerAdapter%E3%81%8B%E3%82%89%E5%8F%96%E5%BE%97%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95/
+        // TODO: ここにある方法で表示しているものを保持しておいて、それだけ処理するようにした方がよさげ。
+
+        // 参考: http://yusuke-hata.hatenablog.com/entry/2014/11/10/235744
+        // 全ての Fragment を再描画
+        public void refreshAll(ViewPager pager) {
+            for (int i = 0; i < getCount(); i++) {
+                OfferListFragment fragment = null;
+                fragment = (OfferListFragment) this.instantiateItem(pager, i);  // まだ表示していないものも取れてしまう (生成してしまう)。
+
+                if (fragment != null) {
+                    fragment.refresh();
+                    Logger.v(TAG, "kyuuki " + i);
+                }
+            }
         }
     }
 }

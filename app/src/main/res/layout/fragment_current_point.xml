@@ -53,9 +53,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:gravity="end"
                     android:textSize="30sp"
-                    android:textColor="@color/theme500" />
+                    android:textColor="@color/theme500"
+                    android:gravity="end" />
 
                 <TextView
                     android:layout_width="wrap_content"

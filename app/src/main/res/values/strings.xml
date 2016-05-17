@@ -34,6 +34,9 @@
     <string name="table_header_gift_name">Name</string>
     <string name="table_header_gift_code">Code</string>
 
+    <!-- ポイント獲得通知 -->
+    <string name="got_point">Got Point!</string>
+
     <!-- 現在のポイント表示部分 -->
     <string name="current_point_title">Current Point</string>
 

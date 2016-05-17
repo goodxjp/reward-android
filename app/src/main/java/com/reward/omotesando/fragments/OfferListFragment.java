@@ -91,6 +91,25 @@ public class OfferListFragment extends BaseFragment
 
 
     /*
+     * 外部インターフェース
+     */
+
+    /**
+     * 案件一覧再取得、再描画。
+     */
+    public void refresh() {
+        Logger.v(TAG, "refresh()");
+
+        // メイン画面で instantiateItem を使っちゃってるので、Activity に結びついていない Fragment もできてしまう。
+        if (getActivity() != null) {
+            state.detach(this);  // キャンセル処理。意味変わってきちゃってる。
+            state = State.INITIAL;
+            state.start(this);
+        }
+    }
+
+
+    /*
      * ライフサイクル
      */
     @Override
@@ -353,6 +372,7 @@ public class OfferListFragment extends BaseFragment
      * @return true: 取得成功 / false: 取得待ち
      */
     private boolean getUser() {
+        Logger.e(TAG, "kyuuki getActivity = " +  getActivity());
         User user = UserManager.getUser(getActivity().getApplicationContext(), this);
 //        if (user != null) {
 //            //updateUser(user);
